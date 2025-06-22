@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign In - VYMR</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+<body>
+    <main class="centered-bg">
+        <section class="login-card new-style">
+            <div class="avatar-area">
+                <img src="{% static 'image/a.jpg' %}" alt="VYMR Logo" class="avatar">
+            </div>
+            <h2 class="login-title">Welcome</h2>
+            <form id="loginForm" autocomplete="off">
+                <div class="input-group new-input">
+                    <span class="input-icon">&#128100;</span>
+                    <input type="text" id="username" name="username" placeholder="Username" required autofocus autocomplete="username">
+                </div>
+                <div class="input-group new-input">
+                    <span class="input-icon">&#128274;</span>
+                    <input type="password" id="password" name="password" placeholder="Password" required autocomplete="current-password">
+                </div>
+                <div class="button-group new-btn-group">
+                    <button type="submit" class="btn-primary new-btn">Sign In</button>
+                    <button type="reset" class="btn-link">Reset</button>
+                </div>
+                <div id="errorMsg" class="error-message"></div>
+            </form>
+        </section>
+    </main>
+    <script src="{% static 'js/login.js' %}"></script>
+</body>
+</html>
