@@ -22,7 +22,7 @@
             <li tabindex="0">
                 <a href="#"><i class="fas fa-users"></i>Members <i class="fas fa-chevron-down" style="margin-left:auto;"></i></a>
                 <ul class="submenu">
-                    <li><a href="#"><i class="fas fa-list"></i>All Members</a></li>
+                    <li><a href="{% url 'all_members' %}"><i class="fas fa-list"></i>All Members</a></li>
                     <li><a href="{% url 'member' %}"><i class="fas fa-user-plus"></i>Add Member</a></li>
                 </ul>
             </li>
@@ -58,7 +58,7 @@
     </div>
     <div class="main-content">
         <header>
-            <h1>Welcome to vymember CRM</h1>
+            <h1>Welcome</h1>
             <div class="user-info">
                 <span>Admin</span>
                 <i class="fas fa-user-circle fa-2x" style="color:#4f8cff;"></i>

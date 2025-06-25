@@ -1,0 +1,86 @@
+{% extends "home.html" %}
+{% load static %}
+
+{% block main_content %}
+<link rel="stylesheet" href="{% static 'css/all_members.css' %}">
+<section class="members-section">
+    <div class="section-header">
+        <h2>All Members</h2>
+        <div class="header-actions">
+            <a href="{% url 'home' %}" class="add-button">
+                <i class="fas fa-plus"></i> Add New Member
+            </a>
+        </div>
+    </div>
+
+    <div class="filter-container">
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search by name...">
+            <button id="searchButton"><i class="fas fa-search"></i></button>
+        </div>
+
+        <div class="filter-controls">
+            <div class="filter-group">
+                <label for="instructorFilter">Instructor</label>
+                <select id="instructorFilter">
+                    <option value="">All Instructors</option>
+                    {% for instructor in instructors %}
+                    <option value="{{ instructor.id }}">{{ instructor.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="companyFilter">Organization</label>
+                <select id="companyFilter">
+                    <option value="">All Organizations</option>
+                    {% for company in companies %}
+                    <option value="{{ company }}">{{ company }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="dateFilter">Initiation Date</label>
+                <input type="date" id="dateFilter">
+            </div>
+
+            <div class="filter-actions">
+                <button id="applyFilters" class="filter-button">Apply Filters</button>
+                <button id="resetFilters" class="reset-button">Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table id="membersTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Contact</th>
+                    <th>Email</th>
+                    <th>Organization</th>
+                    <th>Instructor</th>
+                    <th>Initiation Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="membersTableBody">
+                <!-- Table content will be loaded dynamically -->
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination-container">
+        <div class="pagination-info">
+            Showing <span id="pageStart">1</span> to <span id="pageEnd">10</span> of <span id="totalItems">0</span> members
+        </div>
+        <div class="pagination-controls">
+            <button id="prevPage" class="page-button" disabled><i class="fas fa-chevron-left"></i></button>
+            <div id="pageNumbers" class="page-numbers"></div>
+            <button id="nextPage" class="page-button"><i class="fas fa-chevron-right"></i></button>
+        </div>
+    </div>
+</section>
+<script src="{% static 'js/all_members.js' %}"></script>
+{% endblock %}

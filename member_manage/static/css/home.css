@@ -329,6 +329,22 @@ footer {
         width: 28px;
         height: 28px;
     }
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 10px; /* Space between the text and icon */
+    }
+
+    .user-info span {
+        font-weight: 600;
+        color: #4f8cff; /* Matches your site's blue theme */
+        font-size: 1rem;
+        order: 1; /* This puts the span first if you want the text before the icon */
+    }
+
+    .user-info i {
+        order: 2; /* This puts the icon second */
+    }
     .registration-section h2 {
         font-size: 1.1rem;
     }
