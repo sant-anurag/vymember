@@ -204,7 +204,7 @@ label {
     font-size: 1rem;
 }
 
-input, textarea {
+input, textarea,select {
     padding: 0.7rem 1rem;
     border: 1.5px solid #e3eafc;
     border-radius: 8px;
