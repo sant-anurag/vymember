@@ -1,3 +1,7 @@
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
 from django.shortcuts import render, redirect
 from django.conf import settings
 import mysql.connector
@@ -357,3 +361,72 @@ def all_instructors(request):
         'success_message': success_message
     }
     return render(request, 'all_instructors.html', context)
+
+def register_user(request):
+    if request.method == 'POST':
+        # Generate years from 1900 to current year
+        import datetime
+        current_year = datetime.datetime.now().year
+        range_years = list(range(current_year, 1899, -1))
+
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            # Handle AJAX submission
+            try:
+                # Get form data
+                name = request.POST.get('name')
+                username = request.POST.get('username')
+                email = request.POST.get('email')
+                age = request.POST.get('age')
+                dob = request.POST.get('dob')
+                associated_since = request.POST.get('associated_since')
+                updeshta_since = request.POST.get('updeshta_since')
+                address = request.POST.get('address')
+                reason = request.POST.get('reason')
+                gmail_user = 'sant.vihangam@gmail.com'
+                gmail_app_password = 'pdsexaeusfdgvqsu'
+                # Send email to admin
+                from django.core.mail import send_mail
+
+                subject = f"New User Registration Request: {name}"
+                message = f"""
+                New user registration request details:
+                
+                Name: {name}
+                Username: {username}
+                Email: {email}
+                Age: {age}
+                Date of Birth: {dob}
+                Associated Since: {associated_since}
+                Updeshta Since: {updeshta_since}
+                Address: {address}
+                
+                Reason for Registration:
+                {reason}
+                """
+                msg = MIMEText(message)
+                msg['Subject'] = subject
+                msg['From'] = "sant.vihangam@gmail.com"
+                msg['To'] = "sant.vihangam@gmail.com"
+
+                # Send email via Gmail SMTP
+                server = smtplib.SMTP('smtp.gmail.com', 587)
+                server.starttls()
+                server.login(gmail_user, gmail_app_password)
+                server.sendmail("sant.vihangam@gmail.com", "sant.vihangam@gmail.com", msg.as_string())
+                server.quit()
+
+                return JsonResponse({'success': True})
+            except Exception as e:
+                return JsonResponse({'success': False, 'message': str(e)})
+        else:
+            # Handle regular form submission (fallback)
+            # Process form and send email
+            # Redirect to success page
+            return render(request, 'register_user.html', {'success': True, 'range_years': range_years})
+    else:
+        # Generate years from 1900 to current year
+        import datetime
+        current_year = datetime.datetime.now().year
+        range_years = list(range(current_year, 1899, -1))
+
+        return render(request, 'register_user.html', {'range_years': range_years})

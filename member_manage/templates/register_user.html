@@ -1,0 +1,98 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>User Registration Request</title>
+  <link rel="stylesheet" href="{% static 'css/register_user.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+  <div class="register-container">
+    <form class="register-form" id="registerForm" method="post" action="{% url 'register_user' %}">
+      {% csrf_token %}
+      <h2>New User Registration</h2>
+
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" name="name" required>
+      </div>
+
+      <div class="form-group">
+        <label for="username">Desired Username</label>
+        <input type="text" id="username" name="username" required>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" required>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="age">Age</label>
+          <input type="number" id="age" name="age" min="18" max="100">
+        </div>
+
+        <div class="form-group">
+          <label for="dob">Date of Birth</label>
+          <input type="date" id="dob" name="dob">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="associated_since">Associated Since</label>
+          <select id="associated_since" name="associated_since">
+            <option value="">Select Year</option>
+            {% for year in range_years %}
+              <option value="{{ year }}">{{ year }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="updeshta_since">Updeshta Since</label>
+          <select id="updeshta_since" name="updeshta_since">
+            <option value="">Select Year</option>
+            {% for year in range_years %}
+              <option value="{{ year }}">{{ year }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="address">Address</label>
+        <textarea id="address" name="address" rows="3"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="reason">Reason for Registration</label>
+        <textarea id="reason" name="reason" rows="3" required></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" id="resetBtn" class="reset-btn">
+          <i class="fas fa-undo"></i> Reset
+        </button>
+        <button type="submit" class="submit-btn">
+          <i class="fas fa-paper-plane"></i> Submit Request
+        </button>
+      </div>
+
+      <div id="statusMessage" class="status-message" style="display: none;"></div>
+    </form>
+
+    <div class="form-footer">
+      <a href="{% url 'login' %}" class="back-to-login">
+        <i class="fas fa-arrow-left"></i> Back to Login
+      </a>
+    </div>
+  </div>
+
+  <script src="{% static 'js/register_user.js' %}"></script>
+</body>
+</html>
