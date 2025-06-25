@@ -7,8 +7,9 @@ urlpatterns = [
     path('register_member/', views.register_member, name='register_member'),
     path('add-instructor/', views.add_instructor, name='add_instructor'),
     path('member/', views.register_member, name='member'),
-    # Other URLs...
     path('all_members/', views.all_members, name='all_members'),
-    path('/api/members/', views.api_members, name='api_members'),
-    path('/api/members/<int:id>/', views.api_member_detail, name='api_member_detail'),
+
+    # API endpoints
+    path('api/members/', views.api_members, name='api_members'),
+    path('api/members/<int:id>/', views.api_member_detail, name='api_member_detail'),
 ]

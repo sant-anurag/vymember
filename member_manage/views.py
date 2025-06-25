@@ -150,6 +150,7 @@ def add_instructor(request):
     return render(request, 'add_instructor.html', {'message': message})
 
 def all_members(request):
+    print("All members view accessed")
     # Get database connection
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
@@ -162,57 +163,35 @@ def all_members(request):
     cursor.execute("SELECT id, name FROM instructors")
     instructors = cursor.fetchall()
 
-    cursor.close()
-    conn.close()
-
-    context = {
-        'companies': companies,
-        'instructors': instructors,
-    }
-    return render(request, 'all_members.html', context)
-
-@require_http_methods(["GET"])
-def api_members(request):
-    print("API members view accessed")
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
-
+    # Fetch all members with their instructor names
     cursor.execute("""
         SELECT 
-            m.id, m.name, m.number, m.email, m.address, m.company, 
+            m.id, m.name, m.number, m.email, m.address, m.company,
             m.instructor_id, m.date_of_initiation, m.notes,
             i.name as instructor_name
         FROM 
             members m
         LEFT JOIN 
             instructors i ON m.instructor_id = i.id
+        ORDER BY m.name
     """)
-
     members = cursor.fetchall()
+    print("Members fetched:", members)
+
+    # Format dates for display
+    for member in members:
+        if member['date_of_initiation']:
+            member['date_of_initiation'] = member['date_of_initiation'].strftime('%Y-%m-%d')
+
     cursor.close()
     conn.close()
 
-    # Convert to list of dictionaries for JSON response
-    members_list = []
-    for member in members:
-        # Convert date to ISO format for JSON serialization
-        if member['date_of_initiation']:
-            member['date_of_initiation'] = member['date_of_initiation'].isoformat()
-
-        members_list.append({
-            'id': member['id'],
-            'name': member['name'],
-            'number': member['number'],
-            'email': member['email'],
-            'address': member['address'],
-            'company': member['company'],
-            'instructor_id': member['instructor_id'],
-            'instructor_name': member['instructor_name'] if member['instructor_name'] else 'N/A',
-            'date_of_initiation': member['date_of_initiation'],
-            'notes': member['notes']
-        })
-
-    return JsonResponse(members_list, safe=False)
+    context = {
+        'companies': companies,
+        'instructors': instructors,
+        'members': members,  # This data will be displayed in the template
+    }
+    return render(request, 'all_members.html', context)
 
 @require_http_methods(["GET", "DELETE"])
 def api_member_detail(request, id):
@@ -228,7 +207,7 @@ def api_member_detail(request, id):
             conn.close()
 
             if affected_rows > 0:
-                return JsonResponse({'status': 'success'})
+                return JsonResponse({'success': True, 'message': 'Member deleted successfully'})
             else:
                 return JsonResponse({'error': 'Member not found'}, status=404)
 
@@ -240,15 +219,15 @@ def api_member_detail(request, id):
 
     # GET request
     cursor.execute("""
-        SELECT 
-            m.id, m.name, m.number, m.email, m.address, m.company, 
+        SELECT
+            m.id, m.name, m.number, m.email, m.address, m.company,
             m.instructor_id, m.date_of_initiation, m.notes,
             i.name as instructor_name
-        FROM 
+        FROM
             members m
-        LEFT JOIN 
+        LEFT JOIN
             instructors i ON m.instructor_id = i.id
-        WHERE 
+        WHERE
             m.id = %s
     """, (id,))
 
@@ -259,7 +238,7 @@ def api_member_detail(request, id):
     if not member:
         return JsonResponse({'error': 'Member not found'}, status=404)
 
-    # Convert date to ISO format for JSON serialization
+    # Convert date to string format for JSON serialization
     if member['date_of_initiation']:
         member['date_of_initiation'] = member['date_of_initiation'].isoformat()
 
@@ -277,3 +256,45 @@ def api_member_detail(request, id):
     }
 
     return JsonResponse(member_data)
+
+def api_members(request):
+    print("API members view accessed")
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT
+            m.id, m.name, m.number, m.email, m.address, m.company,
+            m.instructor_id, m.date_of_initiation, m.notes,
+            i.name as instructor_name
+        FROM
+            members m
+        LEFT JOIN
+            instructors i ON m.instructor_id = i.id
+    """)
+
+    members = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    # Convert to list of dictionaries for JSON response
+    members_list = []
+    for member in members:
+        # Convert date to string format for JSON serialization
+        if member['date_of_initiation']:
+            member['date_of_initiation'] = member['date_of_initiation'].isoformat()
+
+        members_list.append({
+            'id': member['id'],
+            'name': member['name'],
+            'number': member['number'],
+            'email': member['email'],
+            'address': member['address'],
+            'company': member['company'],
+            'instructor_id': member['instructor_id'],
+            'instructor_name': member['instructor_name'] if member['instructor_name'] else 'N/A',
+            'date_of_initiation': member['date_of_initiation'],
+            'notes': member['notes']
+        })
+
+    return JsonResponse(members_list, safe=False)

@@ -1,302 +1,275 @@
-// all_members.js
 document.addEventListener('DOMContentLoaded', function() {
-    // Global variables
-    let allMembers = [];
-    let filteredMembers = [];
-    const itemsPerPage = 10;
-    let currentPage = 1;
+    console.log("All members page loaded");
 
-    // DOM elements
-    const searchInput = document.getElementById('searchInput');
-    const searchButton = document.getElementById('searchButton');
-    const instructorFilter = document.getElementById('instructorFilter');
-    const companyFilter = document.getElementById('companyFilter');
-    const dateFilter = document.getElementById('dateFilter');
-    const applyFiltersBtn = document.getElementById('applyFilters');
-    const resetFiltersBtn = document.getElementById('resetFilters');
-    const membersTableBody = document.getElementById('membersTableBody');
-    const prevPageBtn = document.getElementById('prevPage');
-    const nextPageBtn = document.getElementById('nextPage');
-    const pageNumbers = document.getElementById('pageNumbers');
-    const pageStart = document.getElementById('pageStart');
-    const pageEnd = document.getElementById('pageEnd');
-    const totalItems = document.getElementById('totalItems');
+    // Set up event listeners for filters
+    setupFilters();
 
-    // Initialize the page
-    fetchMembers();
+    // Set up event listeners for action buttons
+    setupActionButtons();
 
-    // Event listeners
-    searchButton.addEventListener('click', applyFilters);
-    searchInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            applyFilters();
-        }
-    });
-    applyFiltersBtn.addEventListener('click', applyFilters);
-    resetFiltersBtn.addEventListener('click', resetFilters);
-    prevPageBtn.addEventListener('click', () => goToPage(currentPage - 1));
-    nextPageBtn.addEventListener('click', () => goToPage(currentPage + 1));
-
-    // Fetch members data from the server
-    function fetchMembers() {
-        fetch('/api/members/')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                allMembers = data;
-                filteredMembers = [...allMembers];
-                renderTable();
-                updatePagination();
-            })
-            .catch(error => {
-                console.error('Error fetching members:', error);
-                membersTableBody.innerHTML = `
-                    <tr>
-                        <td colspan="7" class="empty-state">
-                            <p>Could not load members. Please try again later.</p>
-                        </td>
-                    </tr>
-                `;
-            });
-    }
-
-    // Apply filters to the members data
-    function applyFilters() {
-        const searchTerm = searchInput.value.toLowerCase().trim();
-        const selectedInstructor = instructorFilter.value;
-        const selectedCompany = companyFilter.value;
-        const selectedDate = dateFilter.value;
-
-        filteredMembers = allMembers.filter(member => {
-            // Search by name
-            const nameMatch = member.name.toLowerCase().includes(searchTerm);
-
-            // Filter by instructor
-            const instructorMatch = !selectedInstructor || member.instructor_id.toString() === selectedInstructor;
-
-            // Filter by company
-            const companyMatch = !selectedCompany || member.company === selectedCompany;
-
-            // Filter by date
-            const dateMatch = !selectedDate || member.date_of_initiation === selectedDate;
-
-            return nameMatch && instructorMatch && companyMatch && dateMatch;
-        });
-
-        currentPage = 1;
-        renderTable();
-        updatePagination();
-    }
-
-    // Reset all filters
-    function resetFilters() {
-        searchInput.value = '';
-        instructorFilter.value = '';
-        companyFilter.value = '';
-        dateFilter.value = '';
-
-        filteredMembers = [...allMembers];
-        currentPage = 1;
-        renderTable();
-        updatePagination();
-    }
-
-    // Render the members table with current page data
-    function renderTable() {
-        const startIndex = (currentPage - 1) * itemsPerPage;
-        const endIndex = startIndex + itemsPerPage;
-        const currentPageData = filteredMembers.slice(startIndex, endIndex);
-
-        if (currentPageData.length === 0) {
-            membersTableBody.innerHTML = `
-                <tr>
-                    <td colspan="7" class="empty-state">
-                        <p>No members found matching your criteria.</p>
-                    </td>
-                </tr>
-            `;
-            return;
-        }
-
-        membersTableBody.innerHTML = '';
-
-        currentPageData.forEach(member => {
-            const row = document.createElement('tr');
-
-            // Format date for display
-            const initiationDate = member.date_of_initiation ? new Date(member.date_of_initiation) : null;
-            const formattedDate = initiationDate ? initiationDate.toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-            }) : 'N/A';
-
-            row.innerHTML = `
-                <td>${member.name}</td>
-                <td>${member.number}</td>
-                <td>${member.email || '-'}</td>
-                <td>${member.company || '-'}</td>
-                <td>${member.instructor_name}</td>
-                <td>${formattedDate}</td>
-                <td>
-                    <div class="action-buttons">
-                        <button class="action-button view" title="View Details" onclick="viewMember(${member.id})">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        <button class="action-button edit" title="Edit Member" onclick="editMember(${member.id})">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="action-button delete" title="Delete Member" onclick="deleteMember(${member.id})">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </td>
-            `;
-
-            membersTableBody.appendChild(row);
-        });
-    }
-
-    // Update pagination controls
-    function updatePagination() {
-        const totalPages = Math.ceil(filteredMembers.length / itemsPerPage);
-
-        // Update info text
-        totalItems.textContent = filteredMembers.length;
-
-        const start = filteredMembers.length === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
-        const end = Math.min(currentPage * itemsPerPage, filteredMembers.length);
-
-        pageStart.textContent = start;
-        pageEnd.textContent = end;
-
-        // Enable/disable prev/next buttons
-        prevPageBtn.disabled = currentPage === 1;
-        nextPageBtn.disabled = currentPage === totalPages || totalPages === 0;
-
-        // Generate page number buttons
-        pageNumbers.innerHTML = '';
-
-        // Only show a limited number of page numbers to avoid overcrowding
-        let startPage = Math.max(1, currentPage - 2);
-        let endPage = Math.min(totalPages, startPage + 4);
-
-        // Adjust start page if we're near the end
-        if (endPage - startPage < 4) {
-            startPage = Math.max(1, endPage - 4);
-        }
-
-        // Add first page button if needed
-        if (startPage > 1) {
-            addPageNumberButton(1);
-            if (startPage > 2) {
-                addEllipsis();
-            }
-        }
-
-        // Add page number buttons
-        for (let i = startPage; i <= endPage; i++) {
-            addPageNumberButton(i);
-        }
-
-        // Add last page button if needed
-        if (endPage < totalPages) {
-            if (endPage < totalPages - 1) {
-                addEllipsis();
-            }
-            addPageNumberButton(totalPages);
-        }
-    }
-
-    // Add a page number button to the pagination
-    function addPageNumberButton(pageNum) {
-        const pageButton = document.createElement('div');
-        pageButton.className = `page-number ${pageNum === currentPage ? 'active' : ''}`;
-        pageButton.textContent = pageNum;
-        pageButton.addEventListener('click', () => goToPage(pageNum));
-        pageNumbers.appendChild(pageButton);
-    }
-
-    // Add ellipsis to pagination
-    function addEllipsis() {
-        const ellipsis = document.createElement('div');
-        ellipsis.className = 'page-number';
-        ellipsis.textContent = '...';
-        ellipsis.style.cursor = 'default';
-        pageNumbers.appendChild(ellipsis);
-    }
-
-    // Go to specified page
-    function goToPage(pageNum) {
-        currentPage = pageNum;
-        renderTable();
-        updatePagination();
-        // Scroll to top of table
-        document.querySelector('.table-container').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    // These functions will be defined globally to handle row actions
-    window.viewMember = function(id) {
-        window.location.href = `/member/${id}/`;
-    };
-
-    window.editMember = function(id) {
-        window.location.href = `/edit_member/${id}/`;
-    };
-
-    window.deleteMember = function(id) {
-        if (confirm('Are you sure you want to delete this member?')) {
-            fetch(`/api/members/${id}/`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRFToken': getCookie('csrftoken')
-                }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                // Remove member from lists and re-render
-                allMembers = allMembers.filter(member => member.id !== id);
-                filteredMembers = filteredMembers.filter(member => member.id !== id);
-                renderTable();
-                updatePagination();
-
-                // Show success message
-                const message = document.createElement('div');
-                message.className = 'status-message';
-                message.textContent = 'Member deleted successfully.';
-                document.querySelector('.section-header').after(message);
-
-                // Remove message after 3 seconds
-                setTimeout(() => {
-                    message.remove();
-                }, 3000);
-            })
-            .catch(error => {
-                console.error('Error deleting member:', error);
-                alert('Failed to delete member. Please try again.');
-            });
-        }
-    };
-
-    // Helper function to get CSRF token from cookies
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
+    // Set up download button
+    setupDownloadButton();
 });
+
+
+function setupDownloadButton() {
+    const downloadBtn = document.getElementById('downloadExcel');
+    if (downloadBtn) {
+        downloadBtn.addEventListener('click', downloadTableAsExcel);
+    }
+}
+
+
+function downloadTableAsExcel() {
+    // Get the table
+    const table = document.getElementById('membersTable');
+    if (!table) return;
+
+    // Create a workbook
+    const XLSX = window.XLSX;
+    if (!XLSX) {
+        // If XLSX is not available, add the library dynamically
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+        script.onload = function() {
+            // Retry after loading the library
+            downloadTableAsExcel();
+        };
+        document.head.appendChild(script);
+        return;
+    }
+
+    // Get only visible rows (respecting filters)
+    const rows = Array.from(table.querySelectorAll('tbody tr')).filter(row =>
+        row.style.display !== 'none' && !row.classList.contains('no-results-row')
+    );
+
+    if (rows.length === 0) {
+        alert('No data to export. Please adjust your filters.');
+        return;
+    }
+
+    // Get headers
+    const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.textContent.trim());
+
+    // Remove the "Actions" column
+    const actionColumnIndex = headers.findIndex(header => header === 'Actions');
+    if (actionColumnIndex !== -1) {
+        headers.splice(actionColumnIndex, 1);
+    }
+
+    // Create data array
+    const data = [headers];
+
+    // Add rows data
+    rows.forEach(row => {
+        const rowData = Array.from(row.cells).map(cell => cell.textContent.trim());
+        // Remove the actions cell
+        if (actionColumnIndex !== -1) {
+            rowData.splice(actionColumnIndex, 1);
+        }
+        data.push(rowData);
+    });
+
+    // Create worksheet
+    const ws = XLSX.utils.aoa_to_sheet(data);
+
+    // Set column widths
+    const colWidths = headers.map(h => ({ wch: Math.max(h.length, 15) }));
+    ws['!cols'] = colWidths;
+
+    // Create workbook
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Members');
+
+    // Generate Excel file and trigger download
+    const today = new Date();
+    const dateStr = today.toISOString().split('T')[0];
+    const fileName = `members_export_${dateStr}.xlsx`;
+
+    XLSX.writeFile(wb, fileName);
+}
+
+function setupFilters() {
+    const companyFilter = document.getElementById('companyFilter');
+    const instructorFilter = document.getElementById('instructorFilter');
+    const dateFilter = document.getElementById('dateFilter');
+    const searchInput = document.getElementById('searchInput');
+    const applyFilterBtn = document.getElementById('applyFilter');
+    const resetFilterBtn = document.getElementById('resetFilter');
+
+    // Apply filters when the button is clicked
+    if (applyFilterBtn) {
+        applyFilterBtn.addEventListener('click', filterTable);
+    }
+
+    // Reset filters when reset button is clicked
+    if (resetFilterBtn) {
+        resetFilterBtn.addEventListener('click', function() {
+            if (companyFilter) companyFilter.value = '';
+            if (instructorFilter) instructorFilter.value = '';
+            if (dateFilter) dateFilter.value = '';
+            if (searchInput) searchInput.value = '';
+
+            // Show all rows
+            const rows = document.querySelectorAll('#membersTable tbody tr');
+            rows.forEach(row => {
+                row.style.display = '';
+            });
+        });
+    }
+}
+
+function filterTable() {
+    const companyValue = document.getElementById('companyFilter').value.toLowerCase();
+    const instructorValue = document.getElementById('instructorFilter').value.toLowerCase();
+    const dateValue = document.getElementById('dateFilter').value;
+    const searchValue = document.getElementById('searchInput').value.toLowerCase();
+
+    const rows = document.querySelectorAll('#membersTable tbody tr');
+
+    rows.forEach(row => {
+        if (row.cells.length <= 1) return; // Skip "No members found" row
+
+        const companyCell = row.cells[3].textContent.toLowerCase();
+        const instructorNameCell = row.cells[4].textContent.toLowerCase();
+        const dateCell = row.cells[5].textContent;
+        const nameCell = row.cells[0].textContent.toLowerCase();
+        const numberCell = row.cells[1].textContent.toLowerCase();
+        const emailCell = row.cells[2].textContent.toLowerCase();
+
+        // Check each filter condition
+        const companyMatch = !companyValue || companyCell.includes(companyValue);
+
+        const instructorMatch = !instructorValue ||
+                               instructorNameCell.includes(instructorValue) ||
+                               row.querySelector('.view-btn')?.getAttribute('data-id') === instructorValue;
+
+        // Format date for comparison
+        const dateMatch = !dateValue || dateCell.includes(dateValue);
+
+        // Search in name, number, or email
+        const searchMatch = !searchValue ||
+                           nameCell.includes(searchValue) ||
+                           numberCell.includes(searchValue) ||
+                           emailCell.includes(searchValue);
+
+        // Show/hide the row based on all filters combined
+        row.style.display = (companyMatch && instructorMatch && dateMatch && searchMatch) ? '' : 'none';
+    });
+
+    // Check if any visible rows remain
+    const visibleRows = Array.from(rows).filter(row => row.style.display !== 'none');
+
+    if (visibleRows.length === 0) {
+        // If no rows match the filter, show a "No results" message
+        const tbody = document.querySelector('#membersTable tbody');
+
+        // Check if we already have a no-results row
+        const noResultsRow = Array.from(rows).find(row => row.classList.contains('no-results-row'));
+
+        if (!noResultsRow) {
+            // Create a new row for "No results" message
+            const newRow = document.createElement('tr');
+            newRow.classList.add('no-results-row');
+            newRow.innerHTML = '<td colspan="7" class="text-center">No members match the selected filters</td>';
+            tbody.appendChild(newRow);
+        } else {
+            // Show the existing no-results row
+            noResultsRow.style.display = '';
+        }
+    } else {
+        // If we have results, hide any "No results" message
+        const noResultsRow = document.querySelector('.no-results-row');
+        if (noResultsRow) {
+            noResultsRow.style.display = 'none';
+        }
+    }
+}
+
+function setupActionButtons() {
+    // View button action
+    document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const memberId = this.getAttribute('data-id');
+            console.log(`View member ${memberId}`);
+            // Implement view functionality - could open a modal with member details
+            viewMemberDetails(memberId);
+        });
+    });
+
+    // Edit button action
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const memberId = this.getAttribute('data-id');
+            console.log(`Edit member ${memberId}`);
+            // Implement edit functionality - could redirect to an edit page
+            // window.location.href = `/edit_member/${memberId}/`;
+        });
+    });
+
+    // Delete button action
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const memberId = this.getAttribute('data-id');
+            console.log(`Delete member ${memberId}`);
+            if (confirm('Are you sure you want to delete this member?')) {
+                deleteMember(memberId);
+            }
+        });
+    });
+}
+
+function deleteMember(id) {
+    fetch(`/api/members/${id}/`, {
+        method: 'DELETE'
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to delete member');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Member deleted successfully:', data);
+        // Remove the row from the table
+        const row = document.querySelector(`.delete-btn[data-id="${id}"]`).closest('tr');
+        row.remove();
+
+        // Show success message
+        const table = document.getElementById('membersTable');
+        const successMsg = document.createElement('div');
+        successMsg.className = 'success-message';
+        successMsg.textContent = 'Member deleted successfully';
+        table.parentNode.insertBefore(successMsg, table);
+
+        // Remove the message after 3 seconds
+        setTimeout(() => {
+            successMsg.remove();
+        }, 3000);
+    })
+    .catch(error => {
+        console.error('Error deleting member:', error);
+        alert('Error deleting member. Please try again.');
+    });
+}
+
+function viewMemberDetails(id) {
+    // Fetch member details from API
+    fetch(`/api/members/${id}/`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch member details');
+            }
+            return response.json();
+        })
+        .then(member => {
+            console.log('Member details:', member);
+            // Create and show a modal with member details
+            // This is a placeholder for the actual implementation
+        })
+        .catch(error => {
+            console.error('Error fetching member details:', error);
+            alert('Error loading member details. Please try again.');
+        });
+}
