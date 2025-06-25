@@ -32,15 +32,29 @@ class DBInitializer:
             )
         ''')
         cur.execute('''
-            CREATE TABLE IF NOT EXISTS members (
+            CREATE TABLE IF NOT EXISTS instructors (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 name VARCHAR(255) NOT NULL,
-                number VARCHAR(50) NOT NULL,
-                email VARCHAR(255),
-                address VARCHAR(255),
-                company VARCHAR(255),
-                notes TEXT
+                age INT,
+                dop DATE,
+                associated_since YEAR,
+                updeshta_since YEAR,
+                address VARCHAR(255)
             )
+        ''')
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS members (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    name VARCHAR(255) NOT NULL,
+                    number VARCHAR(50) NOT NULL,
+                    email VARCHAR(255),
+                    address VARCHAR(255),
+                    company VARCHAR(255),
+                    notes TEXT,
+                    instructor_id INT,
+                    date_of_initiation DATE NOT NULL,
+                    FOREIGN KEY (instructor_id) REFERENCES instructors(id)
+                )
         ''')
         cur.execute('''
             CREATE TABLE IF NOT EXISTS activities (

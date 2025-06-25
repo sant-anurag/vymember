@@ -1,0 +1,116 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Member Registration</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <img src="{% static 'images/a.jpg' %}" alt="CRM Logo" />
+            <span>Member CRM</span>
+        </div>
+        <ul class="menu">
+            <li>
+                <a href="#"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+            </li>
+            <li tabindex="0">
+                <a href="#"><i class="fas fa-users"></i>Members <i class="fas fa-chevron-down" style="margin-left:auto;"></i></a>
+                <ul class="submenu">
+                    <li><a href="#"><i class="fas fa-list"></i>All Members</a></li>
+                    <li><a href="#"><i class="fas fa-user-plus"></i>Add Member</a></li>
+                </ul>
+            </li>
+            <li tabindex="0">
+                <a href="#"><i class="fas fa-tasks"></i>Activities <i class="fas fa-chevron-down" style="margin-left:auto;"></i></a>
+                <ul class="submenu">
+                    <li><a href="#"><i class="fas fa-eye"></i>View Activities</a></li>
+                    <li><a href="#"><i class="fas fa-plus-circle"></i>Add Activity</a></li>
+                </ul>
+            </li>
+            <li tabindex="0">
+                <a href="#"><i class="fas fa-handshake"></i>Deals <i class="fas fa-chevron-down" style="margin-left:auto;"></i></a>
+                <ul class="submenu">
+                    <li><a href="#"><i class="fas fa-list-alt"></i>All Deals</a></li>
+                    <li><a href="#"><i class="fas fa-plus"></i>Add Deal</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#"><i class="fas fa-chart-bar"></i>Reports</a>
+            </li>
+            <li>
+                <a href="#"><i class="fas fa-cog"></i>Settings</a>
+            </li>
+        </ul>
+    </div>
+    <div class="main-content">
+        <header>
+            <h1>Welcome to vymember CRM</h1>
+            <div class="user-info">
+                <span>Admin</span>
+                <i class="fas fa-user-circle fa-2x" style="color:#4f8cff;"></i>
+            </div>
+        </header>
+        <section class="registration-section">
+            <h2>Register New Member</h2>
+            {% if message %}
+                <div class="status-message">{{ message }}</div>
+            {% endif %}
+            <form id="registrationForm" method="post" action="{% url 'register_member' %}">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" name="name" id="name" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="number">Contact Number</label>
+                        <input type="text" name="number" id="number" required />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="date_of_initiation">Initiation Date</label>
+                        <input type="date" name="date_of_initiation" id="date_of_initiation" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="text" name="email" id="email" required />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="company">Company</label>
+                        <input type="text" name="company" id="company" />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="address">Address</label>
+                        <input type="text" name="address" id="address" />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="feedback">Feedback</label>
+                        <textarea name="feedback" id="feedback" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit">Register Member</button>
+                    <button type="reset" class="reset-btn">Reset</button>
+                </div>
+            </form>
+        </section>
+        <footer>
+            &copy; {{ year|default:"2025" }} VY Member. All rights reserved.
+        </footer>
+    </div>
+    <script src="{% static 'js/home.js' %}"></script>
+</body>
+</html>

@@ -11,15 +11,16 @@
 </head>
 <body>
   <div class="login-container">
-    <form class="login-form" onsubmit="return validateForm()">
+    <form class="login-form" method="post" action="{% url 'login' %}">
+      {% csrf_token %}
       <h2>Member Login</h2>
-      <input type="text" id="username" placeholder="Username" />
-      <input type="password" id="password" placeholder="Password" />
+      <input type="text" id="username" name="username" placeholder="Username" />
+      <input type="password" id="password" name="password" placeholder="Password" />
       <button type="submit">Login</button>
       <p class="forgot"><a href="#">Forgot Username / Password?</a></p>
     </form>
   </div>
-  <script src="script.js"></script>
+  <script src="{% static 'js/login.js' %}"></script>
 </body>
 </html>
 

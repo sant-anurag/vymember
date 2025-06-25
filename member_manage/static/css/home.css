@@ -1,0 +1,364 @@
+body {
+    margin: 0;
+    font-family: 'Roboto', Arial, sans-serif;
+    background: linear-gradient(135deg, #e9f0fa 0%, #c9e0f7 50%, #f5fafd 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
+.sidebar {
+    width: 250px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(60,100,180,0.08);
+    padding: 1.5rem 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    position: sticky;
+    top: 0;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    padding: 0 1.5rem 1.5rem 1.5rem;
+}
+
+.logo img {
+    height: 36px;
+    margin-right: 0.7rem;
+}
+
+.logo span {
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: #2d3a4b;
+}
+
+.menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.menu > li {
+    position: relative;
+}
+
+.menu > li > a {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    color: #2d3a4b;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.menu > li > a:hover {
+    background: #f0f6ff;
+}
+
+.menu i {
+    margin-right: 1rem;
+    min-width: 20px;
+    text-align: center;
+}
+
+.menu > li > a .fa-chevron-down {
+    margin-left: auto;
+}
+
+.submenu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 0;
+    overflow: hidden;
+    background: #f7fbff;
+    transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+
+.menu > li:hover .submenu,
+.menu > li:focus-within .submenu {
+    max-height: 200px;
+}
+
+.submenu li a {
+    display: flex;
+    align-items: center;
+    padding: 0.8rem 2.5rem;
+    color: #4f8cff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.submenu li a:hover {
+    background: #e3f0ff;
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Center content vertically */
+    min-height: 100vh;
+    padding: 0;
+    background: transparent;
+}
+
+header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+header h1 {
+    color: #2d3a4b;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-align: center;
+    width: 100%;
+}
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    font-weight: 500;
+    color: #4f8cff;
+}
+
+.user-info img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #e3eafc;
+    padding: 3px;
+}
+
+.registration-section {
+    background: #fff;
+    padding: 2.2rem 2rem 2rem 2rem;
+    border-radius: 18px;
+    box-shadow: 0 6px 32px rgba(60, 100, 180, 0.10), 0 1.5px 6px rgba(0,0,0,0.04);
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.registration-section h2 {
+    color: #2d3a4b;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 1.2rem;
+    text-align: left;
+}
+
+.status-message {
+    background: #e3f0ff;
+    color: #2d3a4b;
+    padding: 0.7rem 1rem;
+    border-radius: 7px;
+    margin-bottom: 1.1rem;
+    font-size: 1rem;
+    text-align: center;
+}
+
+form#registrationForm {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+}
+
+.form-row {
+    display: flex;
+    gap: 1.2rem;
+}
+
+.form-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group.full-width {
+    flex: 2;
+}
+
+label {
+    font-weight: 500;
+    color: #4f8cff;
+    margin-bottom: 0.3rem;
+    font-size: 1rem;
+}
+
+input, textarea {
+    padding: 0.7rem 1rem;
+    border: 1.5px solid #e3eafc;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: #f7fbff;
+    transition: border 0.2s, box-shadow 0.2s;
+    box-shadow: 0 1px 2px rgba(79,140,255,0.03);
+    resize: none;
+}
+
+input:focus, textarea:focus {
+    border-color: #4f8cff;
+    outline: none;
+    box-shadow: 0 0 0 2px #e3f0ff;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+button[type="submit"] {
+    background: linear-gradient(90deg, #4f8cff 0%, #6ed6ff 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    padding: 0.85rem 2.2rem;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(79,140,255,0.08);
+}
+
+button[type="submit"]:hover {
+    background: linear-gradient(90deg, #6ed6ff 0%, #4f8cff 100%);
+    box-shadow: 0 4px 16px rgba(79,140,255,0.12);
+}
+
+.reset-btn {
+    background: #e3eafc;
+    color: #4f8cff;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    padding: 0.85rem 2.2rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.reset-btn:hover {
+    background: #d0e2ff;
+}
+
+footer {
+    margin: 2.5rem 0 1.2rem 0;
+    text-align: center;
+    color: #b0b8c1;
+    font-size: 0.97rem;
+    letter-spacing: 0.2px;
+}
+
+/* Responsive styles for mobile devices */
+@media (max-width: 900px) {
+    body {
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+    }
+    .sidebar {
+        margin: 0 auto 2rem auto;
+        width: 98vw;
+        height: auto;
+        border-radius: 0 0 12px 12px;
+    }
+    .main-content {
+        margin-left: 0;
+        width: 98vw;
+        max-width: 98vw;
+    }
+}
+
+@media (max-width: 700px) {
+    .registration-section {
+        margin: 1rem 0.5rem 0 0.5rem;
+        padding: 1.2rem 0.7rem 1rem 0.7rem;
+        max-width: 98vw;
+    }
+    header {
+        padding: 1.2rem 0.7rem 0.7rem 0.7rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.7rem;
+    }
+    .form-row {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .sidebar {
+        width: 100vw;
+        min-width: 0;
+        padding: 1rem 0;
+    }
+    .main-content {
+        min-width: 0;
+        padding: 1rem 0.5rem;
+    }
+    .logo {
+        padding: 0 1rem 1rem 1rem;
+    }
+    .menu > li > a {
+        padding: 0.8rem 1rem;
+        font-size: 1rem;
+    }
+    .submenu li a {
+        padding: 0.7rem 1.7rem;
+        font-size: 0.97rem;
+    }
+    .user-info img {
+        width: 28px;
+        height: 28px;
+    }
+    .registration-section h2 {
+        font-size: 1.1rem;
+    }
+    label, input, textarea, button {
+        font-size: 0.97rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar {
+        width: 100vw;
+        padding: 0.7rem 0;
+        border-radius: 0 0 10px 10px;
+    }
+    .main-content {
+        padding: 0.7rem 0.2rem;
+        border-radius: 10px;
+    }
+    .registration-section {
+        padding: 0.7rem 0.2rem 0.7rem 0.2rem;
+        border-radius: 10px;
+    }
+    .form-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .logo img {
+        height: 28px;
+    }
+    .logo span {
+        font-size: 1rem;
+    }
+}
