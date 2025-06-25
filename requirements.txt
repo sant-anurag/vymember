@@ -1,0 +1,6 @@
+openpyxl
+django
+ldap3
+mysql-connector-python
+mysqlclient
+pandas
