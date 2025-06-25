@@ -1,0 +1,269 @@
+/* Instructors section styling */
+.instructors-section {
+    background: #fff;
+    padding: 2rem 1.5rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 40px rgba(60, 100, 180, 0.15), 0 2px 8px rgba(0, 0, 0, 0.05);
+    width: 96%;
+    max-width: 1200px;
+
+}
+
+.instructors-section h2 {
+    color: #2d3a4b;
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+/* Filter Panel Styling */
+.filter-panel {
+    background: #f7fbff;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 15px rgba(79, 140, 255, 0.1);
+    border: 1px solid #e3eafc;
+}
+
+.filter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    justify-content: space-between;
+}
+
+.filter-group {
+    flex: 1;
+    min-width: 140px;
+    max-width: 200px;
+}
+
+.filter-group label {
+    display: block;
+    font-weight: 500;
+    color: #4f8cff;
+    margin-bottom: 0.3rem;
+    font-size: 0.85rem;
+}
+
+.filter-group input,
+.filter-group select {
+    width: 100%;
+    padding: 0.5rem 0.7rem;
+    border: 1.5px solid #e3eafc;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    background: #fff;
+    transition: border 0.2s, box-shadow 0.2s;
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+    border-color: #4f8cff;
+    outline: none;
+    box-shadow: 0 0 0 3px #e3f0ff;
+}
+
+.filter-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.8rem;
+    margin-top: 0.5rem;
+}
+
+.right-actions {
+    display: flex;
+    gap: 0.8rem;
+}
+
+.filter-btn {
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.apply-btn {
+    background: linear-gradient(90deg, #4f8cff 0%, #6ed6ff 100%);
+    color: #fff;
+    box-shadow: 0 3px 10px rgba(79, 140, 255, 0.15);
+}
+
+.apply-btn:hover {
+    background: linear-gradient(90deg, #6ed6ff 0%, #4f8cff 100%);
+    box-shadow: 0 5px 15px rgba(79, 140, 255, 0.25);
+}
+
+.reset-btn {
+    background: #e3eafc;
+    color: #4f8cff;
+}
+
+.reset-btn:hover {
+    background: #d0e2ff;
+}
+
+.download-btn {
+    background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+    color: #fff;
+    box-shadow: 0 3px 10px rgba(40, 167, 69, 0.15);
+}
+
+.download-btn:hover {
+    background: linear-gradient(90deg, #20c997 0%, #28a745 100%);
+    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.25);
+}
+
+/* Table Styling */
+.table-container {
+    overflow-x: auto;
+    margin-top: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(60, 100, 180, 0.08);
+}
+
+#instructorsTable {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#instructorsTable th {
+    background: #4f8cff;
+    color: white;
+    font-weight: 600;
+    padding: 0.7rem 0.8rem;
+    text-align: left;
+    position: sticky;
+    top: 0;
+    font-size: 0.9rem;
+}
+
+#instructorsTable tr:nth-child(even) {
+    background-color: #f7fbff;
+}
+
+#instructorsTable tr:hover {
+    background-color: #e3f0ff;
+}
+
+#instructorsTable td {
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid #e3eafc;
+    font-size: 0.9rem;
+}
+
+.actions-cell {
+    white-space: nowrap;
+    display: flex;
+    gap: 0.3rem;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.view-btn {
+    color: #4f8cff;
+    background: #e3f0ff;
+}
+
+.edit-btn {
+    color: #f5a623;
+    background: #fff8e1;
+}
+
+.delete-btn {
+    color: #e74c3c;
+    background: #ffeeee;
+}
+
+.view-btn:hover {
+    background: #c5dfff;
+}
+
+.edit-btn:hover {
+    background: #ffe6b3;
+}
+
+.delete-btn:hover {
+    background: #ffcccc;
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* Success message styling */
+.success-message {
+    background: #d4edda;
+    color: #155724;
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    text-align: center;
+    animation: fadeIn 0.5s, fadeOut 0.5s 2.5s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .filter-group {
+        min-width: calc(50% - 0.8rem);
+        max-width: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .instructors-section {
+        padding: 1.25rem 0.75rem;
+        width: 98%;
+    }
+
+    .filter-group {
+        min-width: 100%;
+    }
+
+    .filter-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .filter-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}

@@ -12,4 +12,6 @@ urlpatterns = [
     # API endpoints
     path('api/members/', views.api_members, name='api_members'),
     path('api/members/<int:id>/', views.api_member_detail, name='api_member_detail'),
+    # Add the all_instructors URL pattern
+    path('all_instructors/', views.all_instructors, name='all_instructors'),
 ]

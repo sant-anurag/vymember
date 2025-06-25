@@ -298,3 +298,62 @@ def api_members(request):
         })
 
     return JsonResponse(members_list, safe=False)
+
+def all_instructors(request):
+    print("All instructors view accessed")
+    success_message = request.session.pop('success_message', None)
+
+    # Get database connection
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    # Get all instructors with count of members they teach
+    cursor.execute("""
+        SELECT
+            i.id, i.name, i.age, i.dop, i.associated_since,
+            i.updeshta_since, i.address,
+            COUNT(m.id) as member_count
+        FROM
+            instructors i
+        LEFT JOIN
+            members m ON i.id = m.instructor_id
+        GROUP BY
+            i.id
+        ORDER BY
+            i.name
+    """)
+    instructors = cursor.fetchall()
+    print(f"Instructors fetched: {len(instructors)}")
+
+    # Format dates for display
+    for instructor in instructors:
+        if instructor['dop']:
+            instructor['dop'] = instructor['dop'].strftime('%Y-%m-%d')
+
+        # Get associated_since and updeshta_since years as strings
+        instructor['associated_since'] = str(instructor['associated_since']) if instructor['associated_since'] else 'N/A'
+        instructor['updeshta_since'] = str(instructor['updeshta_since']) if instructor['updeshta_since'] else 'N/A'
+
+    # Get distinct years for filters
+    cursor.execute("SELECT DISTINCT associated_since FROM instructors WHERE associated_since IS NOT NULL ORDER BY associated_since DESC")
+    associated_years = [str(row['associated_since']) for row in cursor.fetchall()]
+
+    cursor.execute("SELECT DISTINCT updeshta_since FROM instructors WHERE updeshta_since IS NOT NULL ORDER BY updeshta_since DESC")
+    updeshta_years = [str(row['updeshta_since']) for row in cursor.fetchall()]
+
+    # Generate range of years from 1900 to current year
+    import datetime
+    current_year = datetime.datetime.now().year
+    range_years = list(range(current_year, 1899, -1))
+
+    cursor.close()
+    conn.close()
+
+    context = {
+        'instructors': instructors,
+        'associated_years': associated_years,
+        'updeshta_years': updeshta_years,
+        'range_years': range_years,
+        'success_message': success_message
+    }
+    return render(request, 'all_instructors.html', context)

@@ -30,7 +30,7 @@
                 <a href="#"><i class="fas fa-chalkboard-teacher"></i>Instructor <i class="fas fa-chevron-down" style="margin-left:auto;"></i></a>
                 <ul class="submenu">
                     <li><a href="{% url 'add_instructor' %}"><i class="fas fa-user-plus"></i>Add Instructor</a></li>
-                    <li><a href="#"><i class="fas fa-list"></i>View All Instructors</a></li>
+                    <li><a href="{% url 'all_instructors' %}"><i class="fas fa-list"></i>View All Instructors</a></li>
                     <li><a href="#"><i class="fas fa-chart-pie"></i>Instructor Infographics</a></li>
                 </ul>
             </li>
@@ -57,13 +57,7 @@
         </ul>
     </div>
     <div class="main-content">
-        <header>
-            <h1>Welcome</h1>
-            <div class="user-info">
-                <span>Admin</span>
-                <i class="fas fa-user-circle fa-2x" style="color:#4f8cff;"></i>
-            </div>
-        </header>
+
         {% block main_content %}
         <section class="registration-section">
             <h2>Register New Member</h2>
