@@ -38,13 +38,16 @@
 form#addInstructorForm {
     display: flex;
     flex-direction: column;
-    gap: 1.1rem;
+    gap: 2rem;
 }
 
 .form-row {
     display: flex;
     gap: 1.2rem;
-    padding-top: 1rem;
+}
+
+.form-row {
+    padding-top: 0;
 }
 
 .form-group {
@@ -86,9 +89,9 @@ button[type="submit"] {
     color: #fff;
     border: none;
     border-radius: 10px;
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-weight: 700;
-    padding: 1rem 2.5rem;
+    padding: 1rem 2rem;
     cursor: pointer;
     transition: background 0.3s, box-shadow 0.3s;
     box-shadow: 0 3px 10px rgba(79, 140, 255, 0.15);
@@ -105,8 +108,8 @@ button[type="submit"]:hover {
     font-weight: 600;
     border: none;
     border-radius: 10px;
-    font-size: 1.2rem;
-    padding: 1rem 2.5rem;
+    font-size: 1rem;
+    padding: 1rem 2rem;
     cursor: pointer;
     transition: background 0.3s;
 }
@@ -119,7 +122,35 @@ button[type="submit"]:hover {
     color: #e74c3c;
     font-weight: bold;
 }
+.form-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    width: 100%;
+    margin-top: 1rem;
+    /* Remove auto margins and padding */
+}
 
+button[type="submit"],
+.reset-btn {
+    flex: 1;
+    max-width: 200px;
+    text-align: center;
+}
+
+@media (max-width: 700px) {
+    .form-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    button[type="submit"],
+    .reset-btn {
+        width: 100%;
+        max-width: 100%;
+        margin-bottom: 0.8rem;
+    }
+}
 @media (max-width: 700px) {
     .registration-section {
         padding: 1.5rem 1rem;

@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block main_content %}
+<link rel="stylesheet" href="{% static 'css/add_instructor.css' %}">
 <section class="registration-section">
     <h2>Add New Instructor</h2>
     {% if message %}
@@ -45,10 +46,5 @@
         </div>
     </form>
 </section>
-{% endblock %}
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/add_instructor.css' %}">
-{% endblock %}
-{% block extra_js %}
 <script src="{% static 'js/add_instructor.js' %}"></script>
 {% endblock %}
