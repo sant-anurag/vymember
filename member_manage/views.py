@@ -80,6 +80,9 @@ def register_member(request):
         number = request.POST.get('number', '').strip()
         email = request.POST.get('email', '').strip()
         address = request.POST.get('address', '').strip()
+        country= request.POST.get('country', '').strip()
+        state = request.POST.get('state', '').strip()
+        district = request.POST.get('district', '').strip()
         company = request.POST.get('company', '').strip()
         feedback = request.POST.get('feedback', '').strip()
         instructor_id = request.POST.get('instructor', '').strip()
@@ -95,10 +98,10 @@ def register_member(request):
             cur = conn.cursor()
             cur.execute("""
                 INSERT INTO members
-                (name, number, email, address, company, notes, instructor_id, date_of_initiation)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                (name, number, email, address, country, state,district,company, notes, instructor_id, date_of_initiation)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s,%s, %s, %s)
             """, (
-                name, number, email, address, company, feedback, instructor_id, date_of_initiation
+                name, number, email, address, country, state,district,company, feedback, instructor_id, date_of_initiation
             ))
             conn.commit()
             cur.close()
@@ -133,6 +136,7 @@ def add_instructor(request):
         associated_since = request.POST.get('associated_since')
         updeshta_since = request.POST.get('updeshta_since')
         address = request.POST.get('address', '').strip()
+        is_active = request.POST.get('is_active', '1')  # Default to active
         if name:
             conn = mysql.connector.connect(
                 host=settings.DB_HOST,

@@ -67,6 +67,10 @@
                     <th>Company</th>
                     <th>Instructor</th>
                     <th>Date of Initiation</th>
+                    <th>Address</th>
+                    <th>Country</th>
+                    <th>State</th>
+                    <th>District</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -80,6 +84,11 @@
                             <td>{{ member.company|default:"N/A" }}</td>
                             <td>{{ member.instructor_name|default:"N/A" }}</td>
                             <td>{{ member.date_of_initiation|default:"N/A" }}</td>
+                            <td>{{ member.address|default:"N/A" }}</td>
+                            <td>{{ member.country|default:"N/A" }}</td>
+                            <td>{{ member.state|default:"N/A" }}</td>
+                            <td>{{ member.district|default:"N/A" }}</td>
+
                             <td class="actions-cell">
                                 <button class="action-btn view-btn" data-id="{{ member.id }}">
                                     <i class="fas fa-eye"></i>

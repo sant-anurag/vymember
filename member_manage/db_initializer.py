@@ -28,7 +28,8 @@ class DBInitializer:
                 username VARCHAR(150) UNIQUE NOT NULL,
                 password VARCHAR(255) NOT NULL,
                 email VARCHAR(255),
-                is_admin TINYINT DEFAULT 0
+                is_admin TINYINT DEFAULT 0,
+                created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ''')
         cur.execute('''
@@ -39,7 +40,8 @@ class DBInitializer:
                 dop DATE,
                 associated_since YEAR,
                 updeshta_since YEAR,
-                address VARCHAR(255)
+                address VARCHAR(255),
+                is_active TINYINT(1) DEFAULT 1
             )
         ''')
         cur.execute('''
@@ -49,6 +51,9 @@ class DBInitializer:
                     number VARCHAR(50) NOT NULL,
                     email VARCHAR(255),
                     address VARCHAR(255),
+                    state VARCHAR(100),
+                    district VARCHAR(100),
+                    country VARCHAR(100),
                     company VARCHAR(255),
                     notes TEXT,
                     instructor_id INT,
