@@ -1,0 +1,73 @@
+.upload-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(60, 100, 180, 0.08);
+    padding: 2rem;
+}
+
+.upload-container h2 {
+    text-align: center;
+    color: #2d3a4b;
+    margin-bottom: 1.2rem;
+}
+
+.instructions {
+    background: #f7fbff;
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+}
+
+.instructions ul {
+    margin: 0;
+    padding-left: 1.2rem;
+}
+
+.drop-area {
+    border: 2px dashed #4f8cff;
+    border-radius: 10px;
+    padding: 2rem;
+    text-align: center;
+    color: #4f8cff;
+    background: #f7fbff;
+    cursor: pointer;
+    margin-bottom: 1.2rem;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.drop-area.dragover {
+    background: #e3f0ff;
+    border-color: #6ed6ff;
+}
+
+.browse-btn {
+    color: #4f8cff;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.upload-btn {
+    width: 100%;
+    padding: 0.8rem;
+    background: linear-gradient(90deg, #4f8cff 0%, #6ed6ff 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.upload-btn:hover {
+    background: linear-gradient(90deg, #6ed6ff 0%, #4f8cff 100%);
+}
+
+#uploadStatus {
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 1rem;
+}

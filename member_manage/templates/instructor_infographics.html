@@ -1,0 +1,163 @@
+{% extends "home.html" %}
+{% load static %}
+
+{% block main_content %}
+<link rel="stylesheet" href="{% static 'css/instructor_infographics.css' %}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="infographics-container">
+    <div class="infographics-header">
+        <h2>Instructor Performance Infographics</h2>
+        <div class="actions-container">
+            <button id="downloadReport" class="action-btn download-btn">
+                <i class="fas fa-download"></i> Download Report
+            </button>
+        </div>
+    </div>
+
+    <div class="filter-panel">
+        <div class="filter-form">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label for="instructorFilter">Instructor</label>
+                    <select id="instructorFilter">
+                        <option value="all">All Instructors</option>
+                        {% for instructor in instructors %}
+                        <option value="{{ instructor.id }}">{{ instructor.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="timeRangeFilter">Time Range</label>
+                    <select id="timeRangeFilter">
+                        <option value="all">All Time</option>
+                        <option value="year">This Year</option>
+                        <option value="quarter">Last Quarter</option>
+                        <option value="month">Last Month</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="yearFilter">Specific Year</label>
+                    <select id="yearFilter">
+                        <option value="all">All Years</option>
+                        {% for year in years_range %}
+                        <option value="{{ year }}">{{ year }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="filter-actions">
+                <button id="applyFilter" class="filter-btn apply-btn">
+                    <i class="fas fa-filter"></i> Apply Filters
+                </button>
+                <button id="resetFilter" class="filter-btn reset-btn">
+                    <i class="fas fa-undo"></i> Reset
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <!-- Stats Cards Row -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-data">
+                    <span class="stat-value" id="totalMembers">{{ total_members }}</span>
+                    <span class="stat-label">Total Members</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-user-tie"></i></div>
+                <div class="stat-data">
+                    <span class="stat-value" id="totalInstructors">{{ instructors_count }}</span>
+                    <span class="stat-label">Active Instructors</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-user-plus"></i></div>
+                <div class="stat-data">
+                    <span class="stat-value" id="avgMembersPerInstructor">{{ avg_members_per_instructor }}</span>
+                    <span class="stat-label">Avg Members/Instructor</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                <div class="stat-data">
+                    <span class="stat-value" id="growthRate">{{ growth_rate }}%</span>
+                    <span class="stat-label">Growth Rate</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <h3>Members by Instructor</h3>
+                <div class="chart-container">
+                    <canvas id="membersByInstructorChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-card">
+                <h3>Member Growth Over Time</h3>
+                <div class="chart-container">
+                    <canvas id="memberGrowthChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-card">
+                <h3>Geographic Distribution</h3>
+                <div class="chart-container">
+                    <canvas id="geoDistributionChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-card">
+                <h3>Instructor Comparison</h3>
+                <div class="chart-container">
+                    <canvas id="instructorComparisonChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructor Detail Panel (Hidden by default) -->
+        <div class="instructor-detail-panel" id="instructorDetailPanel">
+            <div class="instructor-detail-header">
+                <h3>Instructor Performance Detail</h3>
+                <div class="instructor-profile">
+                    <img src="{% static 'images/default_avatar.png' %}" alt="Instructor" id="instructorAvatar">
+                    <div class="instructor-info">
+                        <h4 id="instructorName">Select an instructor</h4>
+                        <p id="instructorSince">Associated since: <span>-</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="instructor-metrics">
+                <div class="metric-card">
+                    <div class="metric-value" id="totalMembersMetric">-</div>
+                    <div class="metric-label">Total Members</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="growthRateMetric">-</div>
+                    <div class="metric-label">Growth Rate</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="retentionRateMetric">-</div>
+                    <div class="metric-label">Retention Rate</div>
+                </div>
+            </div>
+
+            <div class="instructor-trend">
+                <h4>Member Growth Trend</h4>
+                <div class="trend-chart-container">
+                    <canvas id="instructorTrendChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/instructor_infographics.js' %}"></script>
+{% endblock %}

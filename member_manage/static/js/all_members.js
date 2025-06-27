@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Set up download button
     setupDownloadButton();
+
+    paginateTable();
+    setupPaginationEvents();
 });
 
 
@@ -272,4 +275,72 @@ function viewMemberDetails(id) {
             console.error('Error fetching member details:', error);
             alert('Error loading member details. Please try again.');
         });
+}
+
+// --- Pagination Logic ---
+const ROWS_PER_PAGE = 10;
+let currentPage = 1;
+let totalPages = 1;
+let allRows = [];
+
+function paginateTable() {
+    const table = document.getElementById('membersTable');
+    if (!table) return;
+    // Always get all rows except the "no-results-row"
+    allRows = Array.from(table.querySelectorAll('tbody tr')).filter(row =>
+        !row.classList.contains('no-results-row')
+    );
+    totalPages = Math.ceil(allRows.length / ROWS_PER_PAGE) || 1;
+    showPage(currentPage);
+    renderPaginationBar();
+}
+
+function showPage(page) {
+    currentPage = page;
+    // Hide all rows first
+    allRows.forEach(row => row.style.display = 'none');
+    // Show only the rows for the current page
+    const startIdx = (page - 1) * ROWS_PER_PAGE;
+    const endIdx = page * ROWS_PER_PAGE;
+    allRows.slice(startIdx, endIdx).forEach(row => row.style.display = '');
+    // Handle "No members found" row
+    const noResultsRow = document.querySelector('.no-results-row');
+    if (noResultsRow) {
+        noResultsRow.style.display = allRows.length === 0 ? '' : 'none';
+    }
+}
+
+function renderPaginationBar() {
+    const pagination = document.getElementById('pagination');
+    if (!pagination) return;
+    pagination.innerHTML = '';
+    if (totalPages <= 1) return;
+
+    // Prev button
+    const prevBtn = document.createElement('button');
+    prevBtn.className = 'pagination-btn';
+    prevBtn.textContent = 'Prev';
+    prevBtn.disabled = currentPage === 1;
+    prevBtn.onclick = () => { if (currentPage > 1) { showPage(currentPage - 1); renderPaginationBar(); } };
+    pagination.appendChild(prevBtn);
+
+    // Page numbers (show max 5 at a time)
+    let start = Math.max(1, currentPage - 2);
+    let end = Math.min(totalPages, start + 4);
+    if (end - start < 4) start = Math.max(1, end - 4);
+    for (let i = start; i <= end; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'pagination-btn' + (i === currentPage ? ' active' : '');
+        btn.textContent = i;
+        btn.onclick = () => { showPage(i); renderPaginationBar(); };
+        pagination.appendChild(btn);
+    }
+
+    // Next button
+    const nextBtn = document.createElement('button');
+    nextBtn.className = 'pagination-btn';
+    nextBtn.textContent = 'Next';
+    nextBtn.disabled = currentPage === totalPages;
+    nextBtn.onclick = () => { if (currentPage < totalPages) { showPage(currentPage + 1); renderPaginationBar(); } };
+    pagination.appendChild(nextBtn);
 }

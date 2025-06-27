@@ -1,0 +1,31 @@
+{% extends "home.html" %}
+{% load static %}
+
+{% block main_content %}
+<link rel="stylesheet" href="{% static 'css/upload_members.css' %}">
+
+<div class="upload-container">
+    <h2>Upload Members via Excel</h2>
+    <div class="instructions">
+        <h3>Instructions:</h3>
+        <ul>
+            <li>Download the <a href="{% static 'templates/member_upload_template.xlsx' %}" download>Excel template</a> and fill in member details.</li>
+            <li>Do not change the column headers in the template.</li>
+            <li>All required fields (<b>name</b>, <b>number</b>, <b>instructor_id</b>, <b>date_of_initiation</b>) must be filled.</li>
+            <li>Optional fields: email, address, state, district, country, company, notes.</li>
+            <li>Once ready, drag and drop your file below or click to select.</li>
+            <li>Upon upload, valid records will be appended to the existing members table.</li>
+        </ul>
+    </div>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <div id="dropArea" class="drop-area">
+            <p>Drag &amp; drop your Excel file here, or <span class="browse-btn">browse</span></p>
+            <input type="file" id="fileInput" name="file" accept=".xlsx,.xls" hidden>
+        </div>
+        <button type="submit" class="upload-btn">Upload</button>
+    </form>
+    <div id="uploadStatus"></div>
+</div>
+
+<script src="{% static 'js/upload_members.js' %}"></script>
+{% endblock %}
