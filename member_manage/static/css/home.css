@@ -74,6 +74,7 @@ body {
     margin-left: auto;
 }
 
+/* Submenu styling with animations */
 .submenu {
     list-style: none;
     padding: 0;
@@ -81,28 +82,33 @@ body {
     max-height: 0;
     overflow: hidden;
     background: #f7fbff;
-    transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: max-height 0.4s ease, opacity 0.4s ease;
+    opacity: 0; /* Initially hidden */
 }
 
 .menu > li:hover .submenu,
 .menu > li:focus-within .submenu {
-    max-height: 200px;
+    max-height: 200px; /* Adjust based on submenu content */
+    opacity: 1; /* Make visible */
 }
 
 .submenu li a {
     display: flex;
     align-items: center;
-    padding: 0.8rem 2.5rem;
+    padding: 0.8rem 2rem;
     color: #4f8cff;
     text-decoration: none;
     font-weight: 500;
-    transition: background 0.2s;
+    font-size: 1rem;
+    transition: background 0.2s, color 0.2s;
 }
 
 .submenu li a:hover {
-    background: #e3f0ff;
+    background: #d0e2ff;
+    color: #2d3a4b;
 }
-
 .main-content {
     flex: 1;
     display: flex;
