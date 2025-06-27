@@ -30,7 +30,7 @@ function initializeCharts() {
     });
     geoDistributionChart = new Chart(document.getElementById('geoDistributionChart').getContext('2d'), {
         type: 'pie',
-        data: { labels: [], datasets: [{ label: 'Countries', data: [], backgroundColor: ['#4f8cff', '#6ed6ff', '#ff9f40', '#4bc0c0', '#ff6384', '#9966ff', '#ffcd56', '#c9cbcf'] }] },
+        data: { labels: [], datasets: [{ label: 'District', data: [], backgroundColor: ['#4f8cff', '#6ed6ff', '#ff9f40', '#4bc0c0', '#ff6384', '#9966ff', '#ffcd56', '#c9cbcf'] }] },
         options: { responsive: true }
     });
     instructorComparisonChart = new Chart(document.getElementById('instructorComparisonChart').getContext('2d'), {

@@ -633,7 +633,7 @@ def api_instructor_infographics_data(request):
                 growth_data.insert(0, count)
         else:
             # Default view by month for the last 12 months
-            for i in range(12):
+            for i in range(48):
                 month_start = (current_date.replace(day=1) - timedelta(days=i * 30))
                 next_month = (month_start.replace(day=28) + timedelta(days=4)).replace(day=1)
 
@@ -653,15 +653,29 @@ def api_instructor_infographics_data(request):
                 growth_data.insert(0, count)
 
         # Prepare data for Geographic Distribution chart
-        query = """
-            SELECT country, COUNT(*) as count 
-            FROM members m
-            WHERE country IS NOT NULL AND country != ''
-        """ + member_filter_sql + """
-            GROUP BY country 
-            ORDER BY count DESC
-            LIMIT 8
-        """
+        # Prepare data for Geographic Distribution chart
+        if instructor_id != 'all':
+            # City-wise distribution for selected instructor
+            query = """
+                SELECT district as location, COUNT(*) as count 
+                FROM members m
+                WHERE district IS NOT NULL AND district != ''
+            """ + member_filter_sql + """
+                GROUP BY district 
+                ORDER BY count DESC
+                LIMIT 8
+            """
+        else:
+            # Country-wise distribution for all instructors
+            query = """
+                SELECT country as location, COUNT(*) as count 
+                FROM members m
+                WHERE country IS NOT NULL AND country != ''
+            """ + member_filter_sql + """
+                GROUP BY country 
+                ORDER BY count DESC
+                LIMIT 8
+            """
 
         cursor.execute(query, member_filter_params)
         geo_distribution = cursor.fetchall()
@@ -670,11 +684,11 @@ def api_instructor_infographics_data(request):
         geo_data = []
 
         for entry in geo_distribution:
-            if entry['country']:
-                geo_labels.append(entry['country'])
-                geo_data.append(entry['count'])
+            if entry.get('location'):
+                geo_labels.append(entry.get('location'))
+                geo_data.append(entry.get('count'))
 
-        # If no countries found, add placeholder
+        # If no locations found, add placeholder
         if not geo_labels:
             geo_labels = ['No Data']
             geo_data = [0]
