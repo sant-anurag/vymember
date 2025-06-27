@@ -174,7 +174,7 @@ def all_members(request):
     # Fetch all members with their instructor names
     cursor.execute("""
         SELECT 
-            m.id, m.name, m.number, m.email, m.address, m.company,
+            m.id, m.name, m.number, m.email, m.address, m.country, m.state, m.district,m.company,
             m.instructor_id, m.date_of_initiation, m.notes,
             i.name as instructor_name
         FROM 
@@ -319,7 +319,7 @@ def all_instructors(request):
     cursor.execute("""
         SELECT
             i.id, i.name, i.age, i.dop, i.associated_since,
-            i.updeshta_since, i.address,
+            i.updeshta_since, i.address,i.is_active,
             COUNT(m.id) as member_count
         FROM
             instructors i
