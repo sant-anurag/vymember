@@ -1,0 +1,21 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{% static 'css/logout.css' %}">
+</head>
+<body>
+<section class="logout-section">
+    <div class="logout-icon">
+        <i class="fas fa-check-circle"></i>
+    </div>
+    <h2>You've been logged out</h2>
+    <p>Your session has been successfully terminated. Thank you for using VY Member CRM.</p>
+    <div class="form-actions">
+        <a href="{% url 'login' %}" class="login-btn">
+            <i class="fas fa-sign-in-alt"></i> Login Again
+        </a>
+    </div>
+</section>
+</body>
+</html>

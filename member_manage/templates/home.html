@@ -34,30 +34,20 @@
                     <li><a href="{% url 'instructor_infographics' %}"><i class="fas fa-chart-pie"></i>Instructor Infographics</a></li>
                 </ul>
             </li>
-            <li tabindex="0">
-                <a href="#"><i class="fas fa-tasks"></i>Activities <i class="fas fa-chevron-down" style="margin-left:auto;"></i></a>
-                <ul class="submenu">
-                    <li><a href="#"><i class="fas fa-eye"></i>View Activities</a></li>
-                    <li><a href="#"><i class="fas fa-plus-circle"></i>Add Activity</a></li>
-                </ul>
-            </li>
-            <li tabindex="0">
-                <a href="#"><i class="fas fa-handshake"></i>Deals <i class="fas fa-chevron-down" style="margin-left:auto;"></i></a>
-                <ul class="submenu">
-                    <li><a href="#"><i class="fas fa-list-alt"></i>All Deals</a></li>
-                    <li><a href="#"><i class="fas fa-plus"></i>Add Deal</a></li>
-                </ul>
-            </li>
+
             <li>
                 <a href="#"><i class="fas fa-chart-bar"></i>Reports</a>
             </li>
             <li>
                 <a href="#"><i class="fas fa-cog"></i>Settings <i class="fas fa-chevron-down" style="margin-left:auto;"></i></a>
                 <ul class="submenu">
-                    <li><a href="#"><i class="fas fa-key"></i>Change Password</a></li>
+                    <li><a href="{% url 'change_password' %}"><i class="fas fa-key"></i>Change Password</a></li>
                     <li><a href="{% url 'upload_members' %}"><i class="fas fa-upload"></i>Upload</a></li>
                     <li><a href="#"><i class="fas fa-user"></i>Profile</a></li>
                 </ul>
+            </li>
+            <li>
+                <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i>Logout</a>
             </li>
         </ul>
     </div>

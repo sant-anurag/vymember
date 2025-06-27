@@ -1,0 +1,94 @@
+/* Logout screen styles */
+.logout-section {
+    background: #fff;
+    padding: 3rem 2.5rem;
+    border-radius: 18px;
+    box-shadow: 0 6px 32px rgba(60, 100, 180, 0.10), 0 1.5px 6px rgba(0,0,0,0.04);
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.logout-icon {
+    font-size: 4rem;
+    color: #4f8cff;
+    margin-bottom: 1.5rem;
+}
+
+.logout-section h2 {
+    color: #2d3a4b;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.logout-section p {
+    color: #6c7a8c;
+    font-size: 1.1rem;
+    line-height: 1.5;
+    margin-bottom: 2rem;
+}
+
+.login-btn {
+    background: linear-gradient(90deg, #4f8cff 0%, #6ed6ff 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 0.85rem 2.2rem;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(79,140,255,0.08);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+}
+
+.login-btn i {
+    margin-right: 0.7rem;
+}
+
+.login-btn:hover {
+    background: linear-gradient(90deg, #6ed6ff 0%, #4f8cff 100%);
+    box-shadow: 0 4px 16px rgba(79,140,255,0.12);
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 700px) {
+    .logout-section {
+        margin: 1rem 0.5rem;
+        padding: 2rem 1.5rem;
+    }
+
+    .logout-icon {
+        font-size: 3.5rem;
+    }
+
+    .logout-section h2 {
+        font-size: 1.5rem;
+    }
+
+    .logout-section p {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .logout-section {
+        padding: 1.5rem 1rem;
+    }
+
+    .logout-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .logout-section h2 {
+        font-size: 1.3rem;
+    }
+}

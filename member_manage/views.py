@@ -8,19 +8,18 @@ import mysql.connector
 from .db_initializer import *
 from django.views.decorators.csrf import csrf_exempt
 from django.db import connection
-from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_http_methods
 from django.db.models import Q
 import json
 import openpyxl
 from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import render
 import os
 import csv
 import io
 from datetime import datetime, timedelta
-
+import hashlib
+import re
 
 
 def get_db_connection():
@@ -31,48 +30,49 @@ def get_db_connection():
         database=settings.DB_NAME
     )
 
+
+
 def login_view(request):
-    print("Login view accessed")
-    error = None
+    """
+    Handle user login
+    """
+    message = None
     db_initializer = DBInitializer(settings.DB_HOST, settings.DB_USER, settings.DB_PASSWORD, settings.DB_NAME)
     db_initializer.initialize()
-    print("request method:", request.method)
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        #check if login is admin ,skip database authentication
-        print("username logging :", username," password logging", password)
-        if username == 'admin' and password == 'admin':
-            request.session['user_id'] = 1  # Assuming admin user ID is 1
-            request.session['username'] = 'admin'
-            print("Admin logged in")
-            return redirect('home')  # Replace with your dashboard URL name
+
+        if not username or not password:
+            message = "Username and password are required"
         else:
+            # Get database connection
             conn = get_db_connection()
-            cur = conn.cursor()
-            cur.execute("SELECT id FROM users WHERE username=%s AND password=%s", (username, password))
-            user = cur.fetchone()
-            cur.close()
+            cursor = conn.cursor(dictionary=True)
+
+            # Hash the password for comparison
+            hashed_password = hashlib.sha256(password.encode()).hexdigest()
+
+            # Check user credentials
+            cursor.execute("SELECT * FROM users WHERE username = %s AND password = %s",
+                           (username, hashed_password))
+            user = cursor.fetchone()
+
+            cursor.close()
             conn.close()
+
             if user:
-                request.session['user_id'] = user[0]
-                print("User logged in:", username)
-                # Optionally, you can set user details in the session
-                request.session['username'] = username
+                # Set session variables
+                request.session['user_id'] = user['id']
+                request.session['username'] = user['username']
+                request.session['is_admin'] = user['is_admin']
 
-                #initlaize database if not already done
-
-                print("Database initialized or already exists.")
-                # Redirect to the dashboard or home page
-                # Make sure to replace 'dashboard' with your actual dashboard URL name
-                # For example, if you have a URL pattern named 'dashboard', you can use:
-                # return redirect('dashboard')
-                # If you don't have a dashboard, you can redirect to another page
-                # For example, if you have a home page URL pattern named 'home', you can
-                return redirect('home')  # Replace with your dashboard URL name
+                # Redirect to dashboard or home
+                return redirect('home')
             else:
-                error = "Invalid username or password."
-    return render(request, 'login.html', {'error': error})
+                message = "Invalid username or password"
+
+    return render(request, 'login.html', {'message': message})
 
 def home(request):
     print("Home view accessed")
@@ -1072,3 +1072,80 @@ def upload_members(request):
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'Error: {str(e)}'})
     return JsonResponse({'success': False, 'message': 'Invalid request.'})
+
+
+
+def change_password(request):
+    """View for changing user passwords"""
+    # Get a database connection
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    # Fetch all users for the dropdown
+    cursor.execute("SELECT id, username FROM users")
+    users = cursor.fetchall()
+
+    message = None
+    success = False
+
+    if request.method == 'POST':
+        user_id = request.POST.get('user')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        # Validate inputs
+        if not all([user_id, new_password, confirm_password]):
+            message = "All fields are required"
+        elif new_password != confirm_password:
+            message = "New passwords don't match"
+        else:
+            # Validate password strength
+            if not validate_password_strength(new_password):
+                message = "Password must be at least 8 characters and include letters, numbers, and a special character"
+            else:
+                # Update with new password
+                hashed_new = hashlib.sha256(new_password.encode()).hexdigest()
+                cursor.execute("UPDATE users SET password = %s WHERE id = %s", (hashed_new, user_id))
+                conn.commit()
+                message = "Password changed successfully"
+                success = True
+
+
+    cursor.close()
+    conn.close()
+
+    return render(request, 'password_change.html', {
+        'users': users,
+        'message': message,
+        'success': success
+    })
+
+def validate_password_strength(password):
+    """Validate password meets complexity requirements"""
+    if len(password) < 8:
+        return False
+
+    # Check for alphanumeric + special char
+    has_letter = bool(re.search(r'[a-zA-Z]', password))
+    has_number = bool(re.search(r'\d', password))
+    has_special = bool(re.search(r'[!@#$%^&*()_+\-=\[\]{};\':"\\|,.<>/?]', password))
+
+    return has_letter and has_number and has_special
+
+
+def logout_view(request):
+    """
+    Logs out the user and terminates the session
+    """
+    # Clear session variables
+    if 'user_id' in request.session:
+        del request.session['user_id']
+
+    if 'username' in request.session:
+        del request.session['username']
+
+    # Flush the session
+    request.session.flush()
+
+    # Render the logout page
+    return render(request, 'logout.html')
