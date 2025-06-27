@@ -356,59 +356,81 @@ footer {
         padding: 1.2rem 0.7rem 1rem 0.7rem;
         max-width: 98vw;
     }
+
     header {
         padding: 1.2rem 0.7rem 0.7rem 0.7rem;
         flex-direction: column;
         align-items: flex-start;
         gap: 0.7rem;
     }
+
     .form-row {
         flex-direction: column;
         gap: 0.5rem;
     }
+
+    /* Improved sidebar styling */
     .sidebar {
-        width: 100vw;
+        width: 250px; /* Fixed width */
         min-width: 0;
         padding: 1rem 0;
+        position: fixed;
+        left: -280px; /* Ensure it's hidden by default */
+        z-index: 999;
     }
+
+    .sidebar.open {
+        left: 0;
+        box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    }
+
     .main-content {
         min-width: 0;
         padding: 1rem 0.5rem;
+        margin-left: 0;
+        width: 100%;
     }
+
     .logo {
         padding: 0 1rem 1rem 1rem;
     }
+
     .menu > li > a {
         padding: 0.8rem 1rem;
         font-size: 1rem;
     }
+
     .submenu li a {
         padding: 0.7rem 1.7rem;
         font-size: 0.97rem;
     }
+
     .user-info img {
         width: 28px;
         height: 28px;
     }
+
     .user-info {
         display: flex;
         align-items: center;
-        gap: 10px; /* Space between the text and icon */
+        gap: 10px;
     }
 
     .user-info span {
         font-weight: 600;
-        color: #4f8cff; /* Matches your site's blue theme */
+        color: #4f8cff;
         font-size: 1rem;
-        order: 1; /* This puts the span first if you want the text before the icon */
+        order: 1;
     }
 
     .user-info i {
-        order: 2; /* This puts the icon second */
+        order: 2;
     }
+
     .registration-section h2 {
         font-size: 1.1rem;
     }
+
     label, input, textarea, button {
         font-size: 0.97rem;
     }
@@ -416,26 +438,56 @@ footer {
 
 @media (max-width: 480px) {
     .sidebar {
-        width: 100vw;
+        width: 240px; /* Slightly narrower on very small screens */
         padding: 0.7rem 0;
-        border-radius: 0 0 10px 10px;
+        border-radius: 0;
+        left: -250px; /* Hidden off-screen */
     }
+
+    .sidebar.open {
+        left: 0;
+    }
+
     .main-content {
         padding: 0.7rem 0.2rem;
         border-radius: 10px;
     }
+
     .registration-section {
         padding: 0.7rem 0.2rem 0.7rem 0.2rem;
         border-radius: 10px;
     }
+
     .form-actions {
         flex-direction: column;
         gap: 0.5rem;
     }
+
     .logo img {
         height: 28px;
     }
+
     .logo span {
         font-size: 1rem;
+    }
+
+    /* Improve menu readability on very small screens */
+    .menu > li > a {
+        padding: 0.75rem 0.8rem;
+        font-size: 0.95rem;
+    }
+
+    .submenu li a {
+        padding: 0.6rem 1.5rem;
+        font-size: 0.9rem;
+    }
+
+    /* Make the toggle button more visible */
+    .sidebar-toggle {
+        top: 10px;
+        left: 10px;
+        width: 38px;
+        height: 38px;
+        font-size: 16px;
     }
 }

@@ -1,4 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded');
+
+    // Form validation
     const form = document.getElementById('registrationForm');
     if (form) {
         form.addEventListener('submit', function(e) {
@@ -11,9 +14,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    // Sidebar toggle functionality
+
+    // Sidebar toggle functionality - FIXED
     const sidebarToggle = document.getElementById('sidebarToggle');
-    const sidebar = document.getElementById('sidebar');
+    const sidebar = document.querySelector('.sidebar'); // Using class selector instead of ID
+
+    console.log('Toggle button:', sidebarToggle);
+    console.log('Sidebar:', sidebar);
 
     if (sidebarToggle && sidebar) {
         // Create overlay element
@@ -23,6 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Toggle sidebar
         sidebarToggle.addEventListener('click', function() {
+            console.log('Toggle button clicked');
             sidebar.classList.toggle('open');
             overlay.classList.toggle('active');
         });
