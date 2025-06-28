@@ -24,9 +24,19 @@
     </div>
 
     <div class="form-row">
-      <div class="form-group full-width">
+      <div class="form-group ">
         <label for="username">Username</label>
         <input type="text" id="username" name="username" required>
+      </div>
+        <div class="form-group ">
+        <label for="user_category">User Category</label>
+        <select id="user_category" name="user_category" required>
+          <option value="">Select Category</option>
+          <option value="Standard">Standard</option>
+          {% if request.session.is_admin %}
+          <option value="Admin">Admin</option>
+          {% endif %}
+        </select>
       </div>
     </div>
 
@@ -49,18 +59,6 @@
       </div>
     </div>
 
-    <div class="form-row">
-      <div class="form-group full-width">
-        <label for="user_category">User Category</label>
-        <select id="user_category" name="user_category" required>
-          <option value="">Select Category</option>
-          <option value="Standard">Standard</option>
-          {% if request.session.is_admin %}
-          <option value="Admin">Admin</option>
-          {% endif %}
-        </select>
-      </div>
-    </div>
 
     <div class="form-actions">
       <button type="button" id="resetBtn" class="reset-btn">
@@ -74,8 +72,101 @@
     <div id="statusMessage" class="status-message" style="display: none;"></div>
   </form>
 </section>
+<!-- User List Section -->
+<!-- User List Section -->
+<section class="user-list-section">
+  <h2>Registered Users</h2>
+
+  <div class="section-header">
+    <div class="table-actions">
+      <div class="search-container">
+        <input type="text" id="userSearchInput" placeholder="Search users...">
+        <i class="fas fa-search search-icon"></i>
+      </div>
+      <button id="applyFilterBtn" class="apply-btn">
+        <i class="fas fa-filter"></i> Apply Filter
+      </button>
+      <button id="downloadUserListBtn" class="download-btn">
+        <i class="fas fa-download"></i> Download
+      </button>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <table id="userTable" class="user-table">
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Admin Status</th>
+          <th>Created On</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+        <tr>
+          <td>{{ user.username }}</td>
+          <td>{{ user.email|default:"N/A" }}</td>
+          <td>
+            {% if user.is_admin %}
+              <span class="badge admin">Admin</span>
+            {% else %}
+              <span class="badge standard">Standard</span>
+            {% endif %}
+          </td>
+          <td>{{ user.created_on|date:"M d, Y" }}</td>
+          <td class="actions-cell">
+            <button class="action-btn view-btn" data-id="{{ user.id }}" title="View User">
+              <i class="fas fa-eye"></i>
+            </button>
+            <button class="action-btn edit-btn" data-id="{{ user.id }}" title="Edit User">
+              <i class="fas fa-edit"></i>
+            </button>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" class="text-center">No users found</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-container">
+    <div class="pagination-info">Showing <span id="startRecord">{{ page_obj.start_index }}</span> to <span id="endRecord">{{ page_obj.end_index }}</span> of <span id="totalRecords">{{ page_obj.paginator.count }}</span> users</div>
+    <div class="pagination">
+      {% if page_obj.has_previous %}
+      <a href="?page=1" class="pagination-link first">&laquo;</a>
+      <a href="?page={{ page_obj.previous_page_number }}" class="pagination-link prev">&lsaquo;</a>
+      {% else %}
+      <span class="pagination-link disabled first">&laquo;</span>
+      <span class="pagination-link disabled prev">&lsaquo;</span>
+      {% endif %}
+
+      {% for i in page_obj.paginator.page_range %}
+        {% if page_obj.number == i %}
+          <span class="pagination-link active">{{ i }}</span>
+        {% elif i > page_obj.number|add:"-3" and i < page_obj.number|add:"3" %}
+          <a href="?page={{ i }}" class="pagination-link">{{ i }}</a>
+        {% endif %}
+      {% endfor %}
+
+      {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}" class="pagination-link next">&rsaquo;</a>
+      <a href="?page={{ page_obj.paginator.num_pages }}" class="pagination-link last">&raquo;</a>
+      {% else %}
+      <span class="pagination-link disabled next">&rsaquo;</span>
+      <span class="pagination-link disabled last">&raquo;</span>
+      {% endif %}
+    </div>
+  </div>
+</section>
 {% endblock %}
 
 {% block extra_scripts %}
 <script src="{% static 'js/create_user.js' %}"></script>
+<script src="{% static 'js/user_table.js' %}"></script>
 {% endblock %}
