@@ -471,7 +471,7 @@ footer {
     .sidebar {
         position: fixed;
         top: 0;
-        left: -90%; /* Change from -280px to -100% to ensure it's completely off-screen */
+        left: -70%; /* Change from -280px to -100% to ensure it's completely off-screen */
         height: 100vh;
         width: 260px;
         margin: 0;
