@@ -125,25 +125,5 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // View and Edit button functionality
-    const viewButtons = document.querySelectorAll('.view-btn');
-    const editButtons = document.querySelectorAll('.edit-btn');
 
-    viewButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const userId = this.getAttribute('data-id');
-            // Implement view user functionality
-            alert(`View user details for ID: ${userId}`);
-            // You could redirect to a user detail page or show a modal
-        });
-    });
-
-    editButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const userId = this.getAttribute('data-id');
-            // Implement edit user functionality
-            alert(`Edit user with ID: ${userId}`);
-            // You could redirect to an edit page or show a modal
-        });
-    });
 });

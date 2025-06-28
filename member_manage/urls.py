@@ -28,5 +28,7 @@ urlpatterns = [
     path('upload_members/', views.upload_members, name='upload_members'),
     path('change-password/', views.change_password, name='change_password'),
     path('create-user/', views.create_user, name='create_user'),
+    path('get-user-details/<int:user_id>/', views.get_user_details, name='get_user_details'),
+    path('update-user/<int:user_id>/', views.update_user, name='update_user'),
     # ... other URLs ...
 ]

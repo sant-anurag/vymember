@@ -1388,3 +1388,107 @@ def create_user(request):
         'users': users,
         'page_obj': users
     })
+
+import json
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
+
+@require_http_methods(["GET"])
+def get_user_details(request, user_id):
+    print("API get user details view accessed")
+    """API endpoint to get user details"""
+
+    try:
+        # Connect to database
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        # Fetch user details
+        cursor.execute("""
+            SELECT id, username, email, is_admin, created_on 
+            FROM users 
+            WHERE id = %s
+        """, (user_id,))
+
+        user = cursor.fetchone()
+        cursor.close()
+        conn.close()
+
+        if not user:
+            return JsonResponse({'success': False, 'message': 'User not found'})
+
+        return JsonResponse({
+            'success': True,
+            'user': user
+        })
+
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)})
+
+@require_http_methods(["POST"])
+def update_user(request, user_id):
+    """API endpoint to update user details"""
+    # Check if the user is an admin
+    if not request.session.get('is_admin'):
+        return JsonResponse({'success': False, 'message': 'You must be an admin to update users'})
+
+    try:
+        # Get request data
+        data = json.loads(request.body)
+        username = data.get('username')
+        email = data.get('email')
+        is_admin = data.get('is_admin')
+        password = data.get('password')
+
+        # Connect to database
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        # Check if username already exists (except for the current user)
+        cursor.execute("""
+            SELECT id FROM users WHERE username = %s AND id != %s
+        """, (username, user_id))
+
+        if cursor.fetchone():
+            cursor.close()
+            conn.close()
+            return JsonResponse({'success': False, 'message': 'Username already exists'})
+
+        # Update user
+        if password:
+            # Hash the password
+            hashed_password = hashlib.sha256(password.encode()).hexdigest()
+
+            # Update user with new password
+            cursor.execute("""
+                UPDATE users 
+                SET username = %s, email = %s, is_admin = %s, password = %s 
+                WHERE id = %s
+            """, (username, email, is_admin, hashed_password, user_id))
+        else:
+            # Update user without changing password
+            cursor.execute("""
+                UPDATE users 
+                SET username = %s, email = %s, is_admin = %s 
+                WHERE id = %s
+            """, (username, email, is_admin, user_id))
+
+        conn.commit()
+
+        # Get updated user data with created_on
+        cursor.execute("""
+            SELECT created_on FROM users WHERE id = %s
+        """, (user_id,))
+        user_data = cursor.fetchone()
+
+        cursor.close()
+        conn.close()
+
+        return JsonResponse({
+            'success': True,
+            'message': 'User updated successfully',
+            'created_on': user_data['created_on'] if user_data else None
+        })
+
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)})
