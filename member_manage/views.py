@@ -77,7 +77,7 @@ def login_view(request):
                 request.session['is_admin'] = user['is_admin']
 
                 # Redirect to dashboard or home
-                return redirect('home')
+                return redirect('dashboard')
             else:
                 message = "Invalid username or password"
 
