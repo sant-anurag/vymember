@@ -206,7 +206,102 @@
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
     }
+/* Member Detail Modal Media Queries */
 
+
+/* Medium screens (tablets, small laptops) */
+@media screen and (max-width: 900px) {
+    .member-detail-modal {
+        width: 90%;
+        max-width: 700px;
+    }
+
+    .form-row {
+        flex-direction: column;
+    }
+
+    .form-group {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+
+    .modal-body {
+        max-height: 70vh;
+        padding: 15px;
+    }
+
+    .modal-header h3 {
+        font-size: 1.4rem;
+    }
+
+    .modal-footer {
+        padding: 12px 15px;
+    }
+
+    .modal-footer .btn {
+        padding: 8px 15px;
+    }
+}
+
+/* Small screens (mobile phones) */
+@media screen and (max-width: 480px) {
+    .member-detail-modal {
+        width: 95%;
+        max-width: none;
+        border-radius: 8px;
+    }
+
+    .modal-header {
+        padding: 10px;
+    }
+
+    .modal-header h3 {
+        font-size: 1.2rem;
+    }
+
+    .close-btn {
+        font-size: 20px;
+    }
+
+    .modal-body {
+        padding: 10px;
+        max-height: 65vh;
+    }
+
+    .form-group label {
+        font-size: 0.9rem;
+    }
+
+    input, select, textarea {
+        padding: 8px;
+        font-size: 0.9rem;
+    }
+
+    .modal-footer {
+        padding: 10px;
+        flex-direction: column;
+    }
+
+    .modal-footer .btn {
+        width: 100%;
+        margin: 5px 0;
+        padding: 8px 10px;
+        font-size: 0.9rem;
+    }
+
+    .form-alert {
+        padding: 8px;
+        margin-bottom: 10px;
+        font-size: 0.85rem;
+    }
+
+    /* Adjust loader size for smaller screens */
+    .loader {
+        width: 30px;
+        height: 30px;
+    }
+}
     /* Responsive adjustments */
     @media (max-width: 768px) {
         .form-row {
