@@ -70,9 +70,10 @@ body {
 
 .menu > li {
     position: relative;
-    margin: 0.15rem 0.8rem;  /* Reduced vertical spacing from 0.3rem to 0.15rem */
+    margin: 0.12rem 0.8rem;
     border-radius: 8px;
     transition: background 0.2s;
+    padding-bottom: 0.12rem; /* Add consistent padding */
 }
 
 .menu > li:hover {
@@ -143,17 +144,18 @@ body {
                 opacity 0.3s ease,
                 margin 0.3s ease;
     opacity: 0;
-    margin-top: 0;
+
 }
 
 .menu > li:hover .submenu,
 .menu > li:focus-within .submenu {
     max-height: 300px;
     opacity: 1;
-    margin-top: 0.1rem; /* Reduced from 0.3rem to 0.1rem */
-    margin-bottom: 0.1rem; /* Reduced from 0.5rem to 0.2rem */
-}
 
+}
+.menu > li.has-submenu {
+    padding-bottom: 0;
+}
 .submenu li {
     transform: translateX(-10px);
     opacity: 0;
