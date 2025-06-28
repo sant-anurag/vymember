@@ -1588,3 +1588,50 @@ def dashboard_metrics_api(request):
         'geo': {'labels': geo_labels, 'data': geo_data},
         'top_instructors': {'labels': top_labels, 'data': top_data}
     })
+
+from django.views.decorators.http import require_http_methods
+from django.http import JsonResponse
+import json
+
+@require_http_methods(["GET"])
+def api_instructor_detail(request, instructor_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM instructors WHERE id = %s", [instructor_id])
+    instructor = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    if not instructor:
+        return JsonResponse({'error': 'Instructor not found'}, status=404)
+    # Convert date fields to string
+    if instructor.get('dop'):
+        instructor['dop'] = str(instructor['dop'])
+    return JsonResponse(instructor)
+
+@require_http_methods(["POST"])
+def api_instructor_update(request, instructor_id):
+    try:
+        data = json.loads(request.body)
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            UPDATE instructors SET
+                name=%s, age=%s, dop=%s, associated_since=%s,
+                updeshta_since=%s, address=%s, is_active=%s
+            WHERE id=%s
+        """, (
+            data.get('name'),
+            data.get('age') or None,
+            data.get('dop') or None,
+            data.get('associated_since') or None,
+            data.get('updeshta_since') or None,
+            data.get('address'),
+            data.get('is_active', 1),
+            instructor_id
+        ))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)})

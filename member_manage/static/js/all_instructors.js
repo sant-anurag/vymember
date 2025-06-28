@@ -5,10 +5,98 @@ document.addEventListener('DOMContentLoaded', function() {
     setupFilters();
 
     // Set up event listeners for action buttons
-    setupActionButtons();
+    //setupActionButtons();
 
     // Set up download button
     setupDownloadButton();
+});
+// Add at the top or after DOMContentLoaded
+let currentInstructorId = null;
+let isEditMode = false;
+
+function openInstructorModal(data, editMode = false) {
+    isEditMode = editMode;
+    currentInstructorId = data.id;
+    document.getElementById('modalTitle').textContent = editMode ? 'Edit Instructor' : 'Instructor Details';
+    document.getElementById('modalName').value = data.name || '';
+    document.getElementById('modalAge').value = data.age || '';
+    document.getElementById('modalDop').value = data.dop || '';
+    document.getElementById('modalAssociated').value = data.associated_since || '';
+    document.getElementById('modalUpdeshta').value = data.updeshta_since || '';
+    document.getElementById('modalAddress').value = data.address || '';
+    document.getElementById('modalActive').value = data.is_active != null ? data.is_active : '1';
+
+    // Enable/disable fields
+    [
+        'modalName', 'modalAge', 'modalDop', 'modalAssociated',
+        'modalUpdeshta', 'modalAddress', 'modalActive'
+    ].forEach(id => {
+        document.getElementById(id).disabled = !editMode;
+    });
+
+    document.getElementById('modalSaveBtn').style.display = editMode ? '' : 'none';
+    document.getElementById('instructorModal').style.display = 'flex';
+}
+
+function closeInstructorModal() {
+    document.getElementById('instructorModal').style.display = 'none';
+    currentInstructorId = null;
+    isEditMode = false;
+}
+
+// View button
+document.querySelectorAll('.view-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const instructorId = this.getAttribute('data-id');
+        fetch(`/member/api/instructors/${instructorId}/`)
+            .then(r => r.json())
+            .then(data => openInstructorModal(data, false))
+            .catch(() => alert('Failed to load instructor details.'));
+    });
+});
+
+// Edit button
+document.querySelectorAll('.edit-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const instructorId = this.getAttribute('data-id');
+        fetch(`/member/api/instructors/${instructorId}/`)
+            .then(r => r.json())
+            .then(data => openInstructorModal(data, true))
+            .catch(() => alert('Failed to load instructor details.'));
+    });
+});
+
+// Close button
+document.getElementById('modalCloseBtn').addEventListener('click', closeInstructorModal);
+
+// Save button
+document.getElementById('instructorForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    if (!isEditMode || !currentInstructorId) return;
+    const payload = {
+        name: document.getElementById('modalName').value,
+        age: document.getElementById('modalAge').value,
+        dop: document.getElementById('modalDop').value,
+        associated_since: document.getElementById('modalAssociated').value,
+        updeshta_since: document.getElementById('modalUpdeshta').value,
+        address: document.getElementById('modalAddress').value,
+        is_active: document.getElementById('modalActive').value
+    };
+    fetch(`/member/api/instructors/${currentInstructorId}/`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            alert('Instructor updated successfully.');
+            location.reload();
+        } else {
+            alert('Update failed: ' + (data.message || 'Unknown error'));
+        }
+    })
+    .catch(() => alert('Error updating instructor.'));
 });
 
 function setupFilters() {
@@ -115,38 +203,6 @@ function filterTable() {
             noResultsRow.style.display = 'none';
         }
     }
-}
-
-function setupActionButtons() {
-    // View button action
-    document.querySelectorAll('.view-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const instructorId = this.getAttribute('data-id');
-            console.log(`View instructor ${instructorId}`);
-            viewInstructorDetails(instructorId);
-        });
-    });
-
-    // Edit button action
-    document.querySelectorAll('.edit-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const instructorId = this.getAttribute('data-id');
-            console.log(`Edit instructor ${instructorId}`);
-            // Redirect to the edit page
-            window.location.href = `/edit_instructor/${instructorId}/`;
-        });
-    });
-
-    // Delete button action
-    document.querySelectorAll('.delete-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const instructorId = this.getAttribute('data-id');
-            console.log(`Delete instructor ${instructorId}`);
-            if (confirm('Are you sure you want to delete this instructor? This will affect all members assigned to this instructor.')) {
-                deleteInstructor(instructorId);
-            }
-        });
-    });
 }
 
 function deleteInstructor(id) {

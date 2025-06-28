@@ -22,4 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('member/', include('member_manage.urls')),  # Add this line
     path('', lambda request: redirect('login')),  # Redirect root to login
+
 ]
