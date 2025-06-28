@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         e.stopPropagation();
 
                         // Toggle submenu visibility manually
-                        if (submenu.style.maxHeight === '200px') {
+                        if (submenu.style.maxHeight === '300px') {
                             submenu.style.maxHeight = '0';
                         } else {
                             // Close all other submenus first
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             });
 
                             // Open this submenu
-                            submenu.style.maxHeight = '200px';
+                            submenu.style.maxHeight = '300px';
                         }
                     } else {
                         // Regular menu item, close sidebar
@@ -92,4 +92,32 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
+
+    // Apply animation to submenu items
+    const submenus = document.querySelectorAll('.submenu');
+    submenus.forEach(submenu => {
+        const items = submenu.querySelectorAll('li');
+        items.forEach((item, index) => {
+            item.style.setProperty('--item-index', index);
+        });
+    });
+
+    // Highlight active menu item based on current URL
+    const currentPath = window.location.pathname;
+    const menuLinks = document.querySelectorAll('.menu > li > a, .submenu li a');
+    menuLinks.forEach(link => {
+        if (link.getAttribute('href') === currentPath) {
+            // For main menu items
+            if (link.parentElement.parentElement.classList.contains('menu')) {
+                link.parentElement.classList.add('active');
+            }
+            // For submenu items
+            else if (link.parentElement.parentElement.classList.contains('submenu')) {
+                link.classList.add('active');
+                // Also highlight parent menu
+                const parentItem = link.parentElement.parentElement.parentElement;
+                parentItem.classList.add('active');
+            }
+        }
+    });
 });

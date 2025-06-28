@@ -1,6 +1,6 @@
 body {
     margin: 0;
-    font-family: 'Roboto', Arial, sans-serif;
+    font-family: 'Inter', 'Roboto', Arial, sans-serif;
     background: linear-gradient(135deg, #e9f0fa 0%, #c9e0f7 50%, #f5fafd 100%);
     min-height: 100vh;
     display: flex;
@@ -9,11 +9,13 @@ body {
     align-items: stretch;
 }
 
+/* Enhanced Sidebar Styling */
 .sidebar {
-    width: 250px;
-    background: #fff;
+    width: 260px;
+    background: linear-gradient(135deg, #0f4c81 0%, #061b2b 100%);
+
     border-radius: 12px;
-    box-shadow: 0 2px 12px rgba(60,100,180,0.08);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     padding: 1.5rem 0;
     height: 100vh;
     display: flex;
@@ -21,94 +23,227 @@ body {
     justify-content: flex-start;
     position: sticky;
     top: 0;
+    transition: all 0.3s ease;
+    overflow-y: auto;
+    z-index: 999;
 }
 
 .logo {
     display: flex;
     align-items: center;
-    padding: 0 1.5rem 1.5rem 1.5rem;
+    padding: 0 1.8rem 1.8rem 1.8rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 0.8rem;
 }
 
 .logo img {
-    height: 36px;
-    margin-right: 0.7rem;
+    height: 38px;
+    width: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 0.9rem;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    padding: 2px;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.logo:hover img {
+    transform: scale(1.05);
+    border-color: rgba(255, 255, 255, 0.4);
 }
 
 .logo span {
     font-weight: 700;
-    font-size: 1.2rem;
-    color: #2d3a4b;
+    font-size: 1.25rem;
+    color: #fff;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
+/* Menu styling with improved visuals */
 .menu {
     list-style: none;
-    padding: 0;
+    padding: 0.5rem 0;
     margin: 0;
+
 }
 
 .menu > li {
     position: relative;
+    margin: 0.15rem 0.8rem;  /* Reduced vertical spacing from 0.3rem to 0.15rem */
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.menu > li:hover {
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .menu > li > a {
     display: flex;
     align-items: center;
-    padding: 1rem 1.5rem;
-    color: #2d3a4b;
+    padding: 0.7rem 1.2rem;
+    color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
-    font-weight: 600;
-    transition: background 0.2s;
+    font-weight: 500;
+    font-size: 0.85rem;
+    letter-spacing: 0.3px;
+    transition: all 0.2s ease;
+    border-radius: 8px;
 }
 
 .menu > li > a:hover {
-    background: #f0f6ff;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateX(3px);
+}
+
+.menu > li.active > a {
+    background: linear-gradient(90deg, rgba(79, 140, 255, 0.2) 0%, rgba(79, 140, 255, 0.1) 100%);
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .menu i {
     margin-right: 1rem;
-    min-width: 20px;
+    min-width: 22px;
     text-align: center;
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.7);
+    transition: color 0.2s, transform 0.3s;
+}
+
+.menu > li:hover i {
+    color: #4f8cff;
+    transform: translateY(-2px);
 }
 
 .menu > li > a .fa-chevron-down {
     margin-left: auto;
+    font-size: 0.85rem;
+    transition: transform 0.3s ease;
 }
 
-/* Submenu styling with animations */
+.menu > li:hover > a .fa-chevron-down,
+.menu > li:focus-within > a .fa-chevron-down {
+    transform: rotate(-180deg);
+}
+
+/* Submenu with enhanced animation */
 .submenu {
     list-style: none;
-    padding: 0;
-    margin: 0;
+    padding: 0.3rem 0;
+    margin: 0 0.7rem;
     max-height: 0;
     overflow: hidden;
-    background: #f7fbff;
+    background: rgba(0, 0, 0, 0.2);
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: max-height 0.4s ease, opacity 0.4s ease;
-    opacity: 0; /* Initially hidden */
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.3s ease,
+                margin 0.3s ease;
+    opacity: 0;
+    margin-top: 0;
 }
 
 .menu > li:hover .submenu,
 .menu > li:focus-within .submenu {
-    max-height: 200px; /* Adjust based on submenu content */
-    opacity: 1; /* Make visible */
+    max-height: 300px;
+    opacity: 1;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.submenu li {
+    transform: translateX(-10px);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    transition-delay: calc(var(--item-index) * 0.05s);
+}
+
+.menu > li:hover .submenu li,
+.menu > li:focus-within .submenu li {
+    transform: translateX(0);
+    opacity: 1;
 }
 
 .submenu li a {
     display: flex;
     align-items: center;
-    padding: 0.8rem 2rem;
-    color: #4f8cff;
+    padding: 0.7rem 1rem 0.7rem 3.2rem;
+    color: rgba(255, 255, 255, 0.7);
     text-decoration: none;
-    font-weight: 500;
-    font-size: 1rem;
-    transition: background 0.2s, color 0.2s;
+    font-weight: 400;
+    font-size: 0.82rem;
+    transition: all 0.2s ease;
+    position: relative;
+    border-radius: 6px;
+}
+
+.submenu li a::before {
+    content: '';
+    position: absolute;
+    left: 1.8rem;
+    top: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(79, 140, 255, 0.5);
+    border-radius: 50%;
+    transform: translateY(-50%);
+    opacity: 0;
+    transition: opacity 0.2s ease, background 0.2s ease;
+}
+
+.submenu li a:hover::before {
+    opacity: 1;
+    background: #4f8cff;
 }
 
 .submenu li a:hover {
-    background: #d0e2ff;
-    color: #2d3a4b;
+    background: rgba(79, 140, 255, 0.1);
+    color: #fff;
+    padding-left: 3.4rem;
 }
+
+.submenu li a i {
+    font-size: 0.9rem;
+    margin-right: 0.7rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.submenu li a:hover i {
+    color: #4f8cff;
+}
+
+/* Sidebar toggle button with improved styling */
+.sidebar-toggle {
+    display: none;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1000;
+    background: linear-gradient(135deg, #4f8cff 0%, #6ed6ff 100%);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 46px;
+    height: 46px;
+    font-size: 18px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(79, 140, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.sidebar-toggle:hover {
+    background: linear-gradient(135deg, #6ed6ff 0%, #4f8cff 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(79, 140, 255, 0.4);
+}
+
+.sidebar-toggle:active {
+    transform: scale(0.95);
+}
+
 .main-content {
     flex: 1;
     display: flex;
@@ -136,6 +271,7 @@ header h1 {
     text-align: center;
     width: 100%;
 }
+
 .user-info {
     display: flex;
     align-items: center;
@@ -164,6 +300,7 @@ header h1 {
     flex-direction: column;
     align-items: center;
 }
+
 .registration-section h2 {
     color: #2d3a4b;
     font-size: 1.4rem;
@@ -210,7 +347,7 @@ label {
     font-size: 1rem;
 }
 
-input, textarea,select {
+input, textarea, select {
     padding: 0.7rem 1rem;
     border: 1.5px solid #e3eafc;
     border-radius: 8px;
@@ -221,7 +358,7 @@ input, textarea,select {
     resize: none;
 }
 
-input:focus, textarea:focus {
+input:focus, textarea:focus, select:focus {
     border-color: #4f8cff;
     outline: none;
     box-shadow: 0 0 0 2px #e3f0ff;
@@ -274,35 +411,48 @@ footer {
     font-size: 0.97rem;
     letter-spacing: 0.2px;
 }
-/* Sidebar toggle button */
-.sidebar-toggle {
-    display: none; /* Hidden on desktop */
-    position: fixed;
-    top: 15px;
-    left: 15px;
-    z-index: 1000;
-    background: #4f8cff;
-    color: white;
-    border: none;
+
+/* Form alert styling */
+.form-alert {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+}
+
+.form-alert.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.form-alert.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Loader styling */
+.loader {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
     border-radius: 50%;
-    width: 42px;
-    height: 42px;
-    font-size: 18px;
-    cursor: pointer;
-    box-shadow: 0 2px 10px rgba(79,140,255,0.2);
-    transition: background 0.2s, transform 0.2s;
+    width: 30px;
+    height: 30px;
+    animation: spin 2s linear infinite;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -15px;
+    margin-left: -15px;
 }
 
-.sidebar-toggle:hover {
-    background: #6ed6ff;
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
-.sidebar-toggle:active {
-    transform: scale(0.95);
-}
-/* Responsive styles for mobile devices */
-/* Mobile responsive adjustments */
-@media (max-width: 900px) {
+/* Media Queries */
+@media screen and (max-width: 900px) {
     .sidebar-toggle {
         display: flex;
         justify-content: center;
@@ -320,11 +470,11 @@ footer {
         top: 0;
         left: -280px; /* Start off-screen */
         height: 100vh;
-        width: 250px;
+        width: 260px;
         margin: 0;
         z-index: 999;
         border-radius: 0;
-        transition: left 0.3s ease;
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         overflow-y: auto;
     }
 
@@ -339,6 +489,38 @@ footer {
         padding-top: 60px; /* Add space for the toggle button */
     }
 
+    .member-detail-modal {
+        width: 90%;
+        max-width: 700px;
+    }
+
+    .form-row {
+        flex-direction: column;
+    }
+
+    .form-group {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+
+    .modal-body {
+        max-height: 70vh;
+        padding: 15px;
+    }
+
+    .modal-header h3 {
+        font-size: 1.4rem;
+    }
+
+    .modal-footer {
+        padding: 12px 15px;
+    }
+
+    .modal-footer .btn {
+        padding: 8px 15px;
+    }
+
     /* Add overlay when sidebar is open */
     .sidebar-overlay {
         display: none;
@@ -347,16 +529,20 @@ footer {
         left: 0;
         right: 0;
         bottom: 0;
-        background: rgba(0,0,0,0.5);
+        background: rgba(0, 0, 0, 0.5);
         z-index: 998;
+        backdrop-filter: blur(2px);
+        opacity: 0;
+        transition: opacity 0.3s ease;
     }
 
     .sidebar-overlay.active {
         display: block;
+        opacity: 1;
     }
 }
 
-@media (max-width: 700px) {
+@media screen and (max-width: 700px) {
     .registration-section {
         margin: 1rem 0.5rem 0 0.5rem;
         padding: 1.2rem 0.7rem 1rem 0.7rem;
@@ -368,47 +554,6 @@ footer {
         flex-direction: column;
         align-items: flex-start;
         gap: 0.7rem;
-    }
-
-    .form-row {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-
-    /* Improved sidebar styling */
-    .sidebar {
-        width: 250px; /* Fixed width */
-        min-width: 0;
-        padding: 1rem 0;
-        position: fixed;
-        left: -280px; /* Ensure it's hidden by default */
-        z-index: 999;
-    }
-
-    .sidebar.open {
-        left: 0;
-        box-shadow: 0 0 20px rgba(0,0,0,0.2);
-    }
-
-    .main-content {
-        min-width: 0;
-        padding: 1rem 0.5rem;
-        margin-left: 0;
-        width: 100%;
-    }
-
-    .logo {
-        padding: 0 1rem 1rem 1rem;
-    }
-
-    .menu > li > a {
-        padding: 0.8rem 1rem;
-        font-size: 1rem;
-    }
-
-    .submenu li a {
-        padding: 0.7rem 1.7rem;
-        font-size: 0.97rem;
     }
 
     .user-info img {
@@ -442,26 +587,68 @@ footer {
     }
 }
 
-@media (max-width: 480px) {
+@media screen and (max-width: 480px) {
     .sidebar {
-        width: 240px; /* Slightly narrower on very small screens */
-        padding: 0.7rem 0;
-        border-radius: 0;
-        left: -250px; /* Hidden off-screen */
+        width: 95%;
+        max-width: none;
     }
 
-    .sidebar.open {
-        left: 0;
+    .modal-header {
+        padding: 10px;
     }
 
-    .main-content {
-        padding: 0.7rem 0.2rem;
-        border-radius: 10px;
+    .modal-header h3 {
+        font-size: 1.2rem;
     }
 
-    .registration-section {
-        padding: 0.7rem 0.2rem 0.7rem 0.2rem;
-        border-radius: 10px;
+    .close-btn {
+        font-size: 20px;
+    }
+
+    .modal-body {
+        padding: 10px;
+        max-height: 65vh;
+    }
+
+    .form-group label {
+        font-size: 0.9rem;
+    }
+
+    input, select, textarea {
+        padding: 8px;
+        font-size: 0.9rem;
+    }
+
+    .modal-footer {
+        padding: 10px;
+        flex-direction: column;
+    }
+
+    .modal-footer .btn {
+        width: 100%;
+        margin: 5px 0;
+        padding: 8px 10px;
+        font-size: 0.9rem;
+    }
+
+    .form-alert {
+        padding: 8px;
+        margin-bottom: 10px;
+        font-size: 0.85rem;
+    }
+
+    /* Adjust loader size for smaller screens */
+    .loader {
+        width: 30px;
+        height: 30px;
+    }
+
+    .sidebar-toggle {
+        top: 10px;
+        left: 10px;
+        width: 38px;
+        height: 38px;
+        font-size: 16px;
     }
 
     .form-actions {
@@ -477,23 +664,52 @@ footer {
         font-size: 1rem;
     }
 
-    /* Improve menu readability on very small screens */
-    .menu > li > a {
-        padding: 0.75rem 0.8rem;
-        font-size: 0.95rem;
+    .member-detail-modal {
+        width: 95%;
+        border-radius: 8px;
     }
+}
 
-    .submenu li a {
-        padding: 0.6rem 1.5rem;
-        font-size: 0.9rem;
-    }
+/* Member Detail Overlay Responsiveness */
+.member-detail-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
 
-    /* Make the toggle button more visible */
-    .sidebar-toggle {
-        top: 10px;
-        left: 10px;
-        width: 38px;
-        height: 38px;
-        font-size: 16px;
-    }
+.member-detail-modal {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    padding: 15px 20px;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
 }

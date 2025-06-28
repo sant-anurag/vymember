@@ -7,6 +7,7 @@
     <title>Member Registration</title>
     <link rel="stylesheet" href="{% static 'css/home.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -23,26 +24,25 @@
                 <a href="#"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
             </li>
             <li tabindex="0">
-                <a href="#"><i class="fas fa-users"></i>Members <i class="fas fa-chevron-down" style="margin-left:auto;"></i></a>
+                <a href="#"><i class="fas fa-users"></i>Members <i class="fas fa-chevron-down"></i></a>
                 <ul class="submenu">
                     <li><a href="{% url 'all_members' %}"><i class="fas fa-list"></i>All Members</a></li>
                     <li><a href="{% url 'member' %}"><i class="fas fa-user-plus"></i>Add Member</a></li>
                 </ul>
             </li>
             <li tabindex="0">
-                <a href="#"><i class="fas fa-chalkboard-teacher"></i>Instructor <i class="fas fa-chevron-down" style="margin-left:auto;"></i></a>
+                <a href="#"><i class="fas fa-chalkboard-teacher"></i>Instructor <i class="fas fa-chevron-down"></i></a>
                 <ul class="submenu">
                     <li><a href="{% url 'add_instructor' %}"><i class="fas fa-user-plus"></i>Add Instructor</a></li>
                     <li><a href="{% url 'all_instructors' %}"><i class="fas fa-list"></i>View All Instructors</a></li>
                     <li><a href="{% url 'instructor_infographics' %}"><i class="fas fa-chart-pie"></i>Instructor Infographics</a></li>
                 </ul>
             </li>
-
             <li>
                 <a href="#"><i class="fas fa-chart-bar"></i>Reports</a>
             </li>
-            <li>
-                <a href="#"><i class="fas fa-cog"></i>Settings <i class="fas fa-chevron-down" style="margin-left:auto;"></i></a>
+            <li tabindex="0">
+                <a href="#"><i class="fas fa-cog"></i>Settings <i class="fas fa-chevron-down"></i></a>
                 <ul class="submenu">
                     <li><a href="{% url 'change_password' %}"><i class="fas fa-key"></i>Change Password</a></li>
                     <li><a href="{% url 'upload_members' %}"><i class="fas fa-upload"></i>Upload</a></li>
@@ -55,7 +55,6 @@
         </ul>
     </div>
     <div class="main-content">
-
         {% block main_content %}
         <section class="registration-section">
             <h2>Register New Member</h2>
