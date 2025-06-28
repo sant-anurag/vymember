@@ -30,5 +30,7 @@ urlpatterns = [
     path('create-user/', views.create_user, name='create_user'),
     path('get-user-details/<int:user_id>/', views.get_user_details, name='get_user_details'),
     path('update-user/<int:user_id>/', views.update_user, name='update_user'),
+    path('dashboard/', views.dashboard, name='dashboard'),
+    path('dashboard/api/metrics/', views.dashboard_metrics_api, name='dashboard_metrics_api'),
     # ... other URLs ...
 ]

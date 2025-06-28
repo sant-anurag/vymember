@@ -1,0 +1,81 @@
+{% extends "home.html" %}
+{% load static %}
+
+{% block main_content %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h2><i class="fas fa-tachometer-alt"></i> Dashboard</h2>
+        <div class="quick-links">
+            <a href="{% url 'register_member' %}" class="quick-link"><i class="fas fa-user-plus"></i> Add Member</a>
+            <a href="{% url 'add_instructor' %}" class="quick-link"><i class="fas fa-chalkboard-teacher"></i> Add Instructor</a>
+        </div>
+    </div>
+
+    <div class="stats-cards">
+        <div class="stat-card">
+            <div class="stat-label">Total Members</div>
+            <div class="stat-value" id="totalMembers">{{ stats.total_members }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Active Instructors</div>
+            <div class="stat-value" id="activeInstructors">{{ stats.active_instructors }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Inactive Instructors</div>
+            <div class="stat-value" id="inactiveInstructors">{{ stats.inactive_instructors }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">New Members This Month</div>
+            <div class="stat-value" id="newMembersMonth">{{ stats.new_members_month }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">New Members This Year</div>
+            <div class="stat-value" id="newMembersYear">{{ stats.new_members_year }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Growth Rate</div>
+            <div class="stat-value" id="growthRate">{{ stats.growth_rate }}%</div>
+        </div>
+    </div>
+
+    <div class="dashboard-charts">
+        <div class="chart-card">
+            <h3>Members Growth Over Time</h3>
+            <canvas id="growthChart"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3>Members by Instructor</h3>
+            <canvas id="instructorChart"></canvas>
+        </div>
+      <div class="chart-card">
+            <h3>Top Performing Instructors</h3>
+            <canvas id="topInstructorChart"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3>Geographic Distribution</h3>
+            <canvas id="geoChart"></canvas>
+        </div>
+    </div>
+
+    <div class="dashboard-widgets">
+        <div class="widget recent-members">
+            <h4>Recent Member Registrations</h4>
+            <ul>
+                {% for member in recent_members %}
+                <li>
+                    <span class="member-name">{{ member.name }}</span>
+                    <span class="member-date">{{ member.date_of_initiation|date:"M d, Y" }}</span>
+                </li>
+                {% empty %}
+                <li>No recent registrations.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

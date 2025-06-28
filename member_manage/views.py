@@ -1492,3 +1492,99 @@ def update_user(request, user_id):
 
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)})
+
+from django.shortcuts import render
+from django.http import JsonResponse
+from datetime import datetime, timedelta
+
+def dashboard(request):
+    # Stat cards
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    now = datetime.now()
+    # Total members
+    cursor.execute("SELECT COUNT(*) as total FROM members")
+    total_members = cursor.fetchone()['total']
+    # Active instructors
+    cursor.execute("SELECT COUNT(*) as total FROM instructors WHERE is_active=1")
+    active_instructors = cursor.fetchone()['total']
+    # Inactive instructors
+    cursor.execute("SELECT COUNT(*) as total FROM instructors WHERE is_active=0")
+    inactive_instructors = cursor.fetchone()['total']
+    # New members this month
+    cursor.execute("SELECT COUNT(*) as total FROM members WHERE YEAR(date_of_initiation)=%s AND MONTH(date_of_initiation)=%s", (now.year, now.month))
+    new_members_month = cursor.fetchone()['total']
+    # New members this year
+    cursor.execute("SELECT COUNT(*) as total FROM members WHERE YEAR(date_of_initiation)=%s", (now.year,))
+    new_members_year = cursor.fetchone()['total']
+    # Growth rate (vs last year)
+    cursor.execute("SELECT COUNT(*) as total FROM members WHERE YEAR(date_of_initiation)=%s", (now.year-1,))
+    last_year = cursor.fetchone()['total']
+    growth_rate = round(((new_members_year - last_year) / last_year * 100), 1) if last_year else 0
+    # Recent members
+    cursor.execute("SELECT name, date_of_initiation FROM members ORDER BY date_of_initiation DESC LIMIT 7")
+    recent_members = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    stats = {
+        'total_members': total_members,
+        'active_instructors': active_instructors,
+        'inactive_instructors': inactive_instructors,
+        'new_members_month': new_members_month,
+        'new_members_year': new_members_year,
+        'growth_rate': growth_rate
+    }
+    return render(request, 'dashboard.html', {'stats': stats, 'recent_members': recent_members})
+
+from django.views.decorators.http import require_GET
+
+@require_GET
+def dashboard_metrics_api(request):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    now = datetime.now()
+    # Growth over last 24 months
+    growth_labels, growth_data = [], []
+    for i in range(23, -1, -1):
+        dt = (now.replace(day=1) - timedelta(days=30*i))
+        cursor.execute("SELECT COUNT(*) as total FROM members WHERE YEAR(date_of_initiation)=%s AND MONTH(date_of_initiation)=%s", (dt.year, dt.month))
+        growth_labels.append(dt.strftime('%b %Y'))
+        growth_data.append(cursor.fetchone()['total'])
+    # Members by instructor
+    cursor.execute("""
+        SELECT i.name, COUNT(m.id) as total FROM instructors i
+        LEFT JOIN members m ON m.instructor_id = i.id
+        GROUP BY i.id ORDER BY i.name
+    """)
+    instructor_labels, instructor_data = [], []
+    for row in cursor.fetchall():
+        instructor_labels.append(row['name'])
+        instructor_data.append(row['total'])
+    # Geographic distribution (by state)
+    cursor.execute("""
+        SELECT state, COUNT(*) as total FROM members
+        WHERE state IS NOT NULL AND state != ''
+        GROUP BY state ORDER BY total DESC LIMIT 6
+    """)
+    geo_labels, geo_data = [], []
+    for row in cursor.fetchall():
+        geo_labels.append(row['state'])
+        geo_data.append(row['total'])
+    # Top performing instructors
+    cursor.execute("""
+        SELECT i.name, COUNT(m.id) as total FROM instructors i
+        LEFT JOIN members m ON m.instructor_id = i.id
+        GROUP BY i.id ORDER BY total DESC LIMIT 5
+    """)
+    top_labels, top_data = [], []
+    for row in cursor.fetchall():
+        top_labels.append(row['name'])
+        top_data.append(row['total'])
+    cursor.close()
+    conn.close()
+    return JsonResponse({
+        'growth': {'labels': growth_labels, 'data': growth_data},
+        'instructor': {'labels': instructor_labels, 'data': instructor_data},
+        'geo': {'labels': geo_labels, 'data': geo_data},
+        'top_instructors': {'labels': top_labels, 'data': top_data}
+    })
