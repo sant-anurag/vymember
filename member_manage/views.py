@@ -20,7 +20,10 @@ import io
 from datetime import datetime, timedelta
 import hashlib
 import re
-
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
+import json
+import datetime
 
 def get_db_connection():
     return mysql.connector.connect(
@@ -1149,3 +1152,137 @@ def logout_view(request):
 
     # Render the logout page
     return render(request, 'logout.html')
+
+# views.py
+
+def get_member_detail(request, member_id):
+    print("API member detail view accessed")
+    """API endpoint to get member details using raw SQL"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        # Get member data
+        cursor.execute("""
+            SELECT m.*, i.name as instructor_name
+            FROM members m
+            LEFT JOIN instructors i ON m.instructor_id = i.id
+            WHERE m.id = %s
+        """, (member_id,))
+
+        member = cursor.fetchone()
+
+        if not member:
+            return JsonResponse({'error': 'Member not found'}, status=404)
+
+        # Get all active instructors
+        cursor.execute("""
+            SELECT id, name
+            FROM instructors
+            WHERE is_active = 1
+        """)
+
+        instructors = cursor.fetchall()
+
+        # Format date for JSON serialization
+        if member['date_of_initiation']:
+            member['date_of_initiation'] = member['date_of_initiation'].strftime('%Y-%m-%d')
+
+        # Prepare the response data
+        member_data = {
+            'id': member['id'],
+            'name': member['name'],
+            'number': member['number'],
+            'email': member['email'],
+            'address': member['address'],
+            'state': member['state'],
+            'district': member['district'],
+            'country': member['country'],
+            'company': member['company'],
+            'notes': member['notes'],
+            'instructor_id': member['instructor_id'],
+            'date_of_initiation': member['date_of_initiation'],
+            'instructors': [{'id': i['id'], 'name': i['name']} for i in instructors]
+        }
+
+        cursor.close()
+        conn.close()
+
+        return JsonResponse(member_data)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+@require_http_methods(["POST"])
+def update_member(request, member_id):
+    print("API update member view accessed")
+    """API endpoint to update member details using raw SQL"""
+    try:
+        data = json.loads(request.body)
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        print("Data received for update:", data)
+        # Format instructor_id - set to NULL if empty
+        instructor_id = data.get('instructor_id')
+        if not instructor_id or instructor_id.strip() == '':
+            instructor_id = None
+
+        # Format date_of_initiation
+        date_of_initiation = data.get('date_of_initiation')
+        if date_of_initiation:
+            date_of_initiation = datetime.datetime.strptime(date_of_initiation, '%Y-%m-%d').date()
+
+        # Update member record
+        cursor.execute("""
+            UPDATE members
+            SET name = %s, 
+                number = %s, 
+                email = %s, 
+                address = %s, 
+                state = %s, 
+                district = %s, 
+                country = %s, 
+                company = %s, 
+                notes = %s, 
+                instructor_id = %s, 
+                date_of_initiation = %s
+            WHERE id = %s
+        """, (
+            data.get('name'),
+            data.get('number'),
+            data.get('email'),
+            data.get('address'),
+            data.get('state'),
+            data.get('district'),
+            data.get('country'),
+            data.get('company'),
+            data.get('notes'),
+            instructor_id,
+            date_of_initiation,
+            member_id
+        ))
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
+@require_http_methods(["POST"])
+def delete_member(request, member_id):
+    """API endpoint to delete a member using raw SQL"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # Delete member record
+        cursor.execute("DELETE FROM members WHERE id = %s", (member_id,))
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})

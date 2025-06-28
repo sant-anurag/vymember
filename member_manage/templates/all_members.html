@@ -3,7 +3,7 @@
 
 {% block main_content %}
 <link rel="stylesheet" href="{% static 'css/all_members.css' %}">
-
+<link rel="stylesheet" href="{% static 'css/member_detail.css' %}">
 <section class="members-section">
     <h2>All Members</h2>
 
@@ -96,9 +96,7 @@
                                 <button class="action-btn edit-btn" data-id="{{ member.id }}">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="action-btn delete-btn" data-id="{{ member.id }}">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+
                             </td>
                         </tr>
                     {% endfor %}
@@ -114,4 +112,5 @@
 </section>
 
 <script src="{% static 'js/all_members.js' %}"></script>
+<script src="{% static 'js/member_detail.js' %}"></script>
 {% endblock %}

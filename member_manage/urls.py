@@ -11,8 +11,10 @@ urlpatterns = [
     path('all_members/', views.all_members, name='all_members'),
 
     # API endpoints
-    path('api/members/', views.api_members, name='api_members'),
-    path('api/members/<int:id>/', views.api_member_detail, name='api_member_detail'),
+    #path('api/members/', views.api_members, name='api_members'),
+    path('api/member/<int:member_id>/', views.get_member_detail, name='get_member_detail'),
+    path('api/member/<int:member_id>/update/', views.update_member, name='update_member'),
+    path('api/member/<int:member_id>/delete/', views.delete_member, name='delete_member'),
     # Add the all_instructors URL pattern
     path('all_instructors/', views.all_instructors, name='all_instructors'),
     path('register_user/', views.register_user, name='register_user'),
