@@ -1,0 +1,245 @@
+.create-user-section {
+    background: #fff;
+    padding: 2.2rem 2rem 2rem 2rem;
+    border-radius: 18px;
+    box-shadow: 0 6px 32px rgba(60, 100, 180, 0.10), 0 1.5px 6px rgba(0,0,0,0.04);
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.create-user-section h2 {
+    color: #2d3a4b;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 1.2rem;
+    text-align: left;
+    width: 100%;
+}
+
+.create-user-form {
+    width: 100%;
+    max-width: 650px;
+    margin: 0 auto;
+}
+
+.create-user-form .form-group {
+    margin-bottom: 20px;
+}
+
+.create-user-form .form-row {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.create-user-form .full-width {
+    width: 100%;
+}
+
+.create-user-form label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-weight: 500;
+    color: #4f8cff;
+    font-size: 0.9rem;
+}
+
+.create-user-form input,
+.create-user-form select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+    background-color: white;
+}
+
+.create-user-form input:focus,
+.create-user-form select:focus {
+    border-color: #4a90e2;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
+
+.create-user-form .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+    gap: 12px;
+}
+
+.create-user-form button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.create-user-form .submit-btn {
+    background-color: #4a90e2;
+    color: white;
+}
+
+.create-user-form .submit-btn:hover {
+    background-color: #3a7bc8;
+}
+
+.create-user-form .reset-btn {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.create-user-form .reset-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.create-user-form button:active {
+    transform: scale(0.98);
+}
+
+.status-message {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+    text-align: center;
+}
+
+.status-message.success {
+    background-color: #e3f5ea;
+    color: #0a7b3f;
+    border: 1px solid #c3e6cb;
+}
+
+.status-message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Media Queries for Responsive Design */
+@media (max-width: 900px) {
+    .create-user-section {
+        max-width: 90%;
+        padding: 2rem 1.8rem;
+    }
+
+    .create-user-form {
+        max-width: 100%;
+    }
+
+    .create-user-section h2 {
+        font-size: 1.3rem;
+    }
+
+    .create-user-form button {
+        padding: 9px 18px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 768px) {
+    .create-user-section {
+        padding: 1.8rem 1.5rem;
+        border-radius: 14px;
+    }
+
+    .create-user-section h2 {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+    }
+
+    .create-user-form .form-row {
+        gap: 1.2rem;
+    }
+
+    .create-user-form label {
+        font-size: 0.85rem;
+    }
+
+    .create-user-form input,
+    .create-user-form select {
+        padding: 9px 10px;
+        font-size: 13px;
+    }
+
+    .create-user-form .form-group {
+        margin-bottom: 16px;
+    }
+
+    .create-user-form button {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+
+    .status-message {
+        padding: 0.7rem 0.9rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .create-user-section {
+        padding: 1.5rem 1.2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(60, 100, 180, 0.08);
+    }
+
+    .create-user-section h2 {
+        font-size: 1.1rem;
+        text-align: center;
+    }
+
+    .create-user-form .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .create-user-form input,
+    .create-user-form select {
+        padding: 8px 10px;
+        font-size: 13px;
+    }
+
+    .create-user-form label {
+        font-size: 0.8rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .create-user-form .form-group {
+        margin-bottom: 14px;
+    }
+
+    .create-user-form .form-actions {
+        flex-direction: column-reverse;
+        gap: 0.8rem;
+        margin-top: 1.2rem;
+    }
+
+    .create-user-form button {
+        width: 100%;
+        padding: 9px 0;
+        justify-content: center;
+    }
+
+    .create-user-form .reset-btn {
+        margin-right: 0;
+    }
+
+    .status-message {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.85rem;
+        margin-bottom: 1.2rem;
+    }
+}

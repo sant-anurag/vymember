@@ -24,6 +24,10 @@ from django.views.decorators.http import require_http_methods
 import mysql.connector
 import openpyxl
 
+from django.shortcuts import render, redirect
+from django.views.decorators.csrf import csrf_exempt
+
+
 # Local imports
 from .db_initializer import *
 
@@ -1288,3 +1292,132 @@ def delete_member(request, member_id):
         return JsonResponse({'success': True})
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
+
+
+
+# Add this new function to your views.py file
+def create_user(request):
+    """View for creating a new user with admin privileges"""
+    message = None
+    success = False
+    print("Create user view accessed")
+    if request.method == 'POST':
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            try:
+                # Get form data
+                name = request.POST.get('name')
+                username = request.POST.get('username')
+                email = request.POST.get('email')
+                password = request.POST.get('password')
+                user_category = request.POST.get('user_category')
+
+                # Check if username exists
+                conn = get_db_connection()
+                cursor = conn.cursor(dictionary=True)
+
+                cursor.execute("SELECT id FROM users WHERE username = %s", (username,))
+                if cursor.fetchone():
+                    cursor.close()
+                    conn.close()
+                    return JsonResponse({
+                        'success': False,
+                        'message': 'Username already exists. Please choose a different username.'
+                    })
+
+                # Check if email exists
+                if email:
+                    cursor.execute("SELECT id FROM users WHERE email = %s", (email,))
+                    if cursor.fetchone():
+                        cursor.close()
+                        conn.close()
+                        return JsonResponse({
+                            'success': False,
+                            'message': 'Email already exists. Please use a different email address.'
+                        })
+
+                # Hash the password
+                hashed_password = hashlib.sha256(password.encode()).hexdigest()
+
+                # Determine is_admin value based on user_category
+                is_admin = 1 if user_category == 'Admin' else 0
+
+                # Insert new user with correct fields from the database schema
+                cursor.execute("""
+                    INSERT INTO users (username, password, email, is_admin)
+                    VALUES (%s, %s, %s, %s)
+                """, (username, hashed_password, email, is_admin))
+
+                conn.commit()
+                cursor.close()
+                conn.close()
+
+                return JsonResponse({'success': True})
+            except Exception as e:
+                return JsonResponse({'success': False, 'message': str(e)})
+        else:
+            # Handle regular form submission (non-AJAX)
+            try:
+                # Get form data
+                name = request.POST.get('name')
+                username = request.POST.get('username')
+                email = request.POST.get('email')
+                password = request.POST.get('password')
+                confirm_password = request.POST.get('confirm_password')
+                user_category = request.POST.get('user_category')
+
+                # Validate passwords match
+                if password != confirm_password:
+                    message = "Passwords do not match."
+                    return render(request, 'create_user.html', {'message': message, 'success': success})
+
+                # Validate password strength
+                if not validate_password_strength(password):
+                    message = "Password must be at least 8 characters long and contain letters, numbers, and special characters."
+                    return render(request, 'create_user.html', {'message': message, 'success': success})
+
+                # Check if username exists
+                conn = get_db_connection()
+                cursor = conn.cursor(dictionary=True)
+
+                cursor.execute("SELECT id FROM users WHERE username = %s", (username,))
+                if cursor.fetchone():
+                    cursor.close()
+                    conn.close()
+                    message = "Username already exists. Please choose a different username."
+                    return render(request, 'create_user.html', {'message': message, 'success': success})
+
+                # Check if email exists
+                if email:
+                    cursor.execute("SELECT id FROM users WHERE email = %s", (email,))
+                    if cursor.fetchone():
+                        cursor.close()
+                        conn.close()
+                        message = "Email already exists. Please use a different email address."
+                        return render(request, 'create_user.html', {'message': message, 'success': success})
+
+                # Hash the password
+                hashed_password = hashlib.sha256(password.encode()).hexdigest()
+
+                # Determine is_admin value based on user_category
+                is_admin = 1 if user_category == 'Admin' else 0
+
+                # Insert new user with correct fields from the database schema
+                cursor.execute("""
+                                    INSERT INTO users (username, password, email, is_admin)
+                                    VALUES (%s, %s, %s, %s)
+                                """, (username, hashed_password, email, is_admin))
+
+                conn.commit()
+                cursor.close()
+                conn.close()
+
+                message = f"User '{username}' has been successfully created."
+                success = True
+
+            except Exception as e:
+                message = f"Error creating user: {str(e)}"
+
+            return render(request, 'create_user.html', {'message': message, 'success': success})
+    else:
+        # GET request - show the form
+        return render(request, 'create_user.html')

@@ -588,12 +588,13 @@ footer {
     label, input, textarea, button {
         font-size: 0.97rem;
     }
+
 }
 
 @media screen and (max-width: 480px) {
     .sidebar {
-        width: 95%;
-        max-width: none;
+        width: 85%;
+        max-width: 220px;
     }
 
     .modal-header {
@@ -646,12 +647,38 @@ footer {
         height: 30px;
     }
 
+    .menu > li > a {
+        padding: 0.7rem 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    .menu i {
+        font-size: 0.9rem;
+        width: 22px;
+    }
+
+    .submenu li a {
+        padding: 0.6rem 1.2rem 0.6rem 2.5rem;
+        font-size: 0.85rem;
+    }
+
     .sidebar-toggle {
-        top: 10px;
-        left: 10px;
+        top: 0.8rem;
+        left: 0.8rem;
         width: 38px;
         height: 38px;
-        font-size: 16px;
+    }
+
+    .main-content {
+        padding: 4.5rem 1rem 1rem;
+    }
+
+    .form-row {
+        flex-direction: column;
+    }
+
+    .form-group {
+        width: 100%;
     }
 
     .form-actions {
