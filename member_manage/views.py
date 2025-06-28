@@ -570,7 +570,7 @@ def api_instructor_infographics_data(request):
         member_filter_params.append(instructor_id)
 
     # Apply time range filter
-    current_date = datetime.datetime.now()
+    current_date = datetime.now()
     if time_range == 'year':
         start_date = datetime(current_date.year, 1, 1)
         member_filter_sql += " AND m.date_of_initiation >= %s"
