@@ -150,6 +150,7 @@
 }
 
 #membersTable th {
+    white-space: nowrap;
     background: #4f8cff;
     color: white;
     font-weight: 600;
@@ -169,6 +170,7 @@
 }
 
 #membersTable td {
+white-space: nowrap;
     padding: 0.6rem 0.8rem;
     border-bottom: 1px solid #e3eafc;
     font-size: 0.9rem;
