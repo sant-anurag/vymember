@@ -68,7 +68,21 @@ document.querySelectorAll('.edit-btn').forEach(btn => {
 
 // Close button
 document.getElementById('modalCloseBtn').addEventListener('click', closeInstructorModal);
-
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+        const cookies = document.cookie.split(";");
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + "=")) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 // Save button
 document.getElementById('instructorForm').addEventListener('submit', function(e) {
     e.preventDefault();
@@ -82,11 +96,16 @@ document.getElementById('instructorForm').addEventListener('submit', function(e)
         address: document.getElementById('modalAddress').value,
         is_active: document.getElementById('modalActive').value
     };
-    fetch(`/member/api/instructors/${currentInstructorId}/`, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(payload)
-    })
+    const csrftoken = getCookie("csrftoken");
+    console.log("Submitting instructor data:", payload);
+    fetch(`/member/api/instructors_update/${currentInstructorId}/`, {
+        method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": csrftoken
+    },
+    body: JSON.stringify(payload)
+})
     .then(r => r.json())
     .then(data => {
         if (data.success) {
@@ -205,43 +224,10 @@ function filterTable() {
     }
 }
 
-function deleteInstructor(id) {
-    fetch(`/api/instructors/${id}/`, {
-        method: 'DELETE'
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Failed to delete instructor');
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Instructor deleted successfully:', data);
-        // Remove the row from the table
-        const row = document.querySelector(`.delete-btn[data-id="${id}"]`).closest('tr');
-        row.remove();
-
-        // Show success message
-        const table = document.getElementById('instructorsTable');
-        const successMsg = document.createElement('div');
-        successMsg.className = 'success-message';
-        successMsg.textContent = 'Instructor deleted successfully';
-        table.parentNode.insertBefore(successMsg, table);
-
-        // Remove the message after 3 seconds
-        setTimeout(() => {
-            successMsg.remove();
-        }, 3000);
-    })
-    .catch(error => {
-        console.error('Error deleting instructor:', error);
-        alert('Error deleting instructor. Please try again.');
-    });
-}
 
 function viewInstructorDetails(id) {
     // Fetch instructor details from API
-    fetch(`/api/instructors/${id}/`)
+    fetch(`/member/api/instructors/${id}/`)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Failed to fetch instructor details');

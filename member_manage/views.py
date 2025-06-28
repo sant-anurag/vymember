@@ -1595,6 +1595,7 @@ import json
 
 @require_http_methods(["GET"])
 def api_instructor_detail(request, instructor_id):
+    print("API instructor detail view accessed")
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
     cursor.execute("SELECT * FROM instructors WHERE id = %s", [instructor_id])
@@ -1608,30 +1609,51 @@ def api_instructor_detail(request, instructor_id):
         instructor['dop'] = str(instructor['dop'])
     return JsonResponse(instructor)
 
-@require_http_methods(["POST"])
+
+from django.views.decorators.http import require_http_methods
+from django.http import JsonResponse
+
+@require_http_methods(["GET", "POST"])
 def api_instructor_update(request, instructor_id):
-    try:
-        data = json.loads(request.body)
+    print("API update instructor view accessed")
+    print("request method:", request.method)
+    if request.method == "GET":
+        # Fetch instructor details
         conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute("""
-            UPDATE instructors SET
-                name=%s, age=%s, dop=%s, associated_since=%s,
-                updeshta_since=%s, address=%s, is_active=%s
-            WHERE id=%s
-        """, (
-            data.get('name'),
-            data.get('age') or None,
-            data.get('dop') or None,
-            data.get('associated_since') or None,
-            data.get('updeshta_since') or None,
-            data.get('address'),
-            data.get('is_active', 1),
-            instructor_id
-        ))
-        conn.commit()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM instructors WHERE id = %s", [instructor_id])
+        instructor = cursor.fetchone()
         cursor.close()
         conn.close()
-        return JsonResponse({'success': True})
-    except Exception as e:
-        return JsonResponse({'success': False, 'message': str(e)})
+        if not instructor:
+            return JsonResponse({'error': 'Instructor not found'}, status=404)
+        # Convert date fields to string if needed
+        if instructor.get('dop'):
+            instructor['dop'] = str(instructor['dop'])
+        return JsonResponse(instructor)
+    elif request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            cursor.execute("""
+                UPDATE instructors SET
+                    name=%s, age=%s, dop=%s, associated_since=%s,
+                    updeshta_since=%s, address=%s, is_active=%s
+                WHERE id=%s
+            """, (
+                data.get('name'),
+                data.get('age') or None,
+                data.get('dop') or None,
+                data.get('associated_since') or None,
+                data.get('updeshta_since') or None,
+                data.get('address'),
+                data.get('is_active', 1),
+                instructor_id
+            ))
+            conn.commit()
+            cursor.close()
+            conn.close()
+            return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)})
