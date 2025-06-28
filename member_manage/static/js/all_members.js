@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setupFilters();
 
     // Set up event listeners for action buttons
-    setupActionButtons();
+    // setupActionButtons();
 
     // Set up download button
     setupDownloadButton();
