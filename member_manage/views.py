@@ -1,29 +1,31 @@
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-
-from django.shortcuts import render, redirect
-from django.conf import settings
-import mysql.connector
-from .db_initializer import *
-from django.views.decorators.csrf import csrf_exempt
-from django.db import connection
-from django.http import JsonResponse, HttpResponse
-from django.views.decorators.http import require_http_methods
-from django.db.models import Q
-import json
-import openpyxl
-from django.views.decorators.csrf import csrf_exempt
-import os
+# Python standard library imports
 import csv
-import io
-from datetime import datetime, timedelta
-import hashlib
-import re
-from django.http import JsonResponse
-from django.views.decorators.http import require_http_methods
-import json
 import datetime
+from datetime import date, timedelta
+import hashlib
+import io
+import json
+import os
+import re
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
+# Django imports
+from django.conf import settings
+from django.db import connection
+from django.db.models import Q
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import redirect, render
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+
+# Third-party imports
+import mysql.connector
+import openpyxl
+
+# Local imports
+from .db_initializer import *
 
 def get_db_connection():
     return mysql.connector.connect(
@@ -564,7 +566,7 @@ def api_instructor_infographics_data(request):
         member_filter_params.append(instructor_id)
 
     # Apply time range filter
-    current_date = datetime.now()
+    current_date = datetime.datetime.now()
     if time_range == 'year':
         start_date = datetime(current_date.year, 1, 1)
         member_filter_sql += " AND m.date_of_initiation >= %s"

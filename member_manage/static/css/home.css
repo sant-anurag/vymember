@@ -455,6 +455,7 @@ footer {
 
 /* Media Queries */
 @media screen and (max-width: 900px) {
+
     .sidebar-toggle {
         display: flex;
         justify-content: center;
@@ -470,7 +471,7 @@ footer {
     .sidebar {
         position: fixed;
         top: 0;
-        left: -280px; /* Start off-screen */
+        left: -100%; /* Change from -280px to -100% to ensure it's completely off-screen */
         height: 100vh;
         width: 260px;
         margin: 0;
