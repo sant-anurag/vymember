@@ -1,0 +1,326 @@
+body {
+    background: linear-gradient(135deg, #e9f0fa 0%, #c9e0f7 50%, #f5fafd 100%);
+    min-height: 100vh;
+    margin: 0;
+    font-family: 'Inter', 'Roboto', Arial, sans-serif;
+}
+
+.attendance-section {
+    background: linear-gradient(120deg, #ffffff 60%, #e3f0ff 100%);
+    padding: 2.5rem 2.5rem 2rem 2.5rem;
+    border-radius: 22px;
+    box-shadow: 0 8px 32px rgba(60, 100, 180, 0.13), 0 2px 8px rgba(0,0,0,0.06);
+    max-width: 900px;
+    margin: 3.5rem auto 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1.5px solid #e3eafc;
+    position: relative;
+}
+
+.attendance-section h2 {
+    color: #2d3a4b;
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.5px;
+    text-shadow: 0 2px 8px rgba(79,140,255,0.07);
+}
+
+.status-message {
+    background: linear-gradient(90deg, #e3f0ff 0%, #f7fbff 100%);
+    color: #2d3a4b;
+    padding: 0.7rem 1rem;
+    border-radius: 7px;
+    margin-bottom: 1.1rem;
+    font-size: 1rem;
+    text-align: center;
+    border: 1px solid #b3d4fc;
+    box-shadow: 0 1px 4px rgba(79,140,255,0.06);
+}
+
+.filter-row {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+    margin-bottom: 1.2rem;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.filter-row select {
+    min-width: 220px;
+    font-size: 1.05rem;
+    padding: 0.7rem 1rem;
+    border-radius: 8px;
+    border: 1.5px solid #e3eafc;
+    background: #f7fbff;
+}
+
+.filter-btn, .reset-btn, .download-btn {
+    background: linear-gradient(90deg, #4f8cff 0%, #6ed6ff 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.7rem 1.5rem;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+    margin-right: 0.2rem;
+}
+
+.reset-btn, .download-btn {
+    background: #e3eafc;
+    color: #4f8cff;
+    font-weight: 600;
+    margin-right: 0.2rem;
+}
+
+.reset-btn:hover, .download-btn:hover {
+    background: #d0e2ff;
+    color: #0f4c81;
+}
+
+.filter-btn:hover {
+    background: linear-gradient(90deg, #6ed6ff 0%, #4f8cff 100%);
+}
+
+.event-details-row {
+    display: flex;
+    gap: 0.7rem;
+    width: 100%;
+    margin-bottom: 1.2rem;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+.event-details-row input {
+    flex: 1 1 120px;
+    min-width: 120px;
+    max-width: 180px;
+    background: #f7fbff;
+    border: 1.5px solid #e3eafc;
+    border-radius: 8px;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.98rem;
+    color: #2d3a4b;
+    margin-bottom: 0.2rem;
+}
+
+.event-details-row input[readonly] {
+    background: #f7fbff;
+    color: #888;
+    font-weight: 500;
+}
+
+.attendance-register-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 0.7rem;
+    font-weight: 700;
+    color: #0f4c81;
+    font-size: 1.1rem;
+}
+
+.add-member-btn, .remove-member-btn {
+    background: linear-gradient(90deg, #4f8cff 0%, #6ed6ff 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.6rem 1.2rem;
+    margin-left: 0.5rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.remove-member-btn {
+    background: #e3eafc;
+    color: #4f8cff;
+}
+
+.add-member-btn:hover {
+    background: linear-gradient(90deg, #6ed6ff 0%, #4f8cff 100%);
+}
+
+.remove-member-btn:hover {
+    background: #d0e2ff;
+    color: #0f4c81;
+}
+
+#attendanceRows {
+    width: 100%;
+    margin-bottom: 1.2rem;
+}
+
+.attendance-row {
+    display: flex;
+    gap: 0.7rem;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    background: #f7fbff;
+    border-radius: 8px;
+    padding: 0.5rem 0.5rem;
+    box-shadow: 0 1px 4px rgba(79,140,255,0.06);
+}
+
+.attendance-row input, .attendance-row select {
+    padding: 0.5rem 0.7rem;
+    border: 1.2px solid #e3eafc;
+    border-radius: 7px;
+    font-size: 0.97rem;
+    min-width: 80px;
+    max-width: 140px;
+}
+
+.attendance-row label {
+    font-size: 0.95rem;
+    color: #0f4c81;
+    font-weight: 500;
+    margin-right: 0.3rem;
+}
+
+.attendance-row .new-member-checkbox {
+    margin-left: 0.5rem;
+    accent-color: #4f8cff;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1.2rem;
+    margin-top: 0.7rem;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.save-btn {
+    background: linear-gradient(90deg, #4f8cff 0%, #6ed6ff 100%);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.13rem;
+    font-weight: 700;
+    padding: 0.85rem 2.2rem;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(79,140,255,0.08);
+}
+
+.save-btn:hover {
+    background: linear-gradient(90deg, #6ed6ff 0%, #4f8cff 100%);
+    box-shadow: 0 4px 16px rgba(79,140,255,0.12);
+}
+
+.close-btn {
+    background: #e3eafc;
+    color: #4f8cff;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.13rem;
+    padding: 0.85rem 2.2rem;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    transition: background 0.2s, color 0.2s;
+    box-shadow: 0 1px 4px rgba(79,140,255,0.06);
+}
+
+.close-btn:hover {
+    background: #d0e2ff;
+    color: #0f4c81;
+}
+
+/* Responsive Styles */
+@media (max-width: 900px) {
+    .attendance-section {
+        max-width: 99vw;
+        padding: 2rem 1.2rem 1.2rem 1.2rem;
+        margin: 2rem auto 0 auto;
+    }
+    .attendance-section h2 {
+        font-size: 1.3rem;
+    }
+    .event-details-row input {
+        font-size: 0.95rem;
+        min-width: 90px;
+        max-width: 120px;
+    }
+}
+
+@media (max-width: 768px) {
+    .attendance-section {
+        max-width: 99vw;
+        padding: 1.2rem 0.7rem 1rem 0.7rem;
+        margin: 1.2rem auto 0 auto;
+        border-radius: 14px;
+    }
+    .attendance-section h2 {
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+    }
+    .event-details-row {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    .event-details-row input {
+        min-width: 80px;
+        max-width: 100px;
+        font-size: 0.92rem;
+    }
+    .attendance-row {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    .attendance-row input, .attendance-row select {
+        min-width: 70px;
+        max-width: 100px;
+        font-size: 0.92rem;
+    }
+    .form-actions {
+        gap: 0.7rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .attendance-section {
+        padding: 0.7rem 0.3rem 0.7rem 0.3rem;
+        margin: 0.7rem auto 0 auto;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(60, 100, 180, 0.10);
+    }
+    .attendance-section h2 {
+        font-size: 1rem;
+        margin-bottom: 0.7rem;
+    }
+    .status-message {
+        font-size: 0.92rem;
+        padding: 0.5rem 0.7rem;
+    }
+    .event-details-row input {
+        font-size: 0.9rem;
+        min-width: 60px;
+        max-width: 90px;
+    }
+    .attendance-row input, .attendance-row select {
+        font-size: 0.9rem;
+        min-width: 60px;
+        max-width: 90px;
+    }
+    .form-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: stretch;
+    }
+    .save-btn, .close-btn {
+        width: 100%;
+        font-size: 0.95rem;
+        padding: 0.7rem 0;
+        border-radius: 7px;
+    }
+}

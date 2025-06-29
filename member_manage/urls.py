@@ -36,5 +36,6 @@ urlpatterns = [
     path('api/instructors/<int:instructor_id>/', views.api_instructor_detail, name='api_instructor_detail'),
     path('api/instructors_update/<int:instructor_id>/', views.api_instructor_update, name='api_instructor_update'),
     path('events/add/', views.add_event, name='add_event'),
+    path('events/attendance/', views.record_attendance, name='record_attendance'),
     # ... other URLs ...
 ]

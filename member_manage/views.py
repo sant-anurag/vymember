@@ -1716,3 +1716,88 @@ def add_event(request):
             message = "All fields are required."
     conn.close()
     return render(request, 'add_event.html', {'instructors': instructors, 'message': message})
+
+from django.shortcuts import render, redirect
+from django.db import connection
+from django.utils.datastructures import MultiValueDictKeyError
+
+def record_attendance(request):
+    # Fetch all events for dropdown
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, event_name, event_date FROM event_registrations")
+    events = [{'id': row[0], 'event_name': row[1], 'event_date': row[2]} for row in cursor.fetchall()]
+
+    selected_event_id = request.GET.get('event_id') or request.POST.get('event_id')
+    selected_event = None
+    message = None
+
+    # Fetch event details if selected
+    if selected_event_id:
+        cursor.execute("""
+            SELECT e.id, e.event_name, e.event_date, e.instructor_id, i.name, e.location, e.state, e.district, e.country, e.total_attendance
+            FROM event_registrations e
+            LEFT JOIN instructors i ON e.instructor_id = i.id
+            WHERE e.id = %s
+        """, [selected_event_id])
+        row = cursor.fetchone()
+        if row:
+            selected_event = {
+                'id': row[0], 'event_name': row[1], 'event_date': row[2],
+                'instructor_id': row[3], 'instructor_name': row[4] or '',
+                'location': row[5] or '', 'state': row[6] or '', 'district': row[7] or '',
+                'country': row[8] or '', 'total_attendance': row[9] or 0
+            }
+
+    # Handle attendance register POST
+    if request.method == 'POST' and selected_event:
+        # Parse dynamic member rows
+        members = []
+        for key in request.POST:
+            if key.startswith('name_'):
+                idx = key.split('_')[1]
+                try:
+                    name = request.POST[f'name_{idx}'].strip()
+                    age = request.POST.get(f'age_{idx}', '').strip()
+                    contact = request.POST.get(f'contact_{idx}', '').strip()
+                    gender = request.POST.get(f'gender_{idx}', '').strip()
+                    address = request.POST.get(f'address_{idx}', '').strip()
+                    is_new = request.POST.get(f'new_member_{idx}', '') == '1'
+                    members.append({
+                        'name': name, 'age': age, 'contact': contact,
+                        'gender': gender, 'address': address, 'is_new': is_new
+                    })
+                except MultiValueDictKeyError:
+                    continue
+
+        # Save new members and count
+        new_member_count = 0
+
+        for m in members:
+            if m['is_new']:
+                cursor.execute("""
+                    INSERT INTO members (name, number, age, gender, address, state, district, country, instructor_id, date_of_initiation)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """, [
+                    m['name'], m['contact'], m['age'], m['gender'], m['address'],
+                    selected_event['state'], selected_event['district'], selected_event['country'],
+                    selected_event['instructor_id'], selected_event['event_date']
+                ])
+                new_member_count += 1
+
+        # Update total_attendance
+        cursor.execute("""
+            UPDATE event_registrations
+            SET total_attendance = total_attendance + %s
+            WHERE id = %s
+        """, [len(members), selected_event['id']])
+        conn.commit()
+        conn.close()
+        message = f"Attendance saved. {new_member_count} new member(s) registered successfully."
+
+    return render(request, 'record_attendance.html', {
+        'events': events,
+        'selected_event': selected_event,
+        'selected_event_id': str(selected_event_id) if selected_event_id else '',
+        'message': message
+    })
