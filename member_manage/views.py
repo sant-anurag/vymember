@@ -1690,6 +1690,9 @@ def add_event(request):
         instructor_id = request.POST.get('instructor_id')
         coordinator = request.POST.get('event_coordinator')
         location = request.POST.get('event_location')
+        country = request.POST.get('event_country')
+        state = request.POST.get('event_state')
+        district = request.POST.get('event_district')
         # Validate inputs
         if not event_name or not event_date or not instructor_id:
             message = "Event name, date, and instructor are required."
@@ -1703,9 +1706,9 @@ def add_event(request):
 
         if event_name and event_date and instructor_id:
             cursor.execute("""
-                INSERT INTO event_registrations (event_name, event_date, instructor_id,coordinator,location)
-                VALUES (%s, %s, %s,%s, %s)
-            """, [event_name, event_date, instructor_id,coordinator,location])
+                INSERT INTO event_registrations (event_name, event_date, instructor_id,coordinator,location,state, district, country)
+                VALUES (%s, %s, %s,%s, %s, %s, %s, %s)
+            """, [event_name, event_date, instructor_id,coordinator,location,state, district, country])
             conn.commit()
             message = "Event registered successfully."
             return render(request, 'add_event.html', {'instructors': instructors, 'message': message})

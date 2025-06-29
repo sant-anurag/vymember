@@ -93,6 +93,9 @@ class DBInitializer:
             coordinator VARCHAR(255),
             total_attendance INT DEFAULT 0,
             location VARCHAR(255),
+            state VARCHAR(100),
+            district VARCHAR(100),
+            country VARCHAR(100),
             description TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (instructor_id) REFERENCES instructors(id)
