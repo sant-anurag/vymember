@@ -1,0 +1,53 @@
+{% extends "home.html" %}
+    {% load static %}
+    {% block main_content %}
+    <link rel="stylesheet" href="{% static 'css/add_event.css' %}">
+    <section class="event-section">
+        <h2>Add New Event</h2>
+        {% if message %}
+            <div class="status-message">{{ message }}</div>
+        {% endif %}
+        <form id="eventForm" method="post" action="{% url 'add_event' %}">
+            {% csrf_token %}
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="event_name">Event Name</label>
+                    <input type="text" name="event_name" id="event_name" required />
+                </div>
+                <div class="form-group">
+                    <label for="event_date">Event Date</label>
+                    <input type="date" name="event_date" id="event_date" required />
+                </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                  <label for="event_coordinator">Event Coordinator</label>
+                  <input type="text" name="event_coordinator" id="event_coordinator" required />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                  <label for="event_location">Event Location</label>
+                  <input type="text" name="event_location" id="event_location" required />
+              </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="instructor_id">Event Instructor</label>
+                    <select name="instructor_id" id="instructor_id" required>
+                        <option value="">Select Instructor</option>
+                        {% for instructor in instructors %}
+                            <option value="{{ instructor.id }}">{{ instructor.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit">Save</button>
+                <a href="{% url 'dashboard' %}" class="close-btn">Close</a>
+            </div>
+        </form>
+    </section>
+    <script src="{% static 'js/add_event.js' %}"></script>
+    {% endblock %}
+

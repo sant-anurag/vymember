@@ -84,6 +84,20 @@ class DBInitializer:
                 FOREIGN KEY(member_id) REFERENCES members(id)
             )
         ''')
+        cur.execute('''
+        CREATE TABLE IF NOT EXISTS event_registrations (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            event_name VARCHAR(255) NOT NULL,
+            event_date DATE NOT NULL,
+            instructor_id INT,
+            coordinator VARCHAR(255),
+            total_attendance INT DEFAULT 0,
+            location VARCHAR(255),
+            description TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (instructor_id) REFERENCES instructors(id)
+        );
+        ''')
         conn.commit()
         cur.close()
         conn.close()

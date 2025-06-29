@@ -1672,3 +1672,44 @@ def api_instructor_update(request, instructor_id):
             return JsonResponse({'success': True})
         except Exception as e:
             return JsonResponse({'success': False, 'message': str(e)})
+
+from django.shortcuts import render, redirect
+from django.db import connection
+
+def add_event(request):
+    # Fetch instructors for dropdown
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, name FROM instructors WHERE is_active=1")
+    instructors = [{'id': row[0], 'name': row[1]} for row in cursor.fetchall()]
+
+    message = None
+    if request.method == 'POST':
+        event_name = request.POST.get('event_name')
+        event_date = request.POST.get('event_date')
+        instructor_id = request.POST.get('instructor_id')
+        coordinator = request.POST.get('event_coordinator')
+        location = request.POST.get('event_location')
+        # Validate inputs
+        if not event_name or not event_date or not instructor_id:
+            message = "Event name, date, and instructor are required."
+        else:
+            # Insert event registration
+            cursor.execute("SELECT COUNT(*) FROM event_registrations WHERE event_name = %s AND event_date = %s AND location =%s", (event_name, event_date,location))
+            if cursor.fetchone()[0] > 0:
+                message = "An event with this date, name,and location already exists."
+                conn.close()
+                return render(request, 'add_event.html', {'instructors': instructors, 'message': message})
+
+        if event_name and event_date and instructor_id:
+            cursor.execute("""
+                INSERT INTO event_registrations (event_name, event_date, instructor_id,coordinator,location)
+                VALUES (%s, %s, %s,%s, %s)
+            """, [event_name, event_date, instructor_id,coordinator,location])
+            conn.commit()
+            message = "Event registered successfully."
+            return render(request, 'add_event.html', {'instructors': instructors, 'message': message})
+        else:
+            message = "All fields are required."
+    conn.close()
+    return render(request, 'add_event.html', {'instructors': instructors, 'message': message})

@@ -35,5 +35,6 @@ urlpatterns = [
     path('dashboard/api/metrics/', views.dashboard_metrics_api, name='dashboard_metrics_api'),
     path('api/instructors/<int:instructor_id>/', views.api_instructor_detail, name='api_instructor_detail'),
     path('api/instructors_update/<int:instructor_id>/', views.api_instructor_update, name='api_instructor_update'),
+    path('events/add/', views.add_event, name='add_event'),
     # ... other URLs ...
 ]
