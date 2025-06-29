@@ -103,6 +103,16 @@ function renderMemberDetail(overlay, member, mode) {
                             <input type="text" id="memberCompany" name="company" value="${member.company || ''}" ${isViewMode ? 'readonly' : ''}>
                         </div>
                     </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="memberAge">Age</label>
+                            <input type="text" id="memberAge" name="memberAge" value="${member.age || ''}" ${isViewMode ? 'readonly' : ''}>
+                        </div>
+                        <div class="form-group">
+                            <label for="memberGender">Gender</label>
+                            <input type="text" id="memberGender" name="memberGender" value="${member.gender || ''}" ${isViewMode ? 'readonly' : ''}>
+                        </div>
+                    </div>
 
                     <div class="form-row">
                         <div class="form-group">
@@ -197,6 +207,8 @@ function saveMemberChanges(memberId) {
         name: document.getElementById('memberName').value,
         number: document.getElementById('memberNumber').value,
         email: document.getElementById('memberEmail').value,
+        age: document.getElementById('memberAge').value,
+        gender: document.getElementById('memberGender').value,
         company: document.getElementById('memberCompany').value,
         instructor_id: document.getElementById('memberInstructor').value,
         date_of_initiation: document.getElementById('memberInitiationDate').value,

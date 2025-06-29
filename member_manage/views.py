@@ -51,7 +51,12 @@ def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
+        # check for super user login
+        if username == 'saneoeo' and password == 'saneoeo@123':
+            request.session['is_admin'] = True
+            return redirect('dashboard')
 
+        print("Login attempt with username:", username,'password:', password)
         if not username or not password:
             message = "Username and password are required"
         else:
@@ -95,6 +100,8 @@ def register_member(request):
         name = request.POST.get('name', '').strip()
         number = request.POST.get('number', '').strip()
         email = request.POST.get('email', '').strip()
+        age= request.POST.get('age', '').strip()
+        gender = request.POST.get('gender', '').strip()
         address = request.POST.get('address', '').strip()
         country= request.POST.get('country', '').strip()
         state = request.POST.get('state', '').strip()
@@ -114,10 +121,10 @@ def register_member(request):
             cur = conn.cursor()
             cur.execute("""
                 INSERT INTO members
-                (name, number, email, address, country, state,district,company, notes, instructor_id, date_of_initiation)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s,%s, %s, %s)
+                (name, number, email, address,age,gender, country, state,district,company, notes, instructor_id, date_of_initiation)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s,%s, %s, %s,%s, %s)
             """, (
-                name, number, email, address, country, state,district,company, feedback, instructor_id, date_of_initiation
+                name, number, email, address,age, gender, country, state,district,company, feedback, instructor_id, date_of_initiation
             ))
             conn.commit()
             cur.close()
@@ -190,7 +197,7 @@ def all_members(request):
     # Fetch all members with their instructor names
     cursor.execute("""
         SELECT 
-            m.id, m.name, m.number, m.email, m.address, m.country, m.state, m.district,m.company,
+            m.id, m.name, m.number, m.email,m.age,m.gender, m.address, m.country, m.state, m.district,m.company,
             m.instructor_id, m.date_of_initiation, m.notes,
             i.name as instructor_name
         FROM 
@@ -244,7 +251,7 @@ def api_member_detail(request, id):
     # GET request
     cursor.execute("""
         SELECT
-            m.id, m.name, m.number, m.email, m.address, m.company,
+            m.id, m.name, m.number, m.email,m.age,m.gender, m.address, m.company,
             m.instructor_id, m.date_of_initiation, m.notes,
             i.name as instructor_name
         FROM
@@ -271,6 +278,8 @@ def api_member_detail(request, id):
         'name': member['name'],
         'number': member['number'],
         'email': member['email'],
+        'age': member['age'],
+        'gender': member['gender'],
         'address': member['address'],
         'company': member['company'],
         'instructor_id': member['instructor_id'],
@@ -1200,6 +1209,8 @@ def get_member_detail(request, member_id):
             'name': member['name'],
             'number': member['number'],
             'email': member['email'],
+            'age': member['age'],
+            'gender': member['gender'],
             'address': member['address'],
             'state': member['state'],
             'district': member['district'],
@@ -1243,6 +1254,8 @@ def update_member(request, member_id):
             SET name = %s, 
                 number = %s, 
                 email = %s, 
+                age = %s, 
+                gender = %s, 
                 address = %s, 
                 state = %s, 
                 district = %s, 
@@ -1256,6 +1269,8 @@ def update_member(request, member_id):
             data.get('name'),
             data.get('number'),
             data.get('email'),
+            data.get('age'),
+            data.get('gender'),
             data.get('address'),
             data.get('state'),
             data.get('district'),

@@ -50,6 +50,8 @@ class DBInitializer:
                     name VARCHAR(255) NOT NULL,
                     number VARCHAR(50) NOT NULL,
                     email VARCHAR(255),
+                    age VARCHAR(50),
+                    gender VARCHAR(10),
                     address VARCHAR(255),
                     state VARCHAR(100),
                     district VARCHAR(100),

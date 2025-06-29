@@ -370,7 +370,7 @@
         max-width: 160px;
     }
     .modal-content {
-        min-width: 320px;
+        min-width: 280px;
         max-width: 90vw;
         padding: 24px 12px 16px 12px;
     }
