@@ -23,9 +23,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 <option value="Other">Other</option>
             </select>
             <input type="text" name="address_${rowCount}" placeholder="Address" required />
-            <label>
+            <label style="display: flex; align-items: center; gap: 0.3rem;">
                 <input type="checkbox" class="new-member-checkbox" name="new_member_${rowCount}" value="1" />
-                New Member
+                New
             </label>
         `;
         rowsContainer.appendChild(row);
