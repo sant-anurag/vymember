@@ -54,7 +54,7 @@ body {
 
 .logo span {
     font-weight: 700;
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     color: #fff;
     letter-spacing: 0.5px;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
@@ -66,6 +66,30 @@ body {
     padding: 0.5rem 0;
     margin: 0;
 
+}
+.logo-text-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.1;
+}
+
+.logo-main {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #fff;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.logo-sub {
+    font-weight: 400;
+    font-size: 1rem;
+    color: #fff;
+    opacity: 0.85;
+    margin-top: 2px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .menu > li {
@@ -571,9 +595,9 @@ footer {
     }
 
     .user-info span {
-        font-weight: 600;
+        font-weight: 500;
         color: #4f8cff;
-        font-size: 1rem;
+        font-size: 0.9rem;
         order: 1;
     }
 
