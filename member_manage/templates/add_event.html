@@ -32,17 +32,23 @@
             </div>
             <div class="form-group">
                 <label for="event_country">Country</label>
-                <input type="text" name="event_country" id="event_country" required/>
+                <select name="event_country" id="event_country" required>
+                    <option value="">Select Country</option>
+                </select>
             </div>
         </div>
         <div class="form-row">
             <div class="form-group">
                 <label for="event_state">State</label>
-                <input type="text" name="event_state" id="event_state" required/>
+                <select name="event_state" id="event_state" required>
+                    <option value="">Select State</option>
+                </select>
             </div>
             <div class="form-group">
                 <label for="event_district">District</label>
-                <input type="text" name="event_district" id="event_district" required/>
+                <select name="event_district" id="event_district" required>
+                    <option value="">Select District</option>
+                </select>
             </div>
         </div>
         <div class="form-row">
@@ -65,4 +71,3 @@
 </section>
 <script src="{% static 'js/add_event.js' %}"></script>
 {% endblock %}
-
