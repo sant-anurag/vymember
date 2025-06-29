@@ -37,5 +37,8 @@ urlpatterns = [
     path('api/instructors_update/<int:instructor_id>/', views.api_instructor_update, name='api_instructor_update'),
     path('events/add/', views.add_event, name='add_event'),
     path('events/attendance/', views.record_attendance, name='record_attendance'),
+    path('ajax/countries/', views.get_countries, name='ajax_countries'),
+    path('ajax/states/', views.get_states, name='ajax_states'),
+    path('ajax/cities/', views.get_cities, name='ajax_cities'),
     # ... other URLs ...
 ]

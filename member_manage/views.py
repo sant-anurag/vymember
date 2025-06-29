@@ -1801,3 +1801,41 @@ def record_attendance(request):
         'selected_event_id': str(selected_event_id) if selected_event_id else '',
         'message': message
     })
+
+# views.py
+from django.http import JsonResponse
+from django.db import connection
+
+def get_countries(request):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT id, name FROM Country ORDER BY name")
+    countries = [{'id': row[0], 'name': row[1]} for row in cursor.fetchall()]
+    conn.close()
+    return JsonResponse({'countries': countries})
+
+def get_states(request):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    country_id = request.GET.get('country_id')
+    if not country_id:
+        return JsonResponse({'states': []})
+
+    cursor.execute("SELECT id, name FROM State WHERE country_id = %s ORDER BY name", [country_id])
+    states = [{'id': row[0], 'name': row[1]} for row in cursor.fetchall()]
+    conn.close()
+    return JsonResponse({'states': states})
+
+def get_cities(request):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    state_id = request.GET.get('state_id')
+    if not state_id:
+        return JsonResponse({'cities': []})
+
+    cursor.execute("SELECT id, name FROM City WHERE state_id = %s ORDER BY name", [state_id])
+    cities = [{'id': row[0], 'name': row[1]} for row in cursor.fetchall()]
+    conn.close()
+
+    return JsonResponse({'cities': cities})

@@ -1,4 +1,6 @@
 import mysql.connector
+import os
+import json
 
 class DBInitializer:
     def __init__(self, host, user, password, database):
@@ -101,6 +103,108 @@ class DBInitializer:
             FOREIGN KEY (instructor_id) REFERENCES instructors(id)
         );
         ''')
+
+        # Create tables
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS Country (
+                id INT PRIMARY KEY AUTO_INCREMENT,
+                name VARCHAR(100) UNIQUE NOT NULL
+            )
+        ''')
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS State (
+                id INT PRIMARY KEY AUTO_INCREMENT,
+                name VARCHAR(100) NOT NULL,
+                country_id INT,
+                UNIQUE(name, country_id),
+                FOREIGN KEY (country_id) REFERENCES Country(id) ON DELETE CASCADE
+            )
+        ''')
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS City (
+                id INT PRIMARY KEY AUTO_INCREMENT,
+                name VARCHAR(100) NOT NULL,
+                state_id INT,
+                UNIQUE(name, state_id),
+                FOREIGN KEY (state_id) REFERENCES State(id) ON DELETE CASCADE
+            )
+        ''')
         conn.commit()
+
+        # Import data from JSON files
+        # Check if Country table is empty before importing
+        cur.execute("SELECT COUNT(*) FROM Country")
+        if cur.fetchone()[0] == 0:
+            self.import_countries(cur, conn)
+
+        # Check if State table is empty before importing
+        cur.execute("SELECT COUNT(*) FROM State")
+        if cur.fetchone()[0] == 0:
+            self.import_states(cur, conn)
+
+        # Check if City table is empty before importing
+        cur.execute("SELECT COUNT(*) FROM City")
+        if cur.fetchone()[0] == 0:
+            self.import_cities(cur, conn)
+
         cur.close()
         conn.close()
+
+    def import_countries(self, cur, conn):
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        countries_path = os.path.join(base_dir, 'member_manage', 'static', 'data', 'countries.json')
+        with open(countries_path, encoding='utf-8') as f:
+            countries = json.load(f)
+        for c in countries:
+            name = c.get('name') or c.get('country_name')
+            if name:
+                try:
+                    cur.execute("INSERT IGNORE INTO Country (name) VALUES (%s)", (name,))
+                except Exception as e:
+                    print(f"Error inserting country {name}: {e}")
+        conn.commit()
+        print("Countries imported successfully.")
+
+    def import_states(self, cur, conn):
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        states_path = os.path.join(base_dir, 'member_manage','static', 'data', 'states.json')
+        cur.execute("SELECT id, name FROM Country")
+        country_map = {name: cid for cid, name in cur.fetchall()}
+        with open(states_path, encoding='utf-8') as f:
+            states = json.load(f)
+        for s in states:
+            name = s.get('name') or s.get('state_name')
+            country_name = s.get('country_name')
+            country_id = country_map.get(country_name)
+            if name and country_id:
+                try:
+                    cur.execute(
+                        "INSERT IGNORE INTO State (name, country_id) VALUES (%s, %s)",
+                        (name, country_id)
+                    )
+                except Exception as e:
+                    print(f"Error inserting state {name}: {e}")
+        conn.commit()
+        print("States imported successfully.")
+
+    def import_cities(self, cur, conn):
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        cities_path = os.path.join(base_dir, 'member_manage','static', 'data', 'cities.json')
+        cur.execute("SELECT id, name FROM State")
+        state_map = {name: sid for sid, name in cur.fetchall()}
+        with open(cities_path, encoding='utf-8') as f:
+            cities = json.load(f)
+        for c in cities:
+            name = c.get('name') or c.get('city_name')
+            state_name = c.get('state_name')
+            state_id = state_map.get(state_name)
+            if name and state_id:
+                try:
+                    cur.execute(
+                        "INSERT IGNORE INTO City (name, state_id) VALUES (%s, %s)",
+                        (name, state_id)
+                    )
+                except Exception as e:
+                    print(f"Error inserting city {name}: {e}")
+        conn.commit()
+        print("Cities imported successfully.")
