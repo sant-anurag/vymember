@@ -39,8 +39,6 @@ def get_db_connection():
         database=settings.DB_NAME
     )
 
-
-
 def login_view(request):
     """
     Handle user login
@@ -84,7 +82,7 @@ def login_view(request):
                 # Redirect to dashboard or home
                 return redirect('dashboard')
             else:
-                message = "Invalid username or password"
+                message = "Invalid username or password.Please try again."
 
     return render(request, 'login.html', {'message': message})
 
