@@ -43,15 +43,18 @@ def login_view(request):
     """
     Handle user login
     """
+    print("Login view accessed")
     message = None
     db_initializer = DBInitializer(settings.DB_HOST, settings.DB_USER, settings.DB_PASSWORD, settings.DB_NAME)
     db_initializer.initialize()
     if request.method == 'POST':
+        print("Login POST request received")
         username = request.POST.get('username')
         password = request.POST.get('password')
         # check for super user login
         if username == 'saneoeo' and password == 'saneoeo@123':
             request.session['is_admin'] = True
+            request.session['is_authenticated'] = True
             return redirect('dashboard')
 
         print("Login attempt with username:", username,'password:', password)
@@ -78,6 +81,7 @@ def login_view(request):
                 request.session['user_id'] = user['id']
                 request.session['username'] = user['username']
                 request.session['is_admin'] = user['is_admin']
+                request.session['is_authenticated'] = True
 
                 # Redirect to dashboard or home
                 return redirect('dashboard')
@@ -87,6 +91,9 @@ def login_view(request):
     return render(request, 'login.html', {'message': message})
 
 def home(request):
+    # check is user is authenticated
+    if not request.session.get('is_authenticated'):
+        return redirect('login')
     print("Home view accessed")
     instructors = get_instructors()
     message = request.session.pop('message', None)
@@ -94,6 +101,10 @@ def home(request):
 
 @csrf_exempt
 def register_member(request):
+    # check is user is authenticated
+    if not request.session.get('is_authenticated'):
+        return redirect('login')
+
     if request.method == 'POST':
         name = request.POST.get('name', '').strip()
         number = request.POST.get('number', '').strip()
@@ -149,6 +160,9 @@ def get_instructors():
 
 
 def add_instructor(request):
+    # check is user is authenticated
+    if not request.session.get('is_authenticated'):
+        return redirect('login')
     message = None
     if request.method == 'POST':
         name = request.POST.get('name', '').strip()
@@ -179,6 +193,9 @@ def add_instructor(request):
     return render(request, 'add_instructor.html', {'message': message})
 
 def all_members(request):
+    # check is user is authenticated
+    if not request.session.get('is_authenticated'):
+        return redirect('login')
     print("All members view accessed")
     # Get database connection
     conn = get_db_connection()
@@ -331,6 +348,9 @@ def api_members(request):
     return JsonResponse(members_list, safe=False)
 
 def all_instructors(request):
+    # check is user is authenticated
+    if not request.session.get('is_authenticated'):
+        return redirect('login')
     print("All instructors view accessed")
     success_message = request.session.pop('success_message', None)
 
@@ -390,6 +410,7 @@ def all_instructors(request):
     return render(request, 'all_instructors.html', context)
 
 def register_user(request):
+
     if request.method == 'POST':
         # Generate years from 1900 to current year
         import datetime
@@ -465,6 +486,9 @@ def dictfetchall(cursor):
     return [dict(zip(columns, row)) for row in cursor.fetchall()]
 
 def instructor_infographics(request):
+    # check is user is authenticated
+    if not request.session.get('is_authenticated'):
+        return redirect('login')
     """View for instructor performance infographics page"""
     # Get database connection
     conn = get_db_connection()
@@ -1045,6 +1069,9 @@ def api_download_instructor_report(request):
 
 @csrf_exempt
 def upload_members(request):
+    # check is user is authenticated
+    if not request.session.get('is_authenticated'):
+        return redirect('login')
     if request.method == 'GET':
         return render(request, 'upload_members.html')
     if request.method == 'POST' and request.FILES.get('file'):
@@ -1092,6 +1119,9 @@ def upload_members(request):
 
 
 def change_password(request):
+    # check is user is authenticated
+    if not request.session.get('is_authenticated'):
+        return redirect('login')
     """View for changing user passwords"""
     # Get a database connection
     conn = get_db_connection()
@@ -1153,9 +1183,16 @@ def logout_view(request):
     """
     Logs out the user and terminates the session
     """
+    # check is user is authenticated
+    if not request.session.get('is_authenticated'):
+        return redirect('login')
     # Clear session variables
     if 'user_id' in request.session:
         del request.session['user_id']
+    if 'is_authenticated' in request.session:
+        del request.session['is_authenticated']
+    if 'is_admin' in request.session:
+        del request.session['is_admin']
 
     if 'username' in request.session:
         del request.session['username']
@@ -1313,6 +1350,9 @@ from datetime import datetime
 
 def create_user(request):
     """View for creating a new user with admin privileges"""
+    # check is user is authenticated
+    if not request.session.get('is_authenticated'):
+        return redirect('login')
     message = None
     success = False
     print("Create user view accessed")
@@ -1511,6 +1551,9 @@ from django.http import JsonResponse
 from datetime import datetime, timedelta
 
 def dashboard(request):
+    # check is user is authenticated
+    if not request.session.get('is_authenticated'):
+        return redirect('login')
     # Stat cards
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
