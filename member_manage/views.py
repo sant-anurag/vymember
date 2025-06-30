@@ -27,7 +27,16 @@ import openpyxl
 
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
+import mysql.connector
+import secrets
+import hashlib
+import datetime
+from django.shortcuts import render, redirect
+from django.conf import settings
+from django.urls import reverse
 
+# In-memory token store for demo (use DB or cache in production)
+RESET_TOKENS = {}
 
 # Local imports
 from .db_initializer import *
@@ -1921,3 +1930,77 @@ def get_cities(request):
     conn.close()
 
     return JsonResponse({'cities': cities})
+
+def session_timeout(request):
+    return render(request, 'session_timeout.html')
+
+
+
+def get_db_conn():
+    return mysql.connector.connect(
+        host=settings.DB_HOST,
+        user=settings.DB_USER,
+        password=settings.DB_PASSWORD,
+        database=settings.DB_NAME
+    )
+
+def forgot_password(request):
+    message = None
+    message_type = "error"
+    if request.method == "POST":
+        email = request.POST.get("email")
+        conn = get_db_conn()
+        cur = conn.cursor(dictionary=True)
+        cur.execute("SELECT id, username FROM users WHERE email=%s", (email,))
+        user = cur.fetchone()
+        if user:
+            # Generate token
+            token = secrets.token_urlsafe(32)
+            RESET_TOKENS[token] = {
+                "user_id": user["id"],
+                "username": user["username"],
+                "expires": datetime.datetime.now() + datetime.timedelta(hours=1)
+            }
+            # Simulate sending email (show link on page for demo)
+            reset_link = request.build_absolute_uri(reverse('reset_password', args=[token]))
+            message = f"Reset link sent!<br>Your username: <b>{user['username']}</b><br><a href='{reset_link}'>Click here to reset your password</a> (valid for 1 hour)."
+            message_type = "success"
+        else:
+            message = "No user found with that email address."
+        cur.close()
+        conn.close()
+    return render(request, "forgot_password.html", {"message": message, "message_type": message_type})
+
+def reset_password(request, token):
+    info = RESET_TOKENS.get(token)
+    message = None
+    message_type = "error"
+    username = None
+    if not info or info["expires"] < datetime.datetime.now():
+        message = "Invalid or expired reset link."
+        return render(request, "reset_password.html", {"message": message, "message_type": message_type})
+    username = info["username"]
+    if request.method == "POST":
+        pwd = request.POST.get("password")
+        cpwd = request.POST.get("confirm_password")
+        if pwd != cpwd:
+            message = "Passwords do not match."
+        elif len(pwd) < 8:
+            message = "Password must be at least 8 characters."
+        else:
+            # Hash password (simple SHA256 for demo; use bcrypt/argon2 in production)
+            hashed = hashlib.sha256(pwd.encode()).hexdigest()
+            conn = get_db_conn()
+            cur = conn.cursor()
+            cur.execute("UPDATE users SET password=%s WHERE id=%s", (hashed, info["user_id"]))
+            conn.commit()
+            cur.close()
+            conn.close()
+            RESET_TOKENS.pop(token, None)
+            message = "Password reset successful! You can now <a href='%s'>login</a>." % reverse('login')
+            message_type = "success"
+    return render(request, "reset_password.html", {
+        "message": message,
+        "message_type": message_type,
+        "username": username
+    })

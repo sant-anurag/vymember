@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Session Timeout</title>
+    <link rel="stylesheet" href="{% static 'css/session_timeout.css' %}">
+</head>
+<body>
+    <div class="timeout-container">
+        <div class="timeout-card">
+            <div class="timeout-header">
+                <span class="timeout-status">Session Expired</span>
+            </div>
+            <div class="timeout-icon">
+                <img src="{% static 'images/timeout.png' %}" alt="Session Timeout">
+            </div>
+            <div class="timeout-content">
+                <h1>You've been signed out</h1>
+                <p>Your session has expired due to inactivity.<br>Please log in again to continue.</p>
+            </div>
+<div class="timeout-actions">
+    <a href="{% url 'login' %}" class="primary-btn" style="text-decoration:none;display:inline-block;">Login</a>
+</div>
+        </div>
+    </div>
+    <script src="{% static 'js/session_timeout.js' %}"></script>
+</body>
+</html>

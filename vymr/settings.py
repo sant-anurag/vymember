@@ -26,7 +26,8 @@ SECRET_KEY = 'django-insecure-b*xo)15!xtv4u6oohgck9r&35)p6qn(d)@714+^=t!@ahz@mur
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-
+SESSION_COOKIE_AGE = 60  # 15 minutes in seconds
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # Application definition
 
@@ -42,6 +43,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'member_manage.middleware.SessionTimeoutMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',

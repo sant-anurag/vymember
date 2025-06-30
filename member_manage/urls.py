@@ -40,5 +40,8 @@ urlpatterns = [
     path('ajax/countries/', views.get_countries, name='ajax_countries'),
     path('ajax/states/', views.get_states, name='ajax_states'),
     path('ajax/cities/', views.get_cities, name='ajax_cities'),
+    path('session_timeout/', views.session_timeout, name='session_timeout'),
+    path('forgot/', views.forgot_password, name='forgot_password'),
+    path('reset/<str:token>/', views.reset_password, name='reset_password'),
     # ... other URLs ...
 ]

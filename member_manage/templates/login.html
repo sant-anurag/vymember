@@ -20,7 +20,9 @@
       <input type="password" id="password" name="password" placeholder="Password" />
       <button type="submit">Login</button>
       <div class="form-links">
-        <p class="forgot"><a href="#">Forgot Username / Password?</a></p>
+        <p class="forgot">
+          <a href="{% url 'forgot_password' %}">Forgot Username / Password?</a>
+        </p>
         <p class="register"><a href="{% url 'register_user' %}">New User? Register</a></p>
       </div>
     </form>
