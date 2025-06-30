@@ -11,40 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
         statusMessage.style.display = 'none';
     });
 
-    // Form submission
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
 
-        // Form validation
-        if (!validateForm()) {
-            return;
-        }
-
-        // Collect form data
-        const formData = new FormData(form);
-
-        // Send form data to server
-        fetch(form.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showStatusMessage('success', 'User created successfully.');
-                form.reset();
-            } else {
-                showStatusMessage('error', data.message || 'There was an error creating the user. Please try again.');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showStatusMessage('error', 'There was a network error. Please try again later.');
-        });
-    });
 
     function validateForm() {
         const name = document.getElementById('name').value.trim();

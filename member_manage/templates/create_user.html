@@ -9,9 +9,9 @@
 <section class="create-user-section">
   <h2>Create New User</h2>
   {% if message %}
-  <div class="status-message {% if success %}success{% else %}error{% endif %}">
-    {{ message }}
-  </div>
+    <div class="status-message {% if success %}success{% else %}error{% endif %}">
+      {{ message }}
+    </div>
   {% endif %}
   <form class="create-user-form" id="createUserForm" method="post" action="{% url 'create_user' %}">
     {% csrf_token %}

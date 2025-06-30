@@ -19,6 +19,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # Third-party imports
 import mysql.connector
@@ -82,13 +83,41 @@ def login_view(request):
                 request.session['username'] = user['username']
                 request.session['is_admin'] = user['is_admin']
                 request.session['is_authenticated'] = True
-
+                # insert record in login history
+                insert_record_in_login_history(user)
                 # Redirect to dashboard or home
                 return redirect('dashboard')
             else:
                 message = "Invalid username or password.Please try again."
 
     return render(request, 'login.html', {'message': message})
+
+def insert_record_in_login_history(request, user):
+    print("Inserting record in login history for user:", user['username'])
+    # Ensure session_key exists
+    if not request.session.session_key:
+        request.session.save()
+    session_key = request.session.session_key
+    print("Inserting session key:", session_key)
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT INTO logged_in_users (user_id, username, session_key) VALUES (%s, %s, %s)",
+        (user['id'], user['username'], session_key)
+    )
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+
+def list_logged_in_users(request):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT user_id, username, login_time FROM logged_in_users")
+    users = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return JsonResponse({'logged_in_users': users})
 
 def home(request):
     # check is user is authenticated
@@ -1189,6 +1218,12 @@ def logout_view(request):
     # Clear session variables
     if 'user_id' in request.session:
         del request.session['user_id']
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM logged_in_users WHERE user_id = %s", (user_id,))
+        conn.commit()
+        cursor.close()
+        conn.close()
     if 'is_authenticated' in request.session:
         del request.session['is_authenticated']
     if 'is_admin' in request.session:
@@ -1345,21 +1380,31 @@ def delete_member(request, member_id):
 
 
 
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from datetime import datetime
+
+def username_exists(username):
+    """
+    Check if a username already exists in the users table.
+    Returns True if exists, False otherwise.
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT 1 FROM users WHERE username = %s LIMIT 1", (username,))
+    exists = cursor.fetchone() is not None
+    cursor.close()
+    conn.close()
+    return exists
 
 def create_user(request):
     """View for creating a new user with admin privileges"""
-    # check is user is authenticated
     if not request.session.get('is_authenticated'):
         return redirect('login')
+
     message = None
     success = False
     print("Create user view accessed")
 
-    # Connect to database
     conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor()
 
     # Fetch all users for the table
     cursor.execute("""
@@ -1371,8 +1416,7 @@ def create_user(request):
 
     # Set up pagination
     page = request.GET.get('page', 1)
-    paginator = Paginator(all_users, 5)  # Show 5 users per page
-
+    paginator = Paginator(all_users, 5)
     try:
         users = paginator.page(page)
     except PageNotAnInteger:
@@ -1381,7 +1425,6 @@ def create_user(request):
         users = paginator.page(paginator.num_pages)
 
     if request.method == 'POST':
-        # Get form data
         username = request.POST.get('username')
         name = request.POST.get('name')
         email = request.POST.get('email')
@@ -1389,8 +1432,11 @@ def create_user(request):
         confirm_password = request.POST.get('confirm_password')
         user_category = request.POST.get('user_category')
 
-        # Validate passwords match
-        if password != confirm_password:
+        if username_exists(username):
+            print("Username already exists:", username)
+            message = f"Username {username} already exists!"
+            success = False
+        elif password != confirm_password:
             message = "Passwords do not match!"
             success = False
         elif not validate_password_strength(password):
@@ -1398,18 +1444,12 @@ def create_user(request):
             success = False
         else:
             try:
-                # Hash the password
                 hashed_password = hashlib.sha256(password.encode()).hexdigest()
-
-                # Determine is_admin value based on user_category
                 is_admin = 1 if user_category == 'Admin' else 0
-
-                # Insert new user
                 cursor.execute("""
                     INSERT INTO users (username, password, email, is_admin)
                     VALUES (%s, %s, %s, %s)
                 """, (username, hashed_password, email, is_admin))
-
                 conn.commit()
                 message = f"User {username} created successfully!"
                 success = True
@@ -1422,11 +1462,10 @@ def create_user(request):
                 """)
                 all_users = cursor.fetchall()
                 paginator = Paginator(all_users, 5)
-                users = paginator.page(1)  # Go back to first page to show new user
-
+                users = paginator.page(1)
             except mysql.connector.Error as err:
                 conn.rollback()
-                if err.errno == 1062:  # Duplicate entry error
+                if err.errno == 1062:
                     message = f"Username {username} already exists!"
                 else:
                     message = f"Database error: {err}"
@@ -1434,12 +1473,15 @@ def create_user(request):
 
     cursor.close()
     conn.close()
+    print("Users fetched for display:", users.object_list)
+    columns = ['id', 'username', 'email', 'is_admin', 'created_on']
+    user_dicts = [dict(zip(columns, row)) for row in users.object_list]
 
     return render(request, 'create_user.html', {
         'message': message,
         'success': success,
-        'users': users,
-        'page_obj': users
+        'users': user_dicts,      # Pass the page object for pagination
+        'page_obj': users    # For compatibility with Django pagination templates
     })
 
 import json

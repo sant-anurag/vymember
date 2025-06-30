@@ -129,6 +129,16 @@ class DBInitializer:
                 FOREIGN KEY (state_id) REFERENCES State(id) ON DELETE CASCADE
             )
         ''')
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS logged_in_users (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                user_id INT NOT NULL,
+                username VARCHAR(150) NOT NULL,
+                login_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                session_key VARCHAR(255),
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            )
+        ''')
         conn.commit()
 
         # Import data from JSON files
