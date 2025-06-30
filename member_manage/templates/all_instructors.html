@@ -67,6 +67,9 @@
                     <th>Associated Since</th>
                     <th>Updeshta Since</th>
                     <th>Address</th>
+                    <th>City</th>
+                    <th>State</th>
+                    <th>Country</th>
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
@@ -81,6 +84,9 @@
                         <td>{{ instructor.associated_since|default:"-" }}</td>
                         <td>{{ instructor.updeshta_since|default:"-" }}</td>
                         <td>{{ instructor.address|default:"-" }}</td>
+                        <td>{{ instructor.district|default:"-" }}</td>
+                        <td>{{ instructor.state|default:"-" }}</td>
+                        <td>{{ instructor.country|default:"-" }}</td>
                         <td>
                             {% if instructor.is_active %}
                                 <span style="color: #28a745; font-weight: 600;">Active</span>

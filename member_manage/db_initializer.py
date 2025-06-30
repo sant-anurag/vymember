@@ -43,6 +43,9 @@ class DBInitializer:
                 associated_since YEAR,
                 updeshta_since YEAR,
                 address VARCHAR(255),
+                state VARCHAR(100),
+                district VARCHAR(100),
+                country VARCHAR(100),
                 is_active TINYINT(1) DEFAULT 1
             )
         ''')

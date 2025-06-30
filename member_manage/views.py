@@ -209,6 +209,10 @@ def add_instructor(request):
         associated_since = request.POST.get('associated_since')
         updeshta_since = request.POST.get('updeshta_since')
         address = request.POST.get('address', '').strip()
+        country= request.POST.get('ins_country', '').strip()
+        state = request.POST.get('ins_state', '').strip()
+        district = request.POST.get('ins_district', '').strip()
+
         is_active = request.POST.get('is_active', '1')  # Default to active
         if name:
             conn = mysql.connector.connect(
@@ -219,9 +223,9 @@ def add_instructor(request):
             )
             cur = conn.cursor()
             cur.execute("""
-                INSERT INTO instructors (name, age, dop, associated_since, updeshta_since, address)
-                VALUES (%s, %s, %s, %s, %s, %s)
-            """, (name, age or None, dop or None, associated_since or None, updeshta_since or None, address or None))
+                INSERT INTO instructors (name, age, dop, associated_since, updeshta_since, address,state, district, country, is_active)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (name, age or None, dop or None, associated_since or None, updeshta_since or None, address or None,state, district, country, is_active))
             conn.commit()
             cur.close()
             conn.close()
@@ -397,15 +401,26 @@ def all_instructors(request):
     cursor = conn.cursor(dictionary=True)
 
     # Get all instructors with count of members they teach
+
     cursor.execute("""
         SELECT
             i.id, i.name, i.age, i.dop, i.associated_since,
-            i.updeshta_since, i.address,i.is_active,
+            i.updeshta_since, i.address,
+            d.name AS district,
+            s.name AS state,
+            c.name AS country,
+            i.is_active,
             COUNT(m.id) as member_count
         FROM
             instructors i
         LEFT JOIN
             members m ON i.id = m.instructor_id
+        LEFT JOIN
+            country c ON i.country = c.id
+        LEFT JOIN
+            state s ON i.state = s.id
+        LEFT JOIN
+            City d ON i.district = d.id
         GROUP BY
             i.id
         ORDER BY
