@@ -1217,6 +1217,7 @@ def logout_view(request):
         return redirect('login')
     # Clear session variables
     if 'user_id' in request.session:
+        user_id = request.session['user_id']
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute("DELETE FROM logged_in_users WHERE user_id = %s", (user_id,))
