@@ -1,0 +1,94 @@
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #e3e9f7 0%, #f7fafc 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.timeout-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+}
+
+.timeout-card {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(60, 72, 88, 0.18);
+    padding: 40px 36px 32px 36px;
+    max-width: 380px;
+    width: 100%;
+    text-align: center;
+    transition: box-shadow 0.3s;
+}
+
+.timeout-card:hover {
+    box-shadow: 0 12px 40px rgba(60, 72, 88, 0.22);
+}
+
+.timeout-header {
+    margin-bottom: 18px;
+}
+
+.timeout-status {
+    display: inline-block;
+    background: #eaf1fb;
+    color: #2563eb;
+    font-size: 0.95em;
+    font-weight: 600;
+    padding: 6px 18px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+}
+
+.timeout-icon {
+    margin: 18px 0 12px 0;
+}
+
+.timeout-icon img {
+    width: 70px;
+    height: 70px;
+    filter: drop-shadow(0 2px 8px rgba(37,99,235,0.08));
+}
+
+.timeout-content h1 {
+    font-size: 1.35em;
+    color: #1a202c;
+    margin: 10px 0 8px 0;
+    font-weight: 700;
+}
+
+.timeout-content p {
+    color: #4b5563;
+    font-size: 1em;
+    margin-bottom: 22px;
+    line-height: 1.5;
+}
+
+.timeout-actions {
+    margin-top: 10px;
+}
+
+.primary-btn {
+    background: linear-gradient(90deg, #2563eb 0%, #1e40af 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 32px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+    transition: background 0.2s, box-shadow 0.2s;
+}
+
+.primary-btn:hover {
+    background: linear-gradient(90deg, #1e40af 0%, #2563eb 100%);
+    box-shadow: 0 4px 16px rgba(37,99,235,0.12);
+}
