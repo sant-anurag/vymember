@@ -84,7 +84,7 @@ def login_view(request):
                 request.session['is_admin'] = user['is_admin']
                 request.session['is_authenticated'] = True
                 # insert record in login history
-                insert_record_in_login_history(user)
+                insert_record_in_login_history(request,user)
                 # Redirect to dashboard or home
                 return redirect('dashboard')
             else:
@@ -1377,9 +1377,6 @@ def delete_member(request, member_id):
         return JsonResponse({'success': True})
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
-
-
-
 
 def username_exists(username):
     """
