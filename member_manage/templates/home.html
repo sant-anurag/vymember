@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Member Registration</title>
     <link rel="stylesheet" href="{% static 'css/home.css' %}">
@@ -11,185 +11,156 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <button id="sidebarToggle" class="sidebar-toggle" >
-        <i class="fas fa-bars"></i>
-    </button>
-    <div class="sidebar">
-        <div class="logo">
-            <img src="{% static 'images/a.jpg' %}" alt="CRM Logo" />
-            <div style="display: flex; flex-direction: column;">
-                <span>Vihangam Yog</span>
-                <span>Pune</span>
-            </div>
+<button id="sidebarToggle" class="sidebar-toggle">
+    <i class="fas fa-bars"></i>
+</button>
+<div class="sidebar">
+    <div class="logo">
+        <img src="{% static 'images/a.jpg' %}" alt="CRM Logo"/>
+        <div style="display: flex; flex-direction: column;">
+            <span>Vihangam Yog</span>
+            <span>Pune</span>
         </div>
-        <ul class="menu">
-            <li>
-                <a href="{% url 'dashboard' %}"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
-            </li>
-            <li tabindex="0">
-                <a href="#"><i class="fas fa-users"></i>Members <i class="fas fa-chevron-down"></i></a>
-                <ul class="submenu">
-                    <li><a href="{% url 'all_members' %}"><i class="fas fa-list"></i>All Members</a></li>
-                    <li><a href="{% url 'member' %}"><i class="fas fa-user-plus"></i>Add Member</a></li>
-                </ul>
-            </li>
-            <li tabindex="0">
-                <a href="#"><i class="fas fa-chalkboard-teacher"></i>Instructor <i class="fas fa-chevron-down"></i></a>
-                <ul class="submenu">
-                    <li><a href="{% url 'add_instructor' %}"><i class="fas fa-user-plus"></i>Add Instructor</a></li>
-                    <li><a href="{% url 'all_instructors' %}"><i class="fas fa-list"></i>View All Instructors</a></li>
-                    <li><a href="{% url 'instructor_infographics' %}"><i class="fas fa-chart-pie"></i>Instructor Infographics</a></li>
-                </ul>
-            </li>
-            <li tabindex="0" class="has-submenu">
-                <a href="#"><i class="fas fa-chart-bar"></i>Events <i class="fas fa-chevron-down"></i></a>
-                <ul class="submenu">
-                    <li><a href="{% url 'add_event' %}"><i class="fas fa-plus"></i>Add Event</a></li>
-                    <li><a href="{% url 'record_attendance' %}"><i class="fas fa-clipboard-list"></i>Record Attendance</a></li>
-                </ul>
-            </li>
-            <li tabindex="0">
-                <a href="#"><i class="fas fa-cog"></i>Settings <i class="fas fa-chevron-down"></i></a>
-                <ul class="submenu">
-                    <li><a href="{% url 'change_password' %}"><i class="fas fa-key"></i>Change Password</a></li>
-                    <li><a href="{% url 'upload_members' %}"><i class="fas fa-upload"></i>Upload</a></li>
-                    <li><a href="{% url 'create_user' %}"><i class="fas fa-user-plus"></i>Create User</a></li>
-                    <li><a href="#"><i class="fas fa-user"></i>Profile</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i>Logout</a>
-            </li>
-        </ul>
     </div>
-    <div class="main-content">
-        {% block main_content %}
-        <section class="registration-section">
-            <h2>Register New Member</h2>
-            {% if message %}
-                <div class="status-message">{{ message }}</div>
-            {% endif %}
-            <form id="registrationForm" method="post" action="{% url 'register_member' %}">
-                {% csrf_token %}
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="name">Full Name</label>
-                        <input type="text" name="name" id="name" required />
-                    </div>
-                    <div class="form-group">
-                        <label for="number">Contact Number</label>
-                        <input type="text" name="number" id="number" required />
-                    </div>
+    <ul class="menu">
+        <li>
+            <a href="{% url 'dashboard' %}"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+        </li>
+        <li tabindex="0">
+            <a href="#"><i class="fas fa-users"></i>Members <i class="fas fa-chevron-down"></i></a>
+            <ul class="submenu">
+                <li><a href="{% url 'all_members' %}"><i class="fas fa-list"></i>All Members</a></li>
+                <li><a href="{% url 'member' %}"><i class="fas fa-user-plus"></i>Add Member</a></li>
+            </ul>
+        </li>
+        <li tabindex="0">
+            <a href="#"><i class="fas fa-chalkboard-teacher"></i>Instructor <i class="fas fa-chevron-down"></i></a>
+            <ul class="submenu">
+                <li><a href="{% url 'add_instructor' %}"><i class="fas fa-user-plus"></i>Add Instructor</a></li>
+                <li><a href="{% url 'all_instructors' %}"><i class="fas fa-list"></i>View All Instructors</a></li>
+                <li><a href="{% url 'instructor_infographics' %}"><i class="fas fa-chart-pie"></i>Instructor
+                    Infographics</a></li>
+            </ul>
+        </li>
+        <li tabindex="0" class="has-submenu">
+            <a href="#"><i class="fas fa-chart-bar"></i>Events <i class="fas fa-chevron-down"></i></a>
+            <ul class="submenu">
+                <li><a href="{% url 'add_event' %}"><i class="fas fa-plus"></i>Add Event</a></li>
+                <li><a href="{% url 'record_attendance' %}"><i class="fas fa-clipboard-list"></i>Record Attendance</a>
+                </li>
+            </ul>
+        </li>
+        <li tabindex="0">
+            <a href="#"><i class="fas fa-cog"></i>Settings <i class="fas fa-chevron-down"></i></a>
+            <ul class="submenu">
+                <li><a href="{% url 'change_password' %}"><i class="fas fa-key"></i>Change Password</a></li>
+                <li><a href="{% url 'upload_members' %}"><i class="fas fa-upload"></i>Upload</a></li>
+                <li><a href="{% url 'create_user' %}"><i class="fas fa-user-plus"></i>Create User</a></li>
+                <li><a href="#"><i class="fas fa-user"></i>Profile</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i>Logout</a>
+        </li>
+    </ul>
+</div>
+<div class="main-content">
+    {% block main_content %}
+    <section class="registration-section">
+        <h2>Register New Member</h2>
+        {% if message %}
+        <div class="status-message">{{ message }}</div>
+        {% endif %}
+        <form id="registrationForm" method="post" action="{% url 'register_member' %}">
+            {% csrf_token %}
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" name="name" id="name" required/>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="date_of_initiation">Initiation Date</label>
-                        <input type="date" name="date_of_initiation" id="date_of_initiation" required />
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="text" name="email" id="email" required />
-                    </div>
+                <div class="form-group">
+                    <label for="number">Contact Number</label>
+                    <input type="text" name="number" id="number" required/>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="age">Age</label>
-                        <input type="text" name="age" id="age" required />
-                    </div>
-                    <div class="form-group">
-                        <label for="gender">Gender</label>
-                        <input type="text" name="gender" id="gender" required />
-                    </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="date_of_initiation">Initiation Date</label>
+                    <input type="date" name="date_of_initiation" id="date_of_initiation" required/>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="company">Company\Org\Instituion</label>
-                        <input type="text" name="company" id="company" />
-                    </div>
-                    <div class="form-group">
-                        <label for="instructor">Instructor</label>
-                        <select name="instructor" id="instructor" required>
-                            <option value="">Select Instructor</option>
-                            {% for instructor in instructors %}
-                                <option value="{{ instructor.id }}">{{ instructor.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="text" name="email" id="email" required/>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="address">Address: Apartment/Street</label>
-                        <input type="text" name="address" id="address" />
-                    </div>
-                    <div class="form-group">
-                        <label for="country">Country</label>
-                        <select name="country" id="country">
-                            <option value="">Select Country</option>
-                            <option value="Afghanistan">Afghanistan</option>
-                            <option value="Albania">Albania</option>
-                            <option value="Algeria">Algeria</option>
-                            <option value="Argentina">Argentina</option>
-                            <option value="Australia">Australia</option>
-                            <option value="Austria">Austria</option>
-                            <option value="Bangladesh">Bangladesh</option>
-                            <option value="Belgium">Belgium</option>
-                            <option value="Brazil">Brazil</option>
-                            <option value="Canada">Canada</option>
-                            <option value="China">China</option>
-                            <option value="Egypt">Egypt</option>
-                            <option value="France">France</option>
-                            <option value="Germany">Germany</option>
-                            <option value="India">India</option>
-                            <option value="Indonesia">Indonesia</option>
-                            <option value="Italy">Italy</option>
-                            <option value="Japan">Japan</option>
-                            <option value="Mexico">Mexico</option>
-                            <option value="Netherlands">Netherlands</option>
-                            <option value="New Zealand">New Zealand</option>
-                            <option value="Nigeria">Nigeria</option>
-                            <option value="Russia">Russia</option>
-                            <option value="Saudi Arabia">Saudi Arabia</option>
-                            <option value="Singapore">Singapore</option>
-                            <option value="South Africa">South Africa</option>
-                            <option value="South Korea">South Korea</option>
-                            <option value="Spain">Spain</option>
-                            <option value="Sweden">Sweden</option>
-                            <option value="Switzerland">Switzerland</option>
-                            <option value="Thailand">Thailand</option>
-                            <option value="Turkey">Turkey</option>
-                            <option value="United Arab Emirates">United Arab Emirates</option>
-                            <option value="United Kingdom">United Kingdom</option>
-                            <option value="United States">United States</option>
-                        </select>
-                    </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="age">Age</label>
+                    <input type="text" name="age" id="age" required/>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="state">State</label>
-                        <input type="text" name="state" id="state" />
-                    </div>
-                    <div class="form-group">
-                        <label for="district">City</label>
-                        <input type="text" name="district" id="district" />
-                    </div>
+                <div class="form-group">
+                    <label for="gender">Gender</label>
+                    <input type="text" name="gender" id="gender" required/>
                 </div>
-                <div class="form-row">
-                    <div class="form-group full-width">
-                        <label for="feedback">Feedback</label>
-                        <textarea name="feedback" id="feedback" rows="2"></textarea>
-                    </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="company">Company\Org\Instituion</label>
+                    <input type="text" name="company" id="company"/>
                 </div>
-                <div class="form-actions">
-                    <button type="submit">Register Member</button>
-                    <button type="reset" class="reset-btn">Reset</button>
+                <div class="form-group">
+                    <label for="instructor">Instructor</label>
+                    <select name="instructor" id="instructor" required>
+                        <option value="">Select Instructor</option>
+                        {% for instructor in instructors %}
+                        <option value="{{ instructor.id }}">{{ instructor.name }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
-            </form>
-        </section>
-        {% endblock %}
-        <footer>
-            &copy; {{ year|default:"2025" }} VY Member. All rights reserved.
-        </footer>
-    </div>
-    <script src="{% static 'js/home.js' %}"></script>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="address">Address: Apartment/Street</label>
+                    <input type="text" name="address" id="address"/>
+                </div>
+                <div class="form-group">
+                    <label for="member_country">Country</label>
+                    <select name="member_country" id="member_country" required>
+                        <option value="">Select Country</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="member_state">State</label>
+                    <select name="member_state" id="member_state" required>
+                        <option value="">Select State</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="member_city">City</label>
+                    <select name="member_city" id="member_city" required>
+                        <option value="">Select City</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group full-width">
+                    <label for="feedback">Feedback</label>
+                    <textarea name="feedback" id="feedback" rows="2"></textarea>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit">Register Member</button>
+                <button type="reset" class="reset-btn">Reset</button>
+            </div>
+        </form>
+    </section>
+    {% endblock %}
+    <footer>
+        &copy; {{ year|default:"2025" }} VY Member. All rights reserved.
+    </footer>
+</div>
+<script src="{% static 'js/home.js' %}"></script>
 </body>
 </html>
