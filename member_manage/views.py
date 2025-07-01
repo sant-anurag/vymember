@@ -150,9 +150,9 @@ def register_member(request):
         age= request.POST.get('age', '').strip()
         gender = request.POST.get('gender', '').strip()
         address = request.POST.get('address', '').strip()
-        country= request.POST.get('country', '').strip()
-        state = request.POST.get('state', '').strip()
-        district = request.POST.get('district', '').strip()
+        country= request.POST.get('member_country', '').strip()
+        state = request.POST.get('member_state', '').strip()
+        district = request.POST.get('member_city', '').strip()
         company = request.POST.get('company', '').strip()
         feedback = request.POST.get('feedback', '').strip()
         instructor_id = request.POST.get('instructor', '').strip()
@@ -253,14 +253,23 @@ def all_members(request):
 
     # Fetch all members with their instructor names
     cursor.execute("""
-        SELECT 
-            m.id, m.name, m.number, m.email,m.age,m.gender, m.address, m.country, m.state, m.district,m.company,
-            m.instructor_id, m.date_of_initiation, m.notes,
+        SELECT
+            m.id, m.name, m.number, m.email, m.age, m.gender, m.address,
+            city.name AS district,
+            state.name AS state,
+            country.name AS country,
+            m.company, m.instructor_id, m.date_of_initiation, m.notes,
             i.name as instructor_name
-        FROM 
+        FROM
             members m
-        LEFT JOIN 
+        LEFT JOIN
             instructors i ON m.instructor_id = i.id
+        LEFT JOIN
+            country ON m.country = country.id
+        LEFT JOIN
+            state ON m.state = state.id
+        LEFT JOIN
+            city ON m.district = city.id
         ORDER BY m.name
     """)
     members = cursor.fetchall()
