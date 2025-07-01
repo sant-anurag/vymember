@@ -112,6 +112,10 @@ function renderMemberDetail(overlay, member, mode) {
                             <label for="memberGender">Gender</label>
                             <input type="text" id="memberGender" name="memberGender" value="${member.gender || ''}" ${isViewMode ? 'readonly' : ''}>
                         </div>
+                        <div class="form-group">
+                            <label for="memberEvent">Event</label>
+                            <input type="text" id="memberEvent" name="memberEvent" value="${member.event_name || ''}" ${isViewMode ? 'readonly' : ''}>
+                        </div>
                     </div>
 
                     <div class="form-row">

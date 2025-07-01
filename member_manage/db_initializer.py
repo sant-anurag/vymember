@@ -50,6 +50,30 @@ class DBInitializer:
             )
         ''')
         cur.execute('''
+            INSERT INTO instructors (name, is_active)
+            SELECT %s, %s FROM DUAL
+            WHERE NOT EXISTS (
+                SELECT 1 FROM instructors WHERE name = %s
+            )
+        ''', ('Sadguru Deo', 1, 'Sadguru Deo'))
+        cur.execute('''
+                CREATE TABLE IF NOT EXISTS event_registrations (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    event_name VARCHAR(255) NOT NULL,
+                    event_date DATE NOT NULL,
+                    instructor_id INT,
+                    coordinator VARCHAR(255),
+                    total_attendance INT DEFAULT 0,
+                    location VARCHAR(255),
+                    state VARCHAR(100),
+                    district VARCHAR(100),
+                    country VARCHAR(100),
+                    description TEXT,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (instructor_id) REFERENCES instructors(id)
+                );
+                ''')
+        cur.execute('''
             CREATE TABLE IF NOT EXISTS members (
                     id INT AUTO_INCREMENT PRIMARY KEY,
                     name VARCHAR(255) NOT NULL,
@@ -64,8 +88,10 @@ class DBInitializer:
                     company VARCHAR(255),
                     notes TEXT,
                     instructor_id INT,
+                    event_id INT,
                     date_of_initiation DATE NOT NULL,
-                    FOREIGN KEY (instructor_id) REFERENCES instructors(id)
+                    FOREIGN KEY (instructor_id) REFERENCES instructors(id),
+                    FOREIGN KEY (event_id) REFERENCES event_registrations(id)
                 )
         ''')
         cur.execute('''
@@ -89,23 +115,17 @@ class DBInitializer:
                 FOREIGN KEY(member_id) REFERENCES members(id)
             )
         ''')
+
+
+        # Insert default "Not Specified" event if not present
         cur.execute('''
-        CREATE TABLE IF NOT EXISTS event_registrations (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            event_name VARCHAR(255) NOT NULL,
-            event_date DATE NOT NULL,
-            instructor_id INT,
-            coordinator VARCHAR(255),
-            total_attendance INT DEFAULT 0,
-            location VARCHAR(255),
-            state VARCHAR(100),
-            district VARCHAR(100),
-            country VARCHAR(100),
-            description TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (instructor_id) REFERENCES instructors(id)
-        );
-        ''')
+        INSERT INTO event_registrations (event_name, event_date)
+        SELECT %s, CURDATE()
+        FROM DUAL
+        WHERE NOT EXISTS (
+            SELECT 1 FROM event_registrations WHERE event_name = %s
+        )
+        ''', ('Not Specified', 'Not Specified'))
 
         # Create tables
         cur.execute('''

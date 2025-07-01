@@ -394,10 +394,11 @@ input:focus, textarea:focus, select:focus {
 }
 
 .form-actions {
-    display: flex;
-    gap: 1rem;
-    margin-top: 0.5rem;
-}
+        display: flex;
+        gap: 1rem;
+        margin-top: 0.5rem;
+        justify-content: center;
+    }
 
 button[type="submit"] {
     background: linear-gradient(90deg, #4f8cff 0%, #6ed6ff 100%);

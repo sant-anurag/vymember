@@ -127,6 +127,14 @@ def list_logged_in_users(request):
     cursor.close()
     conn.close()
     return JsonResponse({'logged_in_users': users})
+def get_events():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT id, event_name FROM event_registrations ORDER BY event_name DESC")
+    events = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return events
 
 def home(request):
     # check is user is authenticated
@@ -134,8 +142,9 @@ def home(request):
         return redirect('login')
     print("Home view accessed")
     instructors = get_instructors()
+    events = get_events()
     message = request.session.pop('message', None)
-    return render(request, 'home.html', {'message': message,'instructors': instructors})
+    return render(request, 'home.html', {'message': message,'instructors': instructors, 'events': events})
 
 @csrf_exempt
 def register_member(request):
@@ -157,6 +166,20 @@ def register_member(request):
         feedback = request.POST.get('feedback', '').strip()
         instructor_id = request.POST.get('instructor', '').strip()
         date_of_initiation = request.POST.get('date_of_initiation', '').strip()
+        event = request.POST.get('event', '').strip()
+
+        # validate the form fields
+        if not name:
+            request.session['message'] = 'Name is required.'
+            return redirect('home')
+        if not number or len(number) < 10 or number.isdigit() is False:
+            request.session['message'] = 'Number is missing or invalid(min 10 digits required).'
+            return redirect('home')
+        if email:
+            email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+            if not re.match(email_regex, email):
+                request.session['message'] = 'Invalid email format.'
+                return redirect('home')
 
         if name and number and instructor_id and date_of_initiation:
             conn = mysql.connector.connect(
@@ -168,10 +191,10 @@ def register_member(request):
             cur = conn.cursor()
             cur.execute("""
                 INSERT INTO members
-                (name, number, email, address,age,gender, country, state,district,company, notes, instructor_id, date_of_initiation)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s,%s, %s, %s,%s, %s)
+                (name, number, email, address,age,gender, country, state,district,company, notes, instructor_id, date_of_initiation,event_id)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s,%s, %s, %s,%s, %s, %s)
             """, (
-                name, number, email, address,age, gender, country, state,district,company, feedback, instructor_id, date_of_initiation
+                name, number, email, address,age, gender, country, state,district,company, feedback, instructor_id, date_of_initiation,event
             ))
             conn.commit()
             cur.close()
@@ -251,7 +274,11 @@ def all_members(request):
     cursor.execute("SELECT id, name FROM instructors")
     instructors = cursor.fetchall()
 
-    # Fetch all members with their instructor names
+    # Get all events for filter dropdown
+    cursor.execute("SELECT id, event_name FROM event_registrations")
+    events = cursor.fetchall()
+
+    # Fetch all members with their instructor names and event name
     cursor.execute("""
         SELECT
             m.id, m.name, m.number, m.email, m.age, m.gender, m.address,
@@ -259,7 +286,8 @@ def all_members(request):
             state.name AS state,
             country.name AS country,
             m.company, m.instructor_id, m.date_of_initiation, m.notes,
-            i.name as instructor_name
+            i.name as instructor_name,
+            e.event_name as event_name
         FROM
             members m
         LEFT JOIN
@@ -270,6 +298,8 @@ def all_members(request):
             state ON m.state = state.id
         LEFT JOIN
             city ON m.district = city.id
+        LEFT JOIN
+            event_registrations e ON m.event_id = e.id
         ORDER BY m.name
     """)
     members = cursor.fetchall()
@@ -286,6 +316,7 @@ def all_members(request):
     context = {
         'companies': companies,
         'instructors': instructors,
+        'events': events,
         'members': members,  # This data will be displayed in the template
     }
     return render(request, 'all_members.html', context)
@@ -1282,14 +1313,15 @@ def get_member_detail(request, member_id):
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
 
-        # Get member data with country, state, and district (city) names
+        # Get member data with country, state, district (city) names, instructor, and event name
         cursor.execute("""
             SELECT
                 m.*,
                 city.name AS district,
                 state.name AS state,
                 country.name AS country,
-                i.name as instructor_name
+                i.name as instructor_name,
+                e.event_name as event_name
             FROM
                 members m
             LEFT JOIN
@@ -1300,6 +1332,8 @@ def get_member_detail(request, member_id):
                 state ON m.state = state.id
             LEFT JOIN
                 city ON m.district = city.id
+            LEFT JOIN
+                event_registrations e ON m.event_id = e.id
             WHERE
                 m.id = %s
         """, (member_id,))
@@ -1315,7 +1349,6 @@ def get_member_detail(request, member_id):
             FROM instructors
             WHERE is_active = 1
         """)
-
         instructors = cursor.fetchall()
 
         # Format date for JSON serialization
@@ -1338,6 +1371,7 @@ def get_member_detail(request, member_id):
             'notes': member['notes'],
             'instructor_id': member['instructor_id'],
             'date_of_initiation': member['date_of_initiation'],
+            'event_name': member['event_name'],
             'instructors': [{'id': i['id'], 'name': i['name']} for i in instructors]
         }
 
