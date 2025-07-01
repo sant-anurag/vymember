@@ -1282,12 +1282,26 @@ def get_member_detail(request, member_id):
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
 
-        # Get member data
+        # Get member data with country, state, and district (city) names
         cursor.execute("""
-            SELECT m.*, i.name as instructor_name
-            FROM members m
-            LEFT JOIN instructors i ON m.instructor_id = i.id
-            WHERE m.id = %s
+            SELECT
+                m.*,
+                city.name AS district,
+                state.name AS state,
+                country.name AS country,
+                i.name as instructor_name
+            FROM
+                members m
+            LEFT JOIN
+                instructors i ON m.instructor_id = i.id
+            LEFT JOIN
+                country ON m.country = country.id
+            LEFT JOIN
+                state ON m.state = state.id
+            LEFT JOIN
+                city ON m.district = city.id
+            WHERE
+                m.id = %s
         """, (member_id,))
 
         member = cursor.fetchone()
