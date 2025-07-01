@@ -76,11 +76,11 @@
             <div class="form-row">
                 <div class="form-group">
                     <label for="name">Full Name</label>
-                    <input type="text" name="name" id="name" required value="{{ form_data.name|default:'' }}" required/>
+                    <input type="text" name="name" id="name" required value="{{ form_data.name|default:'' }}"/>
                 </div>
                 <div class="form-group">
                     <label for="number">Contact Number</label>
-                    <input type="text" name="number" id="number" required/>
+                    <input type="text" name="number" id="number" required value="{{ form_data.number|default:'' }}"/>
                 </div>
             </div>
             <div class="form-row">
@@ -90,7 +90,7 @@
                 </div>
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <input type="text" name="email" id="email" required/>
+                    <input type="text" name="email" id="email" required value="{{ form_data.email|default:'' }}"/>
                 </div>
             </div>
             <style>
@@ -103,7 +103,7 @@
             <div class="form-row">
                 <div class="form-group">
                     <label for="age">Age</label>
-                    <input type="text" name="age" id="age" required/>
+                    <input type="text" name="age" id="age" required value="{{ form_data.age|default:'' }}"/>
                 </div>
                 <div class="form-group">
                     <label for="gender">Gender</label>
@@ -129,14 +129,17 @@
             <div class="form-row">
                 <div class="form-group">
                     <label for="company">Company\Org\Instituion</label>
-                    <input type="text" name="company" id="company"/>
+                    <input type="text" name="company" id="company" value="{{ form_data.company|default:'' }}"/>
                 </div>
                 <div class="form-group">
                     <label for="instructor">Instructor</label>
                     <select name="instructor" id="instructor" required>
                         <option value="">Select Instructor</option>
                         {% for instructor in instructors %}
-                        <option value="{{ instructor.id }}">{{ instructor.name }}</option>
+                        <option value="{{ instructor.id }}"
+                            {% if form_data.instructor|stringformat:"s" == instructor.id|stringformat:"s" %}selected{% endif %}>
+                            {{ instructor.name }}
+                        </option>
                         {% endfor %}
                     </select>
                 </div>
@@ -144,12 +147,18 @@
             <div class="form-row">
                 <div class="form-group">
                     <label for="address">Address: Apartment/Street</label>
-                    <input type="text" name="address" id="address"/>
+                    <input type="text" name="address" id="address" value="{{ form_data.address|default:'' }}"/>
                 </div>
-                <div class="form-group">
+               <div class="form-group">
                     <label for="member_country">Country</label>
                     <select name="member_country" id="member_country" required>
                         <option value="">Select Country</option>
+                        {% for country in countries %}
+                        <option value="{{ country.id }}"
+                            {% if form_data.member_country|stringformat:"s" == country.id|stringformat:"s" %}selected{% endif %}>
+                            {{ country.name }}
+                        </option>
+                        {% endfor %}
                     </select>
                 </div>
             </div>
@@ -158,19 +167,31 @@
                     <label for="member_state">State</label>
                     <select name="member_state" id="member_state" required>
                         <option value="">Select State</option>
+                        {% for state in states %}
+                        <option value="{{ state.id }}"
+                            {% if form_data.member_state|stringformat:"s" == state.id|stringformat:"s" %}selected{% endif %}>
+                            {{ state.name }}
+                        </option>
+                        {% endfor %}
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="member_city">City</label>
                     <select name="member_city" id="member_city" required>
                         <option value="">Select City</option>
+                        {% for city in cities %}
+                        <option value="{{ city.id }}"
+                            {% if form_data.member_city|stringformat:"s" == city.id|stringformat:"s" %}selected{% endif %}>
+                            {{ city.name }}
+                        </option>
+                        {% endfor %}
                     </select>
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group full-width">
                     <label for="feedback">Feedback</label>
-                    <textarea name="feedback" id="feedback" rows="2"></textarea>
+                    <textarea name="feedback" id="feedback" rows="2">{{ form_data.feedback|default:'' }}</textarea>
                 </div>
             </div>
             <div class="form-actions">
@@ -185,5 +206,17 @@
     </footer>
 </div>
 <script src="{% static 'js/home.js' %}"></script>
+<script>
+document.querySelector('.reset-btn').addEventListener('click', function(e) {
+    // Prevent default reset
+    e.preventDefault();
+    // Reset all input, select, and textarea fields
+    const form = document.getElementById('registrationForm');
+    form.reset();
+    // Clear all input values (including those set by Django context)
+    form.querySelectorAll('input, textarea').forEach(el => el.value = '');
+    form.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+});
+</script>
 </body>
 </html>

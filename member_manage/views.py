@@ -169,17 +169,36 @@ def register_member(request):
         event = request.POST.get('event', '').strip()
 
         # validate the form fields
+        form_data = request.POST.copy()
         if not name:
-            request.session['message'] = 'Name is required.'
-            return redirect('home')
+            instructors = get_instructors()
+            events = get_events()
+            return render(request, 'home.html', {
+                'message': 'Name is required.',
+                'form_data': form_data,
+                'instructors': instructors,
+                'events': events
+            })
         if not number or len(number) < 10 or number.isdigit() is False:
-            request.session['message'] = 'Number is missing or invalid(min 10 digits required).'
-            return redirect('home')
+            instructors = get_instructors()
+            events = get_events()
+            return render(request, 'home.html', {
+                'message': 'Number is missing or invalid(min 10 digits required).',
+                'form_data': form_data,
+                'instructors': instructors,
+                'events': events
+            })
         if email:
             email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
             if not re.match(email_regex, email):
-                request.session['message'] = 'Invalid email format.'
-                return redirect('home')
+                instructors = get_instructors()
+                events = get_events()
+                return render(request, 'home.html', {
+                    'message': 'Invalid email format.',
+                    'form_data': form_data,
+                    'instructors': instructors,
+                    'events': events
+                })
 
         if name and number and instructor_id and date_of_initiation:
             conn = mysql.connector.connect(
