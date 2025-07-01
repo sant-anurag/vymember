@@ -69,7 +69,7 @@
     <section class="registration-section">
         <h2>Register New Member</h2>
         {% if message %}
-        <div class="status-message">{{ message }}</div>
+        <div class="form-alert {% if message_type == 'error' %}error{% endif %}">{{ message }}</div>
         {% endif %}
         <form id="registrationForm" method="post" action="{% url 'register_member' %}">
             {% csrf_token %}

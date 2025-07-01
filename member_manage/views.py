@@ -175,6 +175,7 @@ def register_member(request):
             events = get_events()
             return render(request, 'home.html', {
                 'message': 'Name is required.',
+                'message_type': 'error',
                 'form_data': form_data,
                 'instructors': instructors,
                 'events': events
@@ -184,6 +185,7 @@ def register_member(request):
             events = get_events()
             return render(request, 'home.html', {
                 'message': 'Number is missing or invalid(min 10 digits required).',
+                'message_type': 'error',
                 'form_data': form_data,
                 'instructors': instructors,
                 'events': events
@@ -195,11 +197,11 @@ def register_member(request):
                 events = get_events()
                 return render(request, 'home.html', {
                     'message': 'Invalid email format.',
+                    'message_type': 'error',
                     'form_data': form_data,
                     'instructors': instructors,
                     'events': events
                 })
-
         if name and number and instructor_id and date_of_initiation:
             conn = mysql.connector.connect(
                 host=settings.DB_HOST,
