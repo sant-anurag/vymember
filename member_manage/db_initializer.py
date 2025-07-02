@@ -108,13 +108,13 @@ class DBInitializer:
 
         # Create tables
         cur.execute('''
-            CREATE TABLE IF NOT EXISTS Country (
+            CREATE TABLE IF NOT EXISTS country (
                 id INT PRIMARY KEY AUTO_INCREMENT,
                 name VARCHAR(100) UNIQUE NOT NULL
             )
         ''')
         cur.execute('''
-            CREATE TABLE IF NOT EXISTS State (
+            CREATE TABLE IF NOT EXISTS state (
                 id INT PRIMARY KEY AUTO_INCREMENT,
                 name VARCHAR(100) NOT NULL,
                 country_id INT,
@@ -123,7 +123,7 @@ class DBInitializer:
             )
         ''')
         cur.execute('''
-            CREATE TABLE IF NOT EXISTS City (
+            CREATE TABLE IF NOT EXISTS city (
                 id INT PRIMARY KEY AUTO_INCREMENT,
                 name VARCHAR(100) NOT NULL,
                 state_id INT,
