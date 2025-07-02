@@ -47,7 +47,32 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('eventFilterForm').submit();
     };
     if (downloadBtn) downloadBtn.onclick = function() {
-        window.print(); // Simple print as PDF, can be replaced with CSV export
+        // do csv export
+        // For simplicity, we will just print the page.
+        // In a real application, you would implement CSV export logic here.
+        const rows = Array.from(rowsContainer.querySelectorAll('.attendance-row'));
+        if (rows.length === 0) {
+            alert('No attendance records to download.');
+            return;
+        }
+        const csvContent = rows.map(row => {
+            const inputs = row.querySelectorAll('input, select');
+            return Array.from(inputs).map(input => input.value).join(',');
+        }).join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'attendance_records.csv');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        // For printing, you can use:
+        // This will open the print dialog, allowing the user to save as PDF.
+        // This is a simple way to print the current page.
+
+        //window.print(); // Simple print as PDF, can be replaced with CSV export
     };
 
     // Add one row by default if form is present
