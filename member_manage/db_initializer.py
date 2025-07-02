@@ -94,27 +94,6 @@ class DBInitializer:
                     FOREIGN KEY (event_id) REFERENCES event_registrations(id)
                 )
         ''')
-        cur.execute('''
-            CREATE TABLE IF NOT EXISTS activities (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                member_id INT,
-                activity_type VARCHAR(100),
-                description TEXT,
-                date DATETIME,
-                FOREIGN KEY(member_id) REFERENCES members(id)
-            )
-        ''')
-        cur.execute('''
-            CREATE TABLE IF NOT EXISTS deals (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                member_id INT,
-                deal_name VARCHAR(255),
-                value DECIMAL(12,2),
-                status VARCHAR(50),
-                created_at DATETIME,
-                FOREIGN KEY(member_id) REFERENCES members(id)
-            )
-        ''')
 
 
         # Insert default "Not Specified" event if not present
