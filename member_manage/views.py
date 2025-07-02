@@ -481,7 +481,7 @@ def all_instructors(request):
         LEFT JOIN
             state s ON i.state = s.id
         LEFT JOIN
-            City d ON i.district = d.id
+            city d ON i.district = d.id
         GROUP BY
             i.id
         ORDER BY
@@ -809,7 +809,7 @@ def api_instructor_infographics_data(request):
         # Prepare data for Geographic Distribution chart
         # Prepare data for Geographic Distribution chart
         if instructor_id != 'all':
-            # City-wise distribution for selected instructor
+            # city-wise distribution for selected instructor
             query = """
                 SELECT district as location, COUNT(*) as count 
                 FROM members m
@@ -820,7 +820,7 @@ def api_instructor_infographics_data(request):
                 LIMIT 8
             """
         else:
-            # Country-wise distribution for all instructors
+            # country-wise distribution for all instructors
             query = """
                 SELECT country as location, COUNT(*) as count 
                 FROM members m
@@ -1094,7 +1094,7 @@ def api_download_instructor_report(request):
     writer = csv.writer(buffer)
 
     # Write header row
-    writer.writerow(['Instructor Name', 'Total Members', 'New Members This Year', 'Countries', 'States'])
+    writer.writerow(['Instructor Name', 'Total Members', 'New Members This Year', 'Countries', 'states'])
 
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
@@ -1994,7 +1994,7 @@ def get_countries(request):
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    cursor.execute("SELECT id, name FROM Country ORDER BY name")
+    cursor.execute("SELECT id, name FROM country ORDER BY name")
     countries = [{'id': row[0], 'name': row[1]} for row in cursor.fetchall()]
     conn.close()
     return JsonResponse({'countries': countries})
@@ -2006,7 +2006,7 @@ def get_states(request):
     if not country_id:
         return JsonResponse({'states': []})
 
-    cursor.execute("SELECT id, name FROM State WHERE country_id = %s ORDER BY name", [country_id])
+    cursor.execute("SELECT id, name FROM state WHERE country_id = %s ORDER BY name", [country_id])
     states = [{'id': row[0], 'name': row[1]} for row in cursor.fetchall()]
     conn.close()
     return JsonResponse({'states': states})
@@ -2018,7 +2018,7 @@ def get_cities(request):
     if not state_id:
         return JsonResponse({'cities': []})
 
-    cursor.execute("SELECT id, name FROM City WHERE state_id = %s ORDER BY name", [state_id])
+    cursor.execute("SELECT id, name FROM city WHERE state_id = %s ORDER BY name", [state_id])
     cities = [{'id': row[0], 'name': row[1]} for row in cursor.fetchall()]
     conn.close()
 

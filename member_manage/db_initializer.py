@@ -119,7 +119,7 @@ class DBInitializer:
                 name VARCHAR(100) NOT NULL,
                 country_id INT,
                 UNIQUE(name, country_id),
-                FOREIGN KEY (country_id) REFERENCES Country(id) ON DELETE CASCADE
+                FOREIGN KEY (country_id) REFERENCES country(id) ON DELETE CASCADE
             )
         ''')
         cur.execute('''
@@ -128,7 +128,7 @@ class DBInitializer:
                 name VARCHAR(100) NOT NULL,
                 state_id INT,
                 UNIQUE(name, state_id),
-                FOREIGN KEY (state_id) REFERENCES State(id) ON DELETE CASCADE
+                FOREIGN KEY (state_id) REFERENCES state(id) ON DELETE CASCADE
             )
         ''')
         cur.execute('''
@@ -144,18 +144,18 @@ class DBInitializer:
         conn.commit()
 
         # Import data from JSON files
-        # Check if Country table is empty before importing
-        cur.execute("SELECT COUNT(*) FROM Country")
+        # Check if country table is empty before importing
+        cur.execute("SELECT COUNT(*) FROM country")
         if cur.fetchone()[0] == 0:
             self.import_countries(cur, conn)
 
-        # Check if State table is empty before importing
-        cur.execute("SELECT COUNT(*) FROM State")
+        # Check if state table is empty before importing
+        cur.execute("SELECT COUNT(*) FROM state")
         if cur.fetchone()[0] == 0:
             self.import_states(cur, conn)
 
-        # Check if City table is empty before importing
-        cur.execute("SELECT COUNT(*) FROM City")
+        # Check if city table is empty before importing
+        cur.execute("SELECT COUNT(*) FROM city")
         if cur.fetchone()[0] == 0:
             self.import_cities(cur, conn)
 
@@ -171,7 +171,7 @@ class DBInitializer:
             name = c.get('name') or c.get('country_name')
             if name:
                 try:
-                    cur.execute("INSERT IGNORE INTO Country (name) VALUES (%s)", (name,))
+                    cur.execute("INSERT IGNORE INTO country (name) VALUES (%s)", (name,))
                 except Exception as e:
                     print(f"Error inserting country {name}: {e}")
         conn.commit()
@@ -180,7 +180,7 @@ class DBInitializer:
     def import_states(self, cur, conn):
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         states_path = os.path.join(base_dir, 'member_manage','static', 'data', 'states.json')
-        cur.execute("SELECT id, name FROM Country")
+        cur.execute("SELECT id, name FROM country")
         country_map = {name: cid for cid, name in cur.fetchall()}
         with open(states_path, encoding='utf-8') as f:
             states = json.load(f)
@@ -191,18 +191,18 @@ class DBInitializer:
             if name and country_id:
                 try:
                     cur.execute(
-                        "INSERT IGNORE INTO State (name, country_id) VALUES (%s, %s)",
+                        "INSERT IGNORE INTO state (name, country_id) VALUES (%s, %s)",
                         (name, country_id)
                     )
                 except Exception as e:
                     print(f"Error inserting state {name}: {e}")
         conn.commit()
-        print("States imported successfully.")
+        print("states imported successfully.")
 
     def import_cities(self, cur, conn):
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         cities_path = os.path.join(base_dir, 'member_manage','static', 'data', 'cities.json')
-        cur.execute("SELECT id, name FROM State")
+        cur.execute("SELECT id, name FROM state")
         state_map = {name: sid for sid, name in cur.fetchall()}
         with open(cities_path, encoding='utf-8') as f:
             cities = json.load(f)
@@ -213,7 +213,7 @@ class DBInitializer:
             if name and state_id:
                 try:
                     cur.execute(
-                        "INSERT IGNORE INTO City (name, state_id) VALUES (%s, %s)",
+                        "INSERT IGNORE INTO city (name, state_id) VALUES (%s, %s)",
                         (name, state_id)
                     )
                 except Exception as e:
