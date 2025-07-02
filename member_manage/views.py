@@ -1975,6 +1975,11 @@ def record_attendance(request):
                     gender = request.POST.get(f'gender_{idx}', '').strip()
                     address = request.POST.get(f'address_{idx}', '').strip()
                     is_new = request.POST.get(f'new_member_{idx}', '') == '1'
+                    # validate contact number only digit and len> 10
+                    # print error message with name and skip record insertion and continue with next record
+                    if not contact.isdigit() or len(contact) < 10:
+                        message = f"Invalid contact number for {name}. Must be at least 10 digits long."
+                        continue
                     members.append({
                         'name': name, 'age': age, 'contact': contact,
                         'gender': gender, 'address': address, 'is_new': is_new
@@ -1992,7 +1997,7 @@ def record_attendance(request):
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """, [
                     m['name'], m['contact'], m['age'], m['gender'], m['address'],
-                    selected_event['state'], selected_event['district'], selected_event['country'],
+                    selected_event['state'], selected_event['city'], selected_event['country'],
                     selected_event['instructor_id'], selected_event['event_date']
                 ])
                 new_member_count += 1
