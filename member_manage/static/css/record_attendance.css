@@ -60,7 +60,7 @@ body {
 
 .filter-btn, .reset-btn, .download-btn {
     background: linear-gradient(90deg, #4f8cff 0%, #6ed6ff 100%);
-    min-width: 110px;
+    width: auto;
     height: 40px;
     font-size: 0.9rem;
     border-radius: 7px;

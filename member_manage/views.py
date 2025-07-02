@@ -220,6 +220,19 @@ def register_member(request):
             conn.commit()
             cur.close()
             conn.close()
+            # incease the attendance of selected event by 1
+            if event:
+                conn = mysql.connector.connect(
+                    host=settings.DB_HOST,
+                    user=settings.DB_USER,
+                    password=settings.DB_PASSWORD,
+                    database=settings.DB_NAME
+                )
+                cur = conn.cursor()
+                cur.execute("UPDATE event_registrations SET total_attendance = total_attendance + 1 WHERE id = %s", (event,))
+                conn.commit()
+                cur.close()
+                conn.close()
             request.session['message'] = 'Member registered successfully!'
         else:
             request.session['message'] = 'All required fields must be filled.'
@@ -1919,18 +1932,33 @@ def record_attendance(request):
     # Fetch event details if selected
     if selected_event_id:
         cursor.execute("""
-            SELECT e.id, e.event_name, e.event_date, e.instructor_id, i.name, e.location, e.state, e.district, e.country, e.total_attendance
+            SELECT 
+                e.id, e.event_name, e.event_date, e.instructor_id, i.name,
+                e.location,
+                country.name AS country_name,
+                state.name AS state_name,
+                city.name AS city_name,
+                e.total_attendance
             FROM event_registrations e
             LEFT JOIN instructors i ON e.instructor_id = i.id
+            LEFT JOIN country ON e.country = country.id
+            LEFT JOIN state ON e.state = state.id
+            LEFT JOIN city ON e.district = city.id
             WHERE e.id = %s
         """, [selected_event_id])
         row = cursor.fetchone()
         if row:
             selected_event = {
-                'id': row[0], 'event_name': row[1], 'event_date': row[2],
-                'instructor_id': row[3], 'instructor_name': row[4] or '',
-                'location': row[5] or '', 'state': row[6] or '', 'district': row[7] or '',
-                'country': row[8] or '', 'total_attendance': row[9] or 0
+                'id': row[0],
+                'event_name': row[1],
+                'event_date': row[2],
+                'instructor_id': row[3],
+                'instructor_name': row[4] or '',
+                'location': row[5] or '',
+                'country': row[6] or '',
+                'state': row[7] or '',
+                'city': row[8] or '',
+                'total_attendance': row[9] or 0
             }
 
     # Handle attendance register POST

@@ -17,9 +17,9 @@
                 </option>
             {% endfor %}
         </select>
-        <button type="submit" class="filter-btn">Apply Filter</button>
-        <button type="button" class="reset-btn" id="resetFilterBtn">Reset</button>
-        <button type="button" class="download-btn" id="downloadBtn">Download</button>
+        <button type="submit" class="filter-btn" title="Apply"><i class="fas fa-filter"></i></button>
+        <button type="button" class="reset-btn" id="resetFilterBtn" title="Reset"><i class="fas fa-undo"></i></button>
+        <button type="button" class="download-btn" id="downloadBtn" title="Download"><i class="fas fa-download"></i></button>
     </form>
 
     <!-- Event Details Row -->
@@ -30,7 +30,7 @@
         <input type="text" value="{{ selected_event.instructor_name }}" readonly placeholder="Instructor" />
         <input type="text" value="{{ selected_event.location }}" readonly placeholder="Location" />
         <input type="text" value="{{ selected_event.state }}" readonly placeholder="State" />
-        <input type="text" value="{{ selected_event.district }}" readonly placeholder="District" />
+        <input type="text" value="{{ selected_event.city }}" readonly placeholder="City" />
         <input type="text" value="{{ selected_event.country }}" readonly placeholder="Country" />
         <input type="text" value="{{ selected_event.total_attendance }}" readonly placeholder="Total Attendance" />
     </div>
