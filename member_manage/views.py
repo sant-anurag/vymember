@@ -470,7 +470,7 @@ def all_instructors(request):
 
     cursor.execute("""
         SELECT
-            i.id, i.name, i.age, i.dop, i.associated_since,
+            i.id, i.name, i.age, i.gender, i.associated_since,
             i.updeshta_since, i.address,
             d.name AS district,
             s.name AS state,
@@ -497,8 +497,7 @@ def all_instructors(request):
 
     # Format dates for display
     for instructor in instructors:
-        if instructor['dop']:
-            instructor['dop'] = instructor['dop'].strftime('%Y-%m-%d')
+
 
         # Get associated_since and updeshta_since years as strings
         instructor['associated_since'] = str(instructor['associated_since']) if instructor['associated_since'] else 'N/A'
@@ -1809,8 +1808,6 @@ def api_instructor_detail(request, instructor_id):
     if not instructor:
         return JsonResponse({'error': 'Instructor not found'}, status=404)
     # Convert date fields to string
-    if instructor.get('dop'):
-        instructor['dop'] = str(instructor['dop'])
     return JsonResponse(instructor)
 
 
@@ -1842,16 +1839,19 @@ def api_instructor_update(request, instructor_id):
             cursor = conn.cursor()
             cursor.execute("""
                 UPDATE instructors SET
-                    name=%s, age=%s, dop=%s, associated_since=%s,
-                    updeshta_since=%s, address=%s, is_active=%s
+                    name=%s, age=%s, gender=%s, associated_since=%s,
+                    updeshta_since=%s, address=%s, state=%s, district=%s, country=%s,is_active=%s
                 WHERE id=%s
             """, (
                 data.get('name'),
                 data.get('age') or None,
-                data.get('dop') or None,
+                data.get('gender') or None,
                 data.get('associated_since') or None,
                 data.get('updeshta_since') or None,
                 data.get('address'),
+                data.get('state'),
+                data.get('city'),
+                data.get('country'),
                 data.get('is_active', 1),
                 instructor_id
             ))

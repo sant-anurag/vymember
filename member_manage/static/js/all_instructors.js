@@ -1,6 +1,57 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log("All instructors page loaded");
+    console.log('DOM loaded');
+    const countrySelect = document.getElementById('modalCountry');
+    const stateSelect = document.getElementById('modalState');
+    const districtSelect = document.getElementById('modalCity');
 
+    // Load countries on page load
+    fetch('/member/ajax/countries/')
+        .then(res => res.json())
+        .then(data => {
+            countrySelect.innerHTML = '<option value="">Select Country</option>';
+            data.countries.forEach(c => {
+                let opt = document.createElement('option');
+                opt.value = c.id;
+                opt.text = c.name;
+                countrySelect.add(opt);
+            });
+            stateSelect.innerHTML = '<option value="">Select State</option>';
+            districtSelect.innerHTML = '<option value="">Select City</option>';
+        });
+
+    countrySelect.addEventListener('change', function() {
+        const countryId = this.value;
+        stateSelect.innerHTML = '<option value="">Select State</option>';
+        districtSelect.innerHTML = '<option value="">Select City</option>';
+        if (!countryId) return;
+        fetch(`/member/ajax/states/?country_id=${countryId}`)
+            .then(res => res.json())
+            .then(data => {
+                data.states.forEach(s => {
+                    let opt = document.createElement('option');
+                    opt.value = s.id;
+                    opt.text = s.name;
+                    stateSelect.add(opt);
+                });
+            });
+    });
+
+    stateSelect.addEventListener('change', function() {
+        const stateId = this.value;
+        districtSelect.innerHTML = '<option value="">Select City</option>';
+        if (!stateId) return;
+        fetch(`/member/ajax/cities/?state_id=${stateId}`)
+            .then(res => res.json())
+            .then(data => {
+                data.cities.forEach(c => {
+                    let opt = document.createElement('option');
+                    opt.value = c.id;
+                    opt.text = c.name;
+                    districtSelect.add(opt);
+                });
+            });
+    });
     // Set up event listeners for filters
     setupFilters();
 
@@ -20,15 +71,19 @@ function openInstructorModal(data, editMode = false) {
     document.getElementById('modalTitle').textContent = editMode ? 'Edit Instructor' : 'Instructor Details';
     document.getElementById('modalName').value = data.name || '';
     document.getElementById('modalAge').value = data.age || '';
+    document.getElementById('modelGender').value = data.gender || '';
     document.getElementById('modalAssociated').value = data.associated_since || '';
     document.getElementById('modalUpdeshta').value = data.updeshta_since || '';
     document.getElementById('modalAddress').value = data.address || '';
+    document.getElementById('modalCountry').value = data.country || '';
+    document.getElementById('modalState').value = data.state || '';
+    document.getElementById('modalCity').value = data.district || '';
     document.getElementById('modalActive').value = data.is_active != null ? data.is_active : '1';
 
     // Enable/disable fields
     [
-        'modalName', 'modalAge', 'modalAssociated',
-        'modalUpdeshta', 'modalAddress', 'modalActive'
+        'modalName', 'modalAge', 'modalAssociated','modelGender',
+        'modalUpdeshta', 'modalAddress', 'modalCountry','modalState','modalCity','modalActive'
     ].forEach(id => {
         document.getElementById(id).disabled = !editMode;
     });
@@ -90,8 +145,12 @@ document.getElementById('instructorForm').addEventListener('submit', function(e)
         name: document.getElementById('modalName').value,
         age: document.getElementById('modalAge').value,
         associated_since: document.getElementById('modalAssociated').value,
+        gender: document.getElementById('modelGender').value,
         updeshta_since: document.getElementById('modalUpdeshta').value,
         address: document.getElementById('modalAddress').value,
+        country: document.getElementById('modalCountry').value,
+        state: document.getElementById('modalState').value,
+        city: document.getElementById('modalCity').value,
         is_active: document.getElementById('modalActive').value
     };
     const csrftoken = getCookie("csrftoken");
