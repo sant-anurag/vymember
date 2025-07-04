@@ -39,7 +39,7 @@ class DBInitializer:
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 name VARCHAR(255) NOT NULL,
                 age INT,
-                dop DATE,
+                gender VARCHAR(10),
                 associated_since YEAR,
                 updeshta_since YEAR,
                 address VARCHAR(255),
