@@ -7,33 +7,25 @@ import io
 import json
 import os
 import re
+import secrets
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 # Django imports
 from django.conf import settings
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db import connection
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # Third-party imports
 import mysql.connector
 import openpyxl
-
-from django.shortcuts import render, redirect
-from django.views.decorators.csrf import csrf_exempt
-import mysql.connector
-import secrets
-import hashlib
-import datetime
-from django.shortcuts import render, redirect
-from django.conf import settings
-from django.urls import reverse
 
 # In-memory token store for demo (use DB or cache in production)
 RESET_TOKENS = {}

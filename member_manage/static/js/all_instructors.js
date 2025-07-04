@@ -20,7 +20,6 @@ function openInstructorModal(data, editMode = false) {
     document.getElementById('modalTitle').textContent = editMode ? 'Edit Instructor' : 'Instructor Details';
     document.getElementById('modalName').value = data.name || '';
     document.getElementById('modalAge').value = data.age || '';
-    document.getElementById('modalDop').value = data.dop || '';
     document.getElementById('modalAssociated').value = data.associated_since || '';
     document.getElementById('modalUpdeshta').value = data.updeshta_since || '';
     document.getElementById('modalAddress').value = data.address || '';
@@ -28,7 +27,7 @@ function openInstructorModal(data, editMode = false) {
 
     // Enable/disable fields
     [
-        'modalName', 'modalAge', 'modalDop', 'modalAssociated',
+        'modalName', 'modalAge', 'modalAssociated',
         'modalUpdeshta', 'modalAddress', 'modalActive'
     ].forEach(id => {
         document.getElementById(id).disabled = !editMode;
@@ -90,7 +89,6 @@ document.getElementById('instructorForm').addEventListener('submit', function(e)
     const payload = {
         name: document.getElementById('modalName').value,
         age: document.getElementById('modalAge').value,
-        dop: document.getElementById('modalDop').value,
         associated_since: document.getElementById('modalAssociated').value,
         updeshta_since: document.getElementById('modalUpdeshta').value,
         address: document.getElementById('modalAddress').value,
