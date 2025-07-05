@@ -68,6 +68,7 @@ let isEditMode = false;
 function openInstructorModal(data, editMode = false) {
     isEditMode = editMode;
     currentInstructorId = data.id;
+    console.log("Opening instructor modal with data:", data, "Edit mode:", editMode);
     document.getElementById('modalTitle').textContent = editMode ? 'Edit Instructor' : 'Instructor Details';
     document.getElementById('modalName').value = data.name || '';
     document.getElementById('modalAge').value = data.age || '';
@@ -76,8 +77,8 @@ function openInstructorModal(data, editMode = false) {
     document.getElementById('modalUpdeshta').value = data.updeshta_since || '';
     document.getElementById('modalAddress').value = data.address || '';
     document.getElementById('modalCountry').value = data.country || '';
-    document.getElementById('modalState').value = data.state || '';
-    document.getElementById('modalCity').value = data.district || '';
+    document.getElementById('modalState').value = data.state_name || '';
+    document.getElementById('modalCity').value = data.district_name || '';
     document.getElementById('modalActive').value = data.is_active != null ? data.is_active : '1';
 
     // Enable/disable fields
@@ -152,7 +153,9 @@ document.getElementById('instructorForm').addEventListener('submit', function(e)
         state: document.getElementById('modalState').value,
         city: document.getElementById('modalCity').value,
         is_active: document.getElementById('modalActive').value
+
     };
+    console.log("Payload:", payload);
     const csrftoken = getCookie("csrftoken");
     console.log("Submitting instructor data:", payload);
     fetch(`/member/api/instructors_update/${currentInstructorId}/`, {

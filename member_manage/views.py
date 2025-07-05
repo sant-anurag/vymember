@@ -497,8 +497,6 @@ def all_instructors(request):
 
     # Format dates for display
     for instructor in instructors:
-
-
         # Get associated_since and updeshta_since years as strings
         instructor['associated_since'] = str(instructor['associated_since']) if instructor['associated_since'] else 'N/A'
         instructor['updeshta_since'] = str(instructor['updeshta_since']) if instructor['updeshta_since'] else 'N/A'
@@ -1801,13 +1799,26 @@ def api_instructor_detail(request, instructor_id):
     print("API instructor detail view accessed")
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM instructors WHERE id = %s", [instructor_id])
+    cursor.execute("""
+        SELECT 
+            i.*, 
+            c.name AS country_name, 
+            s.name AS state_name, 
+            d.name AS district_name
+        FROM instructors i
+        LEFT JOIN country c ON i.country = c.id
+        LEFT JOIN state s ON i.state = s.id
+        LEFT JOIN city d ON i.district = d.id
+        WHERE i.id = %s
+    """, [instructor_id])
     instructor = cursor.fetchone()
     cursor.close()
     conn.close()
     if not instructor:
         return JsonResponse({'error': 'Instructor not found'}, status=404)
     # Convert date fields to string
+    print("Instructor data fetched:", instructor)
+
     return JsonResponse(instructor)
 
 
