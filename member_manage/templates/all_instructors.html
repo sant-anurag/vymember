@@ -175,7 +175,71 @@
         </form>
     </div>
 </div>
-
+<!-- New Edit Modal -->
+<div class="modal-overlay" id="editInstructorModal" style="display: none;">
+    <div class="modal-content">
+        <button class="modal-close-btn" id="editModalCloseBtn" title="Close">&times;</button>
+        <h2 id="editModalTitle">Edit Instructor</h2>
+        <form id="editInstructorForm">
+            <div class="modal-grid">
+                <div>
+                    <label for="editModalName">Name</label>
+                    <input type="text" id="editModalName" name="name" required>
+                </div>
+                <div>
+                    <label for="editModalAge">Age</label>
+                    <input type="number" id="editModalAge" name="age" min="0">
+                </div>
+                <div>
+                    <label for="editModalAssociated">Associated Since</label>
+                    <input type="number" id="editModalAssociated" name="associated_since">
+                </div>
+                <div>
+                    <label for="editModalUpdeshta">Updeshta Since</label>
+                    <input type="number" id="editModalUpdeshta" name="updeshta_since">
+                </div>
+                <div>
+                    <label for="editModalGender">Gender</label>
+                    <input type="text" id="editModalGender" name="gender">
+                </div>
+                <div>
+                    <label for="editModalAddress">Address</label>
+                    <input type="text" id="editModalAddress" name="address">
+                </div>
+                <div>
+                    <label for="editModalCountry">Country</label>
+                    <select id="editModalCountry" name="country" required>
+                        <option value="">Select Country</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="editModalState">State</label>
+                    <select id="editModalState" name="state" required>
+                        <option value="">Select State</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="editModalCity">City</label>
+                    <select id="editModalCity" name="district" required>
+                        <option value="">Select City</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="editModalActive">Status</label>
+                    <select id="editModalActive" name="is_active">
+                        <option value="1">Active</option>
+                        <option value="0">Inactive</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="modal-btn cancel-btn" id="editModalCancelBtn">Cancel</button>
+                <button type="submit" class="modal-btn save-btn" id="editModalSaveBtn">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
 <script src="https://kit.fontawesome.com/2b8e1e2e2a.js" crossorigin="anonymous"></script>
 <script src="{% static 'js/all_instructors.js' %}"></script>
+<script src="{% static 'js/edit_instructor_modal.js' %}"></script>
 {% endblock %}

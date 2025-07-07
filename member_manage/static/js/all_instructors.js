@@ -110,16 +110,7 @@ document.querySelectorAll('.view-btn').forEach(btn => {
     });
 });
 
-// Edit button
-document.querySelectorAll('.edit-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-        const instructorId = this.getAttribute('data-id');
-        fetch(`/member/api/instructors/${instructorId}/`)
-            .then(r => r.json())
-            .then(data => openInstructorModal(data, true))
-            .catch(() => alert('Failed to load instructor details.'));
-    });
-});
+
 
 // Close button
 document.getElementById('modalCloseBtn').addEventListener('click', closeInstructorModal);
