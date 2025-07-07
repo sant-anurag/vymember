@@ -6,6 +6,7 @@
     box-shadow: 0 8px 40px rgba(60, 100, 180, 0.15), 0 2px 8px rgba(0, 0, 0, 0.05);
     width: 96%;
     max-width: 1200px;
+    margin: 2rem auto;
 }
 
 .instructors-section h2 {
@@ -140,6 +141,7 @@
     border-collapse: collapse;
     border-radius: 10px;
     overflow: hidden;
+    min-width: 800px;
 }
 
 #instructorsTable th {
@@ -358,7 +360,9 @@
     color: #fff;
 }
 
-/* Responsive adjustments */
+/* --- Responsive Styles --- */
+
+/* 900px and below */
 @media (max-width: 900px) {
     .instructors-section {
         padding: 1.5rem 0.8rem;
@@ -370,7 +374,7 @@
         max-width: 160px;
     }
     .modal-content {
-        min-width: 280px;
+        min-width: 320px;
         max-width: 90vw;
         padding: 24px 12px 16px 12px;
     }
@@ -382,8 +386,30 @@
         font-size: 0.85rem;
         padding: 0.5rem 0.5rem;
     }
+    .actions-cell {
+        flex-direction: row;
+        gap: 0.2rem;
+    }
+    .filter-actions,
+    .actions-cell {
+        flex-wrap: wrap;
+        gap: 0.4rem;
+    }
+    .filter-btn,
+    .apply-btn,
+    .reset-btn,
+    .download-btn,
+    .action-btn {
+        min-width: 80px;
+        margin-bottom: 0.3rem;
+    }
+    .modal-content h2 {
+        font-size: 1rem;
+        padding: 1rem 1rem;
+    }
 }
 
+/* 768px and below */
 @media (max-width: 768px) {
     .instructors-section {
         padding: 1.25rem 0.75rem;
@@ -424,8 +450,26 @@
         flex-direction: row;
         gap: 0.2rem;
     }
+    .filter-actions,
+    .actions-cell {
+        flex-wrap: wrap;
+        gap: 0.4rem;
+    }
+    .filter-btn,
+    .apply-btn,
+    .reset-btn,
+    .download-btn,
+    .action-btn {
+        min-width: 80px;
+        margin-bottom: 0.3rem;
+    }
+    .modal-content h2 {
+        font-size: 0.95rem;
+        padding: 0.7rem 0.5rem;
+    }
 }
 
+/* 480px and below */
 @media (max-width: 480px) {
     .instructors-section {
         padding: 0.7rem 0.2rem;
@@ -461,8 +505,8 @@
         border-radius: 8px;
     }
     .modal-content h2 {
-        font-size: 0.95rem;
-        padding: 0.7rem 0.5rem;
+        font-size: 0.85rem;
+        padding: 0.5rem 0.2rem;
     }
     .modal-grid label {
         font-size: 0.85rem;
@@ -494,40 +538,6 @@
         padding: 0.5rem 0.7rem;
         border-radius: 5px;
     }
-}
-
-@media (max-width: 900px) {
-    .filter-actions,
-    .actions-cell {
-        flex-wrap: wrap;
-        gap: 0.4rem;
-    }
-    .filter-btn,
-    .apply-btn,
-    .reset-btn,
-    .download-btn,
-    .action-btn {
-        min-width: 80px;
-        margin-bottom: 0.3rem;
-    }
-}
-@media (max-width: 768px) {
-    .filter-actions,
-    .actions-cell {
-        flex-wrap: wrap;
-        gap: 0.4rem;
-    }
-    .filter-btn,
-    .apply-btn,
-    .reset-btn,
-    .download-btn,
-    .action-btn {
-        min-width: 80px;
-        margin-bottom: 0.3rem;
-    }
-}
-
-@media (max-width: 480px) {
     .filter-actions,
     .actions-cell {
         flex-wrap: wrap;
@@ -541,4 +551,41 @@
         min-width: 60px;
         margin-bottom: 0.2rem;
     }
+    .table-container {
+        border-radius: 5px;
+    }
+    #instructorsTable {
+        min-width: 600px;
+    }
 }
+html, body {
+    height: 100%;
+    min-height: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    overflow-y: auto;
+}
+
+.modal-overlay {
+    align-items: flex-start;
+    overflow-y: auto;
+    min-height: 100vh;
+}
+
+@media (max-width: 900px) {
+    .modal-overlay {
+        align-items: flex-start;
+        padding-top: 24px;
+        padding-bottom: 24px;
+    }
+}
+@media (max-width: 480px) {
+    .modal-overlay {
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+}
+
+/* --- End of Modal Styles --- */

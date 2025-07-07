@@ -68,9 +68,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Sidebar toggle functionality
     const sidebarToggle = document.getElementById('sidebarToggle');
     const sidebar = document.querySelector('.sidebar');
-
+    if (!sidebarToggle || !sidebar) {
+        console.warn('Sidebar toggle or sidebar not found on this page.');
+    }
     console.log('Toggle button:', sidebarToggle);
     console.log('Sidebar:', sidebar);
+
 
     if (sidebarToggle && sidebar) {
         // Create overlay element
