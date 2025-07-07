@@ -130,44 +130,6 @@ function getCookie(name) {
     return cookieValue;
 }
 // Save button
-document.getElementById('instructorForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    if (!isEditMode || !currentInstructorId) return;
-    const payload = {
-        name: document.getElementById('modalName').value,
-        age: document.getElementById('modalAge').value,
-        associated_since: document.getElementById('modalAssociated').value,
-        gender: document.getElementById('modelGender').value,
-        updeshta_since: document.getElementById('modalUpdeshta').value,
-        address: document.getElementById('modalAddress').value,
-        country: document.getElementById('modalCountry').value,
-        state: document.getElementById('modalState').value,
-        city: document.getElementById('modalCity').value,
-        is_active: document.getElementById('modalActive').value
-
-    };
-    console.log("Payload:", payload);
-    const csrftoken = getCookie("csrftoken");
-    console.log("Submitting instructor data:", payload);
-    fetch(`/member/api/instructors_update/${currentInstructorId}/`, {
-        method: "POST",
-    headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": csrftoken
-    },
-    body: JSON.stringify(payload)
-})
-    .then(r => r.json())
-    .then(data => {
-        if (data.success) {
-            alert('Instructor updated successfully.');
-            location.reload();
-        } else {
-            alert('Update failed: ' + (data.message || 'Unknown error'));
-        }
-    })
-    .catch(() => alert('Error updating instructor.'));
-});
 
 function setupFilters() {
     const yearFilter = document.getElementById('yearFilter');
