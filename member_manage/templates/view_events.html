@@ -2,22 +2,23 @@
 {% load static %}
 {% block main_content %}
 <link rel="stylesheet" href="{% static 'css/view_events.css' %}">
-<div class="ve-container">
-    <!-- Header -->
-    <div class="ve-header">
-        <h2><i class="fas fa-calendar-alt"></i> Event Attendance Dashboard</h2>
-        <button id="download-btn" class="ve-btn ve-btn-success">
-            <i class="fas fa-download"></i> Download Excel
+<div class="ve-main-container">
+    <div class="ve-header-bar">
+        <div>
+            <h1 class="ve-title"><i class="fas fa-calendar-check"></i> Event Attendance</h1>
+            <p class="ve-subtitle">View, filter, and export event attendance records</p>
+        </div>
+        <button id="download-btn" class="ve-btn ve-btn-accent">
+            <i class="fas fa-file-excel"></i> Export Excel
         </button>
     </div>
 
-    <!-- Filter Card -->
     <div class="ve-card ve-card-filter">
-        <form id="filter-form" class="ve-form" method="get">
+        <form class="ve-form" method="get">
             <div class="ve-form-group">
-                <label for="event_id" class="ve-label">Select Event</label>
+                <label for="event_id" class="ve-label">Event</label>
                 <select class="ve-select" id="event_id" name="event_id">
-                    <option value="">-- All Events --</option>
+                    <option value="">All Events</option>
                     {% for event in events %}
                     <option value="{{ event.id }}" {% if event.id|add:"" == selected_event_id|add:"" %}selected{% endif %}>
                         {{ event.event_name }} ({{ event.event_date }})
@@ -26,43 +27,24 @@
                 </select>
             </div>
             <div class="ve-form-actions">
-                <button type="submit" class="ve-btn ve-btn-primary">Filter</button>
-                <a href="{% url 'view_events' %}" class="ve-btn ve-btn-secondary">Reset</a>
+                <button type="submit" class="ve-btn ve-btn-primary"><i class="fas fa-filter"></i> Filter</button>
+                <a href="{% url 'view_events' %}" class="ve-btn ve-btn-secondary"><i class="fas fa-undo"></i> Reset</a>
             </div>
         </form>
     </div>
 
-    <!-- Event Summary -->
     {% if event_summary %}
     <div class="ve-card ve-card-summary">
-        <div class="ve-card-title">
-            <i class="fas fa-info-circle"></i> Event Summary
+        <div class="ve-summary-header">
+            <i class="fas fa-info-circle"></i> <span>Event Summary</span>
         </div>
         <div class="ve-summary-grid">
-            <div>
-                <span class="ve-summary-label">Event Name:</span>
-                <span>{{ event_summary.event_name }}</span>
-            </div>
-            <div>
-                <span class="ve-summary-label">Date:</span>
-                <span>{{ event_summary.event_date }}</span>
-            </div>
-            <div>
-                <span class="ve-summary-label">Location:</span>
-                <span>{{ event_summary.location }}</span>
-            </div>
-            <div>
-                <span class="ve-summary-label">Instructor:</span>
-                <span>{{ event_summary.instructor_name }}</span>
-            </div>
-            <div>
-                <span class="ve-summary-label">Coordinator:</span>
-                <span>{{ event_summary.coordinator }}</span>
-            </div>
-            <div>
-                <span class="ve-summary-label">Total Attendance:</span>
-                <span>{{ event_summary.total_attendance }}</span>
-            </div>
+            <div><span class="ve-summary-label">Name:</span> {{ event_summary.event_name }}</div>
+            <div><span class="ve-summary-label">Date:</span> {{ event_summary.event_date }}</div>
+            <div><span class="ve-summary-label">Location:</span> {{ event_summary.location }}</div>
+            <div><span class="ve-summary-label">Instructor:</span> {{ event_summary.instructor_name }}</div>
+            <div><span class="ve-summary-label">Coordinator:</span> {{ event_summary.coordinator }}</div>
+            <div><span class="ve-summary-label">Total Attendance:</span> {{ event_summary.total_attendance }}</div>
             <div class="ve-summary-desc" style="grid-column: 1 / -1;">
                 <span class="ve-summary-label">Description:</span>
                 <span>{{ event_summary.description|default:"-" }}</span>
@@ -71,9 +53,8 @@
     </div>
     {% endif %}
 
-    <!-- Attendance Table -->
     <div class="ve-card ve-card-table">
-        <div class="ve-card-title">
+        <div class="ve-table-header">
             <i class="fas fa-users"></i> Attendance List
         </div>
         <div class="ve-table-responsive">
@@ -87,7 +68,7 @@
                         <th>Gender</th>
                         <th>Address</th>
                         <th>Attended On</th>
-                        <th>New Member?</th>
+                        <th>New?</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -104,7 +85,7 @@
                             {% if att.is_new_member %}
                                 <span class="ve-badge ve-badge-success">Yes</span>
                             {% else %}
-                                <span class="ve-badge ve-badge-secondary">No</span>
+                                <span class="ve-badge ve-badge-muted">No</span>
                             {% endif %}
                         </td>
                     </tr>
@@ -116,13 +97,12 @@
                 </tbody>
             </table>
         </div>
-        <!-- Pagination -->
         <nav class="ve-pagination-nav">
             <ul class="ve-pagination">
                 {% if attendance_page.has_previous %}
-                <li><a href="?event_id={{ selected_event_id }}&page={{ attendance_page.previous_page_number }}">Previous</a></li>
+                <li><a href="?event_id={{ selected_event_id }}&page={{ attendance_page.previous_page_number }}"><i class="fas fa-angle-left"></i></a></li>
                 {% else %}
-                <li class="disabled">Previous</li>
+                <li class="disabled"><i class="fas fa-angle-left"></i></li>
                 {% endif %}
                 {% for num in attendance_page.paginator.page_range %}
                     {% if attendance_page.number == num %}
@@ -132,15 +112,14 @@
                     {% endif %}
                 {% endfor %}
                 {% if attendance_page.has_next %}
-                <li><a href="?event_id={{ selected_event_id }}&page={{ attendance_page.next_page_number }}">Next</a></li>
+                <li><a href="?event_id={{ selected_event_id }}&page={{ attendance_page.next_page_number }}"><i class="fas fa-angle-right"></i></a></li>
                 {% else %}
-                <li class="disabled">Next</li>
+                <li class="disabled"><i class="fas fa-angle-right"></i></li>
                 {% endif %}
             </ul>
         </nav>
     </div>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 document.getElementById('download-btn').addEventListener('click', function() {
     window.location.href = "{% url 'download_event_attendance' %}?event_id={{ selected_event_id }}";

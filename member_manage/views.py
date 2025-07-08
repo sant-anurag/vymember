@@ -26,6 +26,7 @@ from django.views.decorators.http import require_http_methods
 # Third-party imports
 import mysql.connector
 import openpyxl
+from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from django.shortcuts import render
 from django.core.paginator import Paginator
 from django.db import connection
@@ -2242,34 +2243,94 @@ def download_event_attendance(request):
         """)
     attendance = cur.fetchall()
 
+
+
     # Create Excel
     wb = openpyxl.Workbook()
     ws1 = wb.active
     ws1.title = "Event Summary"
+
+    # Styles
+    header_font = Font(bold=True, color="FFFFFF", name="Calibri", size=12)
+    header_fill = PatternFill("solid", fgColor="2563eb")
+    data_font = Font(name="Calibri", size=11)
+    data_fill = PatternFill("solid", fgColor="f3f6fa")
+    border = Border(
+        left=Side(style="thin", color="B0B7C3"),
+        right=Side(style="thin", color="B0B7C3"),
+        top=Side(style="thin", color="B0B7C3"),
+        bottom=Side(style="thin", color="B0B7C3"),
+    )
+    align = Alignment(vertical="center", horizontal="left", wrap_text=True)
+
     # Write event summary
     if event_summary:
-        for idx, (k, v) in enumerate(event_summary.items(), 1):
-            ws1[f"A{idx}"] = k
-            ws1[f"B{idx}"] = str(v)
+        ws1.append(["Field", "Value"])
+        for idx, (k, v) in enumerate(event_summary.items(), 2):
+            ws1.append([k, str(v)])
+        # Style header
+        for col in range(1, 3):
+            cell = ws1.cell(row=1, column=col)
+            cell.font = header_font
+            cell.fill = header_fill
+            cell.alignment = align
+            cell.border = border
+        # Style data
+        for row in ws1.iter_rows(min_row=2, max_row=ws1.max_row, min_col=1, max_col=2):
+            for cell in row:
+                cell.font = data_font
+                cell.fill = data_fill
+                cell.alignment = align
+                cell.border = border
     else:
         ws1["A1"] = "No event selected"
+        ws1["A1"].font = header_font
+        ws1["A1"].fill = header_fill
+        ws1["A1"].alignment = align
+        ws1["A1"].border = border
 
     # Attendance sheet
     ws2 = wb.create_sheet("Attendance")
     headers = ["Name", "Age", "Contact", "Gender", "Address", "Attended On", "New Member?"]
     ws2.append(headers)
-    for row in attendance:
-            ws2.append([
-                row['member_name'],
-                row['age'],
-                row['contact_number'],
-                row['gender'],
-                row['address'],
-                row['attended_on'].strftime("%Y-%m-%d %H:%M") if row['attended_on'] else "",
-                "Yes" if row['is_new_member'] else "No"
-            ])
+    # Style header
     for col in range(1, len(headers) + 1):
-        ws2.column_dimensions[get_column_letter(col)].width = 18
+        cell = ws2.cell(row=1, column=col)
+        cell.font = header_font
+        cell.fill = header_fill
+        cell.alignment = align
+        cell.border = border
+
+    # Data rows
+    for row in attendance:
+        ws2.append([
+            row['member_name'],
+            row['age'],
+            row['contact_number'],
+            row['gender'],
+            row['address'],
+            row['attended_on'].strftime("%Y-%m-%d %H:%M") if row['attended_on'] else "",
+            "Yes" if row['is_new_member'] else "No"
+        ])
+    for r in ws2.iter_rows(min_row=2, max_row=ws2.max_row, min_col=1, max_col=len(headers)):
+        for cell in r:
+            cell.font = data_font
+            cell.fill = data_fill
+            cell.alignment = align
+            cell.border = border
+
+    # Auto column width
+    for ws in [ws1, ws2]:
+        for col in ws.columns:
+            max_length = 0
+            col_letter = get_column_letter(col[0].column)
+            for cell in col:
+                try:
+                    if cell.value:
+                        max_length = max(max_length, len(str(cell.value)))
+                except:
+                    pass
+            ws.column_dimensions[col_letter].width = max_length + 4
 
     # Response
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
