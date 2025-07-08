@@ -45,4 +45,5 @@ urlpatterns = [
     path('reset/<str:token>/', views.reset_password, name='reset_password'),
     path('events/', views.view_events, name='view_events'),
     path('events/download/', views.download_event_attendance, name='download_event_attendance'),
+    path('upload-attendance/', views.upload_attendance, name='upload_attendance'),
 ]

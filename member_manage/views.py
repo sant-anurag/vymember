@@ -28,6 +28,14 @@ import mysql.connector
 import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.urls import reverse
+from django.views.decorators.http import require_http_methods
+
+
+
+
 
 # In-memory token store for demo (use DB or cache in production)
 RESET_TOKENS = {}
@@ -2359,3 +2367,60 @@ def download_event_attendance(request):
     response['Content-Disposition'] = f'attachment; filename={filename}'
     wb.save(response)
     return response
+
+
+@require_http_methods(["GET", "POST"])
+def upload_attendance(request):
+    # Fetch all events for dropdown
+    conn = get_db_connection()
+    cur = conn.cursor(dictionary=True)
+    cur.execute("SELECT id, event_name, event_date FROM event_registrations ORDER BY event_date DESC")
+    events = cur.fetchall()
+    cur.close()
+    conn.close()
+
+    if request.method == "POST":
+        event_id = request.POST.get('event_id')
+        file = request.FILES.get('attendance_file')
+        if not event_id or not file:
+            messages.error(request, "Please select an event and upload a file.")
+            return render(request, 'upload_attendance.html', {'events': events})
+
+        try:
+            wb = openpyxl.load_workbook(file)
+            ws = wb.active
+            headers = [cell.value for cell in ws[1]]
+            expected = ['Name', 'Age', 'Contact', 'Gender', 'Address', 'Attended On', 'New Member?']
+            if headers != expected:
+                messages.error(request, "Invalid template. Please use the provided template.")
+                return render(request, 'upload_attendance.html', {'events': events})
+
+            conn = get_db_connection()
+            cur = conn.cursor()
+            count = 0
+            for row in ws.iter_rows(min_row=2, values_only=True):
+                if not row[0]:
+                    continue
+                cur.execute("""
+                    INSERT INTO event_attendance
+                    (event_id, member_name, age, contact_number, gender, address, attended_on, is_new_member)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                """, (
+                    event_id,
+                    row[0],
+                    int(row[1]) if row[1] else None,
+                    row[2] or "",
+                    row[3] or "",
+                    row[4] or "",
+                    row[5] if row[5] else None,
+                    1 if (str(row[6]).strip().lower() == "yes") else 0
+                ))
+                count += 1
+            conn.commit()
+            cur.close()
+            conn.close()
+            messages.success(request, f"Successfully uploaded {count} attendance records.")
+            return redirect(reverse('upload_attendance'))
+        except Exception as e:
+            messages.error(request, f"Error processing file: {e}")
+    return render(request, 'upload_attendance.html', {'events': events})

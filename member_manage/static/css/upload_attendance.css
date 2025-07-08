@@ -1,0 +1,168 @@
+/* upload_attendance.css */
+
+body {
+    font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    background: linear-gradient(135deg, #e0e7ff 0%, #f3f6fa 100%);
+    min-height: 100vh;
+}
+
+.ua-main-container {
+    max-width: 540px;
+    margin: 48px auto;
+    background: linear-gradient(120deg, #ffffff 60%, #e0e7ff 100%);
+    border-radius: 18px;
+    box-shadow: 0 8px 32px 0 rgba(60, 72, 100, 0.18);
+    padding: 40px 36px 28px 36px;
+    border: 1.5px solid #e5e7eb;
+    transition: box-shadow 0.2s;
+}
+
+.ua-main-container:hover {
+    box-shadow: 0 12px 40px 0 rgba(60, 72, 100, 0.22);
+}
+
+.ua-header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.ua-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #1e3a8a;
+    margin-bottom: 2px;
+    letter-spacing: -1px;
+}
+
+.ua-subtitle {
+    color: #64748b;
+    font-size: 1.08rem;
+    font-weight: 400;
+    margin-top: 2px;
+}
+
+.ua-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 22px;
+    border-radius: 7px;
+    border: none;
+    font-size: 1.08rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+    box-shadow: 0 2px 8px 0 rgba(37, 99, 235, 0.08);
+    outline: none;
+}
+
+.ua-btn-accent {
+    background: linear-gradient(90deg, #e0e7ff 0%, #f3f6fa 100%);
+    color: #2563eb;
+    border: 1.5px solid #2563eb;
+}
+
+.ua-btn-accent:hover, .ua-btn-accent:focus {
+    background: linear-gradient(90deg, #2563eb 0%, #60a5fa 100%);
+    color: #fff;
+    box-shadow: 0 4px 16px 0 rgba(37, 99, 235, 0.18);
+}
+
+.ua-btn-primary {
+    background: linear-gradient(90deg, #2563eb 0%, #60a5fa 100%);
+    color: #fff;
+    border: none;
+}
+
+.ua-btn-primary:hover, .ua-btn-primary:focus {
+    background: linear-gradient(90deg, #1e40af 0%, #2563eb 100%);
+    color: #fff;
+    box-shadow: 0 4px 16px 0 rgba(37, 99, 235, 0.18);
+}
+
+.ua-card-form {
+    margin-top: 18px;
+    padding: 28px 22px 18px 22px;
+    background: linear-gradient(120deg, #f9fafb 80%, #e0e7ff 100%);
+    border-radius: 12px;
+    box-shadow: 0 2px 12px 0 rgba(60, 72, 100, 0.08);
+    border: 1px solid #e5e7eb;
+}
+
+.ua-form-group {
+    margin-bottom: 22px;
+}
+
+.ua-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 7px;
+    color: #334155;
+    font-size: 1.05rem;
+    letter-spacing: 0.01em;
+}
+
+.ua-select, input[type="file"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 1.08rem;
+    background: #fff;
+    color: #1e293b;
+    transition: border 0.18s, box-shadow 0.18s;
+    box-shadow: 0 1px 4px 0 rgba(100, 116, 139, 0.06);
+}
+
+.ua-select:focus, input[type="file"]:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px #93c5fd;
+    outline: none;
+}
+
+.ua-form-actions {
+    text-align: right;
+    margin-top: 10px;
+}
+
+.ua-messages {
+    margin-top: 22px;
+}
+
+.ua-message {
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    font-size: 1.08rem;
+    font-weight: 500;
+    box-shadow: 0 1px 4px 0 rgba(100, 116, 139, 0.08);
+    border-left: 5px solid;
+}
+
+.ua-message.success {
+    background: linear-gradient(90deg, #d1fae5 80%, #bbf7d0 100%);
+    color: #065f46;
+    border-color: #10b981;
+}
+
+.ua-message.error {
+    background: linear-gradient(90deg, #fee2e2 80%, #fecaca 100%);
+    color: #991b1b;
+    border-color: #ef4444;
+}
+
+@media (max-width: 700px) {
+    .ua-main-container {
+        padding: 18px 6vw 18px 6vw;
+    }
+    .ua-header-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 18px;
+    }
+    .ua-card-form {
+        padding: 16px 6vw 12px 6vw;
+    }
+}

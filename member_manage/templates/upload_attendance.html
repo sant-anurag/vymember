@@ -1,0 +1,45 @@
+{% extends "home.html" %}
+{% load static %}
+{% block main_content %}
+<link rel="stylesheet" href="{% static 'css/upload_attendance.css' %}">
+<div class="ua-main-container">
+    <div class="ua-header-bar">
+        <div>
+            <h1 class="ua-title"><i class="fas fa-upload"></i> Upload Attendance</h1>
+            <p class="ua-subtitle">Upload an Excel file to add attendance records for a specific event.</p>
+        </div>
+        <a href="{% static 'templates/attendance_template.xlsx' %}" class="ua-btn ua-btn-accent" download>
+            <i class="fas fa-file-download"></i> Download Template
+        </a>
+    </div>
+    <div class="ua-card ua-card-form">
+        <form id="upload-form" class="ua-form" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="ua-form-group">
+                <label for="event_id" class="ua-label">Select Event</label>
+                <select class="ua-select" id="event_id" name="event_id" required>
+                    <option value="">-- Select Event --</option>
+                    {% for event in events %}
+                    <option value="{{ event.id }}">{{ event.event_name }} ({{ event.event_date }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="ua-form-group">
+                <label for="attendance_file" class="ua-label">Excel File</label>
+                <input type="file" id="attendance_file" name="attendance_file" accept=".xlsx,.xls" required>
+            </div>
+            <div class="ua-form-actions">
+                <button type="submit" class="ua-btn ua-btn-primary"><i class="fas fa-upload"></i> Upload</button>
+            </div>
+        </form>
+        {% if messages %}
+        <div class="ua-messages">
+            {% for message in messages %}
+            <div class="ua-message {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+<script src="{% static 'js/upload_attendance.js' %}"></script>
+{% endblock %}
