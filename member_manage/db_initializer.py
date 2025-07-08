@@ -106,6 +106,22 @@ class DBInitializer:
         )
         ''', ('Not Specified', 'Not Specified'))
 
+        # Create event attendance table
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS event_attendance (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                event_id INT NOT NULL,
+                member_name VARCHAR(255) NOT NULL,
+                age INT,
+                contact_number VARCHAR(20),
+                gender VARCHAR(20),
+                address VARCHAR(255),
+                attended_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                is_new_member TINYINT(1) DEFAULT 0,
+                FOREIGN KEY (event_id) REFERENCES event_registrations(id) ON DELETE CASCADE
+            )
+        ''')
+
         # Create tables
         cur.execute('''
             CREATE TABLE IF NOT EXISTS country (

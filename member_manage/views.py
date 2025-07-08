@@ -26,6 +26,11 @@ from django.views.decorators.http import require_http_methods
 # Third-party imports
 import mysql.connector
 import openpyxl
+from django.shortcuts import render
+from django.core.paginator import Paginator
+from django.db import connection
+from django.http import HttpResponse
+from openpyxl.utils import get_column_letter
 
 # In-memory token store for demo (use DB or cache in production)
 RESET_TOKENS = {}
@@ -2011,9 +2016,31 @@ def record_attendance(request):
             SET total_attendance = total_attendance + %s
             WHERE id = %s
         """, [len(members), selected_event['id']])
+
+        # record the attendance in event_attendance table
+        for m in members:
+            cursor.execute("""
+                INSERT INTO event_attendance (
+                    event_id,
+                    member_name,
+                    age,
+                    contact_number,
+                    gender,
+                    address,
+                    is_new_member
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """, [
+                selected_event['id'],
+                m['name'],
+                m.get('age'),
+                m.get('contact'),
+                m.get('gender'),
+                m.get('address'),
+                1 if m.get('is_new') else 0
+            ])
         conn.commit()
         conn.close()
-        message = f"Attendance saved. {new_member_count} new member(s) registered successfully."
+        message = f"Attendance recorded. {new_member_count} new member(s) registered successfully."
 
     return render(request, 'record_attendance.html', {
         'events': events,
@@ -2133,3 +2160,120 @@ def reset_password(request, token):
         "message_type": message_type,
         "username": username
     })
+
+def view_events(request):
+    print("View events page accessed")
+    # Fetch all events for filter dropdown
+    conn = get_db_conn()
+    cur = conn.cursor(dictionary=True)
+    cur.execute("SELECT id, event_name, event_date FROM event_registrations ORDER BY event_date DESC")
+    events = cur.fetchall()
+    #[dict(zip([col[0] for col in cur.description], row)) for row in cur.fetchall()]
+    print("Events fetched for display:", events)
+    selected_event_id = request.GET.get('event_id')
+    page_number = request.GET.get('page', 1)
+    print("Selected event ID:", selected_event_id, "Page number:", page_number)
+    # Event summary
+    event_summary = None
+    if selected_event_id:
+        cur.execute("""
+            SELECT er.*, i.name as instructor_name
+            FROM event_registrations er
+            LEFT JOIN instructors i ON er.instructor_id = i.id
+            WHERE er.id = %s
+        """, [selected_event_id])
+        event_summary = cur.fetchone()
+        #if row:
+            #event_summary = dict(zip([col[0] for col in cur.description], row))
+        print("Event summary fetched:", event_summary)
+    # Attendance data
+    if selected_event_id:
+        cur.execute("""
+            SELECT * FROM event_attendance
+            WHERE event_id = %s
+            ORDER BY attended_on DESC
+        """, [selected_event_id])
+    else:
+        cur.execute("""
+            SELECT * FROM event_attendance
+            ORDER BY attended_on DESC
+        """)
+    attendance =  cur.fetchall()
+
+    paginator = Paginator(attendance, 10)
+    attendance_page = paginator.get_page(page_number)
+
+    return render(request, 'view_events.html', {
+        'events': events,
+        'selected_event_id': selected_event_id or '',
+        'event_summary': event_summary,
+        'attendance_page': attendance_page,
+    })
+
+# Excel download view
+def download_event_attendance(request):
+    event_id = request.GET.get('event_id')
+    # Fetch event summary
+    event_summary = {}
+    conn = get_db_conn()
+    cur = conn.cursor(dictionary=True)
+    if event_id:
+        cur.execute("""
+            SELECT er.*, i.name as instructor_name
+            FROM event_registrations er
+            LEFT JOIN instructors i ON er.instructor_id = i.id
+            WHERE er.id = %s
+        """, [event_id])
+        event_summary = cur.fetchone()
+
+    # Fetch attendance
+
+    if event_id:
+        cur.execute("""
+            SELECT member_name, age, contact_number, gender, address, attended_on, is_new_member
+            FROM event_attendance WHERE event_id = %s
+            ORDER BY attended_on DESC
+        """, [event_id])
+    else:
+        cur.execute("""
+            SELECT member_name, age, contact_number, gender, address, attended_on, is_new_member
+            FROM event_attendance
+            ORDER BY attended_on DESC
+        """)
+    attendance = cur.fetchall()
+
+    # Create Excel
+    wb = openpyxl.Workbook()
+    ws1 = wb.active
+    ws1.title = "Event Summary"
+    # Write event summary
+    if event_summary:
+        for idx, (k, v) in enumerate(event_summary.items(), 1):
+            ws1[f"A{idx}"] = k
+            ws1[f"B{idx}"] = str(v)
+    else:
+        ws1["A1"] = "No event selected"
+
+    # Attendance sheet
+    ws2 = wb.create_sheet("Attendance")
+    headers = ["Name", "Age", "Contact", "Gender", "Address", "Attended On", "New Member?"]
+    ws2.append(headers)
+    for row in attendance:
+            ws2.append([
+                row['member_name'],
+                row['age'],
+                row['contact_number'],
+                row['gender'],
+                row['address'],
+                row['attended_on'].strftime("%Y-%m-%d %H:%M") if row['attended_on'] else "",
+                "Yes" if row['is_new_member'] else "No"
+            ])
+    for col in range(1, len(headers) + 1):
+        ws2.column_dimensions[get_column_letter(col)].width = 18
+
+    # Response
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    filename = "event_attendance.xlsx"
+    response['Content-Disposition'] = f'attachment; filename={filename}'
+    wb.save(response)
+    return response

@@ -18,7 +18,7 @@
     <div class="logo">
         <img src="{% static 'images/a.jpg' %}" alt="CRM Logo"/>
         <div style="display: flex; flex-direction: column;">
-            <span>XYZ Ltd</span>
+            <span>Vihangam Yog</span>
             <span>Pune</span>
         </div>
     </div>
@@ -46,8 +46,8 @@
             <a href="#"><i class="fas fa-chart-bar"></i>Events <i class="fas fa-chevron-down"></i></a>
             <ul class="submenu">
                 <li><a href="{% url 'add_event' %}"><i class="fas fa-plus"></i>Add Event</a></li>
-                <li><a href="{% url 'record_attendance' %}"><i class="fas fa-clipboard-list"></i>Record Attendance</a>
-                </li>
+                <li><a href="{% url 'record_attendance' %}"><i class="fas fa-clipboard-list"></i>Record Attendance</a></li>
+                <li><a href="{% url 'view_events' %}"><i class="fas fa-eye"></i>View Events</a></li>
             </ul>
         </li>
         <li tabindex="0">

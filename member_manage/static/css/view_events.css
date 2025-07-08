@@ -1,0 +1,278 @@
+/* view_events.css */
+body {
+    background: #f4f6fb;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    color: #222;
+}
+
+.ve-container {
+    max-width: 1100px;
+    margin: 32px auto;
+    padding: 0 16px;
+}
+
+.ve-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+}
+
+.ve-header h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+    letter-spacing: 0.5px;
+}
+
+.ve-card {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 16px rgba(30,41,59,0.07);
+    margin-bottom: 28px;
+    padding: 28px 32px;
+    border: none;
+}
+
+.ve-card-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2563eb;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ve-card-filter {
+    padding-bottom: 18px;
+}
+
+.ve-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    align-items: flex-end;
+}
+
+.ve-form-group {
+    flex: 1 1 260px;
+    min-width: 220px;
+}
+
+.ve-label {
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.ve-select {
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    font-size: 1rem;
+    background: #f9fafb;
+    color: #222;
+    transition: border 0.2s;
+}
+
+.ve-select:focus {
+    border-color: #2563eb;
+    outline: none;
+}
+
+.ve-form-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.ve-btn {
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+}
+
+.ve-btn-primary {
+    background: #2563eb;
+    color: #fff;
+}
+
+.ve-btn-primary:hover, .ve-btn-primary:focus {
+    background: #1d4ed8;
+}
+
+.ve-btn-secondary {
+    background: #64748b;
+    color: #fff;
+}
+
+.ve-btn-secondary:hover, .ve-btn-secondary:focus {
+    background: #475569;
+}
+
+.ve-btn-success {
+    background: #22c55e;
+    color: #fff;
+}
+
+.ve-btn-success:hover, .ve-btn-success:focus {
+    background: #16a34a;
+}
+
+.ve-card-summary {
+    background: linear-gradient(90deg, #e0e7ff 0%, #fff 100%);
+    border-left: 4px solid #2563eb;
+}
+
+.ve-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px 32px;
+    margin-top: 10px;
+}
+
+.ve-summary-label {
+    font-weight: 600;
+    color: #374151;
+    margin-right: 4px;
+}
+
+.ve-summary-desc {
+    margin-top: 10px;
+}
+
+.ve-card-table {
+    padding: 0;
+    overflow: hidden;
+}
+
+.ve-table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.ve-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #fff;
+    font-size: 1rem;
+}
+
+.ve-table thead th {
+    background: #2563eb;
+    color: #fff;
+    font-weight: 600;
+    padding: 14px 10px;
+    border-bottom: 2px solid #e5e7eb;
+    text-align: left;
+}
+
+.ve-table tbody tr:nth-child(odd) {
+    background: #f3f6fa;
+}
+
+.ve-table tbody tr:hover {
+    background: #e0e7ff;
+}
+
+.ve-table td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #e5e7eb;
+    vertical-align: middle;
+}
+
+.ve-table-empty {
+    text-align: center;
+    color: #6b7280;
+    font-style: italic;
+    padding: 24px 0;
+}
+
+.ve-badge {
+    display: inline-block;
+    padding: 0.35em 0.8em;
+    border-radius: 5px;
+    font-size: 0.97em;
+    font-weight: 500;
+    color: #fff;
+}
+
+.ve-badge-success {
+    background: #22c55e;
+}
+
+.ve-badge-secondary {
+    background: #64748b;
+}
+
+.ve-pagination-nav {
+    padding: 18px 32px;
+    background: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+    border-radius: 0 0 14px 14px;
+}
+
+.ve-pagination {
+    display: flex;
+    justify-content: flex-end;
+    gap: 4px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.ve-pagination li {
+    min-width: 36px;
+    text-align: center;
+    padding: 6px 0;
+    border-radius: 5px;
+    font-weight: 500;
+    color: #2563eb;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.ve-pagination li a {
+    color: inherit;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.ve-pagination li.active, .ve-pagination li:hover:not(.disabled) {
+    background: #2563eb;
+    color: #fff;
+}
+
+.ve-pagination li.disabled {
+    color: #b0b7c3;
+    background: #f3f6fa;
+    cursor: not-allowed;
+}
+
+@media (max-width: 900px) {
+    .ve-card, .ve-card-summary, .ve-card-table {
+        padding: 18px 8px;
+    }
+    .ve-pagination-nav {
+        padding: 12px 8px;
+    }
+    .ve-header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+    }
+}

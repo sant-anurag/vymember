@@ -43,5 +43,6 @@ urlpatterns = [
     path('session_timeout/', views.session_timeout, name='session_timeout'),
     path('forgot/', views.forgot_password, name='forgot_password'),
     path('reset/<str:token>/', views.reset_password, name='reset_password'),
-    # ... other URLs ...
+    path('events/', views.view_events, name='view_events'),
+    path('events/download/', views.download_event_attendance, name='download_event_attendance'),
 ]
