@@ -2216,13 +2216,19 @@ def download_event_attendance(request):
     cur = conn.cursor(dictionary=True)
     if event_id:
         cur.execute("""
-            SELECT er.*, i.name as instructor_name
+            SELECT er.*, i.name as instructor_name,
+                   c.name as country_name,
+                   s.name as state_name,
+                   d.name as city_name
             FROM event_registrations er
             LEFT JOIN instructors i ON er.instructor_id = i.id
+            LEFT JOIN country c ON er.country = c.id
+            LEFT JOIN state s ON er.state = s.id
+            LEFT JOIN city d ON er.district = d.id
             WHERE er.id = %s
         """, [event_id])
         event_summary = cur.fetchone()
-
+        print("Event summary fetched for Excel:", event_summary)
     # Fetch attendance
 
     if event_id:
@@ -2262,8 +2268,27 @@ def download_event_attendance(request):
     # Write event summary
     if event_summary:
         ws1.append(["Field", "Value"])
-        for idx, (k, v) in enumerate(event_summary.items(), 2):
-            ws1.append([k, str(v)])
+        # Map DB keys to user-friendly labels
+        field_labels = {
+            "event_name": "Event Name",
+            "event_date": "Event Date",
+            "instructor_name": "Instructor",
+            "coordinator": "Coordinator",
+            "location": "Location",
+            "country_name": "Country",
+            "state_name": "State",
+            "city_name": "City",
+            "total_attendance": "Total Attendance",
+            "description": "Description",
+            # Add more as needed
+        }
+
+        for key in ["event_name", "event_date", "instructor_name", "coordinator", "location",
+                    "country_name", "state_name", "city_name", "total_attendance", "description"]:
+            if key in event_summary:
+                label = field_labels.get(key, key.replace("_", " ").title())
+                value = event_summary[key] if event_summary[key] is not None else ""
+                ws1.append([label, str(value)])
         # Style header
         for col in range(1, 3):
             cell = ws1.cell(row=1, column=col)
