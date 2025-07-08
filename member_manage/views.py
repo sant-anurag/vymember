@@ -27,10 +27,6 @@ from django.views.decorators.http import require_http_methods
 import mysql.connector
 import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
-from django.shortcuts import render
-from django.core.paginator import Paginator
-from django.db import connection
-from django.http import HttpResponse
 from openpyxl.utils import get_column_letter
 
 # In-memory token store for demo (use DB or cache in production)
