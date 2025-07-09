@@ -2399,27 +2399,64 @@ def upload_attendance(request):
             cur = conn.cursor()
             count = 0
             for row in ws.iter_rows(min_row=2, values_only=True):
-                if not row[0]:
-                    continue
-                cur.execute("""
-                    INSERT INTO event_attendance
-                    (event_id, member_name, age, contact_number, gender, address, attended_on, is_new_member)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-                """, (
-                    event_id,
-                    row[0],
-                    int(row[1]) if row[1] else None,
-                    row[2] or "",
-                    row[3] or "",
-                    row[4] or "",
-                    row[5] if row[5] else None,
-                    1 if (str(row[6]).strip().lower() == "yes") else 0
-                ))
-                count += 1
+                    if not row[0]:
+                        continue
+                    cur.execute("""
+                        INSERT INTO event_attendance
+                        (event_id, member_name, age, contact_number, gender, address, attended_on, is_new_member)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                    """, (
+                        event_id,
+                        row[0],
+                        int(row[1]) if row[1] else None,
+                        row[2] or "",
+                        row[3] or "",
+                        row[4] or "",
+                        row[5] if row[5] else None,
+                        1 if (str(row[6]).strip().lower() == "yes") else 0
+                    ))
+                    count += 1
+
+                    # Register as new member if needed
+                    if str(row[6]).strip().lower() == "yes":
+                        # Fetch event location info
+                        cur.execute("""
+                            SELECT country, state, district FROM event_registrations WHERE id = %s
+                        """, (event_id,))
+                        event_loc = cur.fetchone()
+                        country = event_loc[0] if event_loc else None
+                        state = event_loc[1] if event_loc else None
+                        district = event_loc[2] if event_loc else None
+
+                        # Insert into members table
+                        cur.execute("""
+                            INSERT INTO members
+                            (name, age, gender, address, state, district, country, event_id, date_of_initiation, number)
+                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        """, (
+                            row[0],  # name
+                            str(row[1]) if row[1] else None,  # age as string
+                            row[3] or "",  # gender
+                            row[4] or "",  # address
+                            state,
+                            district,
+                            country,
+                            event_id,
+                            row[5] if row[5] else None,  # attended_on as date_of_initiation
+                            row[2] or ""  # contact number
+                        ))
+                    new_member_count += 1
+            # Update total attendance for the event
+            cur.execute("""
+                UPDATE event_registrations
+                SET total_attendance = total_attendance + %s
+                WHERE id = %s
+            """, (count, event_id))
+
             conn.commit()
             cur.close()
             conn.close()
-            messages.success(request, f"Successfully uploaded {count} attendance records.")
+            messages.success(request, f"Successfully uploaded {count} attendance records. {new_member_count} new member(s) registered.")
             return redirect(reverse('upload_attendance'))
         except Exception as e:
             messages.error(request, f"Error processing file: {e}")
