@@ -1,37 +1,44 @@
 {% extends "home.html" %}
 {% load static %}
+
 {% block main_content %}
 <link rel="stylesheet" href="{% static 'css/upload_attendance.css' %}">
-<div class="ua-main-container">
-    <div class="ua-header-bar">
-        <div>
-            <h1 class="ua-title"><i class="fas fa-upload"></i> Upload Attendance</h1>
-            <p class="ua-subtitle">Upload an Excel file to add attendance records for a specific event.</p>
-        </div>
-        <a href="{% static 'templates/attendance_template.xlsx' %}" class="ua-btn ua-btn-accent" download>
-            <i class="fas fa-file-download"></i> Download Template
-        </a>
+
+<div class="upload-container">
+    <h2>Upload Attendance via Excel</h2>
+    <div class="instructions">
+        <h3>Instructions:</h3>
+        <ul>
+            <li>Download the <a href="{% static 'templates/attendance_template.xlsx' %}" download>Excel template</a> and fill in attendance details for each participant.</li>
+            <li>Do not change the column headers in the template.</li>
+            <li>Required fields: <b>Name</b>, <b>Attended On</b>, <b>New Member?</b></li>
+            <li>Optional fields: Age, Contact, Gender, Address.</li>
+            <li>Select the event for which you are uploading attendance.</li>
+            <li>Once ready, drag and drop your file below or click to select.</li>
+            <li>Upon upload, valid records will be appended to the selected event's attendance.</li>
+        </ul>
     </div>
-    <div class="ua-card ua-card-form">
-        <form id="upload-form" class="ua-form" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <div class="ua-form-group">
-                <label for="event_id" class="ua-label">Select Event</label>
-                <select class="ua-select" id="event_id" name="event_id" required>
-                    <option value="">-- Select Event --</option>
-                    {% for event in events %}
-                    <option value="{{ event.id }}">{{ event.event_name }} ({{ event.event_date }})</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="ua-form-group">
-                <label for="attendance_file" class="ua-label">Excel File</label>
-                <input type="file" id="attendance_file" name="attendance_file" accept=".xlsx,.xls" required>
-            </div>
-            <div class="ua-form-actions">
-                <button type="submit" class="ua-btn ua-btn-primary"><i class="fas fa-upload"></i> Upload</button>
-            </div>
-        </form>
+    <form id="uploadForm" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="event_id" class="ua-label">Select Event</label>
+            <select class="ua-select" id="event_id" name="event_id" required>
+                <option value="">-- Select Event --</option>
+                {% for event in events %}
+                <option value="{{ event.id }}">{{ event.event_name }} ({{ event.event_date }})</option>
+                {% endfor %}
+            </select>
+        </div>
+        <!-- ...inside your form, after the drop area... -->
+        <div id="dropArea" class="drop-area">
+            <p>Drag &amp; drop your Excel file here, or <span class="browse-btn">browse</span></p>
+            <input type="file" id="fileInput" name="attendance_file" accept=".xlsx,.xls" hidden required>
+        </div>
+        <span id="fileName" class="file-name"></span>
+        <div></div>
+        <button type="submit" class="upload-btn"><i class="fas fa-upload"></i> Upload</button>
+    </form>
+    <div id="uploadStatus">
         {% if messages %}
         <div class="ua-messages">
             {% for message in messages %}
@@ -41,5 +48,42 @@
         {% endif %}
     </div>
 </div>
+
 <script src="{% static 'js/upload_attendance.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const dropArea = document.getElementById('dropArea');
+    const fileInput = document.getElementById('fileInput');
+    const browseBtn = dropArea.querySelector('.browse-btn');
+    const fileNameSpan = document.getElementById('fileName');
+
+    dropArea.addEventListener('click', () => fileInput.click());
+    browseBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        fileInput.click();
+    });
+
+    dropArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropArea.classList.add('dragover');
+    });
+    dropArea.addEventListener('dragleave', () => dropArea.classList.remove('dragover'));
+    dropArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropArea.classList.remove('dragover');
+        fileInput.files = e.dataTransfer.files;
+        updateFileName();
+    });
+
+    fileInput.addEventListener('change', updateFileName);
+
+    function updateFileName() {
+        if (fileInput.files.length > 0) {
+            fileNameSpan.textContent = "Selected file: " + fileInput.files[0].name;
+        } else {
+            fileNameSpan.textContent = "";
+        }
+    }
+});
+</script>
 {% endblock %}
