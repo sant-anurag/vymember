@@ -18,12 +18,13 @@
                 <label for="event_date">Event Date</label>
                 <input type="date" name="event_date" id="event_date" required/>
             </div>
-        </div>
-        <div class="form-row">
             <div class="form-group">
                 <label for="event_coordinator">Event Coordinator</label>
                 <input type="text" name="event_coordinator" id="event_coordinator" required/>
             </div>
+        </div>
+        <div class="form-row">
+
         </div>
         <div class="form-row">
             <div class="form-group">
@@ -36,23 +37,21 @@
                     <option value="">Select Country</option>
                 </select>
             </div>
-        </div>
-        <div class="form-row">
             <div class="form-group">
                 <label for="event_state">State</label>
                 <select name="event_state" id="event_state" required>
                     <option value="">Select State</option>
                 </select>
             </div>
+        </div>
+        <div class="form-row">
             <div class="form-group">
                 <label for="event_district">District</label>
                 <select name="event_district" id="event_district" required>
                     <option value="">Select District</option>
                 </select>
             </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group">
+             <div class="form-group">
                 <label for="instructor_id">Event Instructor</label>
                 <select name="instructor_id" id="instructor_id" required>
                     <option value="">Select Instructor</option>
@@ -62,12 +61,131 @@
                 </select>
             </div>
         </div>
-
+        <div class="form-row">
+            <div class="form-group">
+                <label for="event_description">Event Description</label>
+                <textarea name="event_description" id="event_description" rows="2"></textarea>
+            </div>
+        </div>
         <div class="form-actions">
             <button type="submit">Save</button>
             <a href="{% url 'dashboard' %}" class="close-btn">Close</a>
         </div>
     </form>
 </section>
+
+<!-- Filter Row -->
+<section class="event-table-section">
+    <div class="event-filter-row">
+        <input type="text" id="filterEventName" placeholder="Event Name">
+        <input type="text" id="filterCoordinator" placeholder="Coordinator">
+        <input type="date" id="filterDate" placeholder="Date">
+        <select id="filterInstructor">
+            <option value="">Instructor</option>
+            {% for instructor in instructors %}
+            <option value="{{ instructor.id }}">{{ instructor.name }}</option>
+            {% endfor %}
+        </select>
+        <button id="filterBtn" class="filter-btn">Filter</button>
+        <button id="resetBtn" class="reset-btn">Reset</button>
+        <button id="downloadBtn" class="download-btn">Download</button>
+    </div>
+
+    <!-- Events Table -->
+    <div class="event-table-container">
+        <table id="eventsTable">
+            <thead>
+                <tr>
+                    <th>Event Name</th>
+                    <th>Date</th>
+                    <th>Coordinator</th>
+                    <th>Location</th>
+                    <th>State</th>
+                    <th>District</th>
+                    <th>Country</th>
+                    <th>Total Attendance</th>
+                    <th>Description</th>
+                    <th>Instructor Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Filled by JS -->
+            </tbody>
+        </table>
+        <div class="pagination" id="pagination">
+            <!-- Pagination buttons by JS -->
+        </div>
+    </div>
+</section>
+
+<!-- Edit Modal -->
+<div id="editEventModal" class="modal-overlay" style="display:none;">
+    <div class="modal-content">
+        <h3>Edit Event</h3>
+        <form id="editEventForm">
+            <input type="hidden" id="editEventId">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="editEventName">Event Name</label>
+                    <input type="text" id="editEventName" required>
+                </div>
+                <div class="form-group">
+                    <label for="editEventDate">Event Date</label>
+                    <input type="date" id="editEventDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="editEventCoordinator">Coordinator</label>
+                    <input type="text" id="editEventCoordinator" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="editEventLocation">Location</label>
+                    <input type="text" id="editEventLocation" required>
+                </div>
+                <div class="form-group">
+                    <label for="editInstructorId">Instructor</label>
+                    <select id="editInstructorId" required>
+                        <option value="">Select Instructor</option>
+                        {% for instructor in instructors %}
+                        <option value="{{ instructor.id }}">{{ instructor.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="editEventCountry">Country</label>
+                    <select id="editEventCountry" required>
+                        <option value="">Select Country</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editEventState">State</label>
+                    <select id="editEventState" required>
+                        <option value="">Select State</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editEventCity">District</label>
+                    <select id="editEventCity" required>
+                        <option value="">Select District</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="editEventDescription">Description</label>
+                <textarea id="editEventDescription"></textarea>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="save-btn">Save</button>
+                <button type="button" class="close-btn" id="closeEditModal">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script src="{% static 'js/add_event.js' %}"></script>
+<script src="{% static 'js/events_table.js' %}"></script>
 {% endblock %}

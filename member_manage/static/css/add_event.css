@@ -10,7 +10,7 @@ body {
     padding: 2.5rem 2.5rem 2rem 2.5rem;
     border-radius: 22px;
     box-shadow: 0 8px 32px rgba(60, 100, 180, 0.13), 0 2px 8px rgba(0,0,0,0.06);
-    max-width: 540px;
+    max-width: auto;
     margin: 3.5rem auto 0 auto;
     display: flex;
     flex-direction: column;
@@ -32,8 +32,8 @@ body {
 
 .event-section h2 {
     color: #2d3a4b;
-    font-size: 1.6rem;
-    font-weight: 800;
+    font-size: 1.2rem;
+    font-weight: 600;
     margin-bottom: 1.5rem;
     letter-spacing: 0.5px;
     text-shadow: 0 2px 8px rgba(79,140,255,0.07);
@@ -55,7 +55,7 @@ body {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 1.3rem;
+    gap: 1rem;
 }
 
 .form-row {
@@ -75,7 +75,7 @@ label {
     font-weight: 600;
     color: #0f4c81;
     margin-bottom: 0.35rem;
-    font-size: 1.05rem;
+    font-size: 0.9rem;
     letter-spacing: 0.1px;
 }
 
@@ -83,7 +83,7 @@ input, select {
     padding: 0.8rem 1.1rem;
     border: 1.7px solid #e3eafc;
     border-radius: 10px;
-    font-size: 1.05rem;
+    font-size: 0.9rem;
     background: linear-gradient(90deg, #f7fbff 80%, #e3f0ff 100%);
     transition: border 0.2s, box-shadow 0.2s;
     box-shadow: 0 1px 3px rgba(79,140,255,0.04);
@@ -225,5 +225,214 @@ button[type="submit"]:hover {
         font-size: 0.95rem;
         padding: 0.7rem 0;
         border-radius: 7px;
+    }
+}
+.event-table-section {
+    width: auto;
+    overflow-x: auto;
+    margin-bottom: 2rem;
+    margin-top: 2rem;
+    background: linear-gradient(120deg, #ffffff 80%, #e3f0ff 100%);
+    border-radius: 18px;
+    box-shadow: 0 4px 18px rgba(60, 100, 180, 0.10);
+    padding: 2rem 2.5rem 2.5rem 2.5rem;
+    border: 1.5px solid #e3eafc;
+}
+
+.event-filter-row {
+    display: flex;
+    gap: 1.2rem;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+.event-filter-row input,
+.event-filter-row select {
+    flex: 0 1 auto;
+    min-width: auto;
+    padding: 0.7rem 1rem;
+    border-radius: 8px;
+    border: 1.5px solid #e3eafc;
+    font-size: 0.85rem;
+    background: #f7fbff;
+    transition: border 0.2s;
+}
+
+.event-filter-row input:focus,
+.event-filter-row select:focus {
+    border-color: #4f8cff;
+    outline: none;
+}
+
+.filter-btn, .reset-btn, .download-btn {
+    background: linear-gradient(90deg, #4f8cff 0%, #6ed6ff 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 0.7rem 1.7rem;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(79,140,255,0.10);
+    margin-left: 0.2rem;
+}
+
+.reset-btn {
+    background: linear-gradient(90deg, #e3eafc 0%, #f7fbff 100%);
+    color: #4f8cff;
+    font-weight: 600;
+}
+
+.download-btn {
+    background: linear-gradient(90deg, #28a745 0%, #6ed6ff 100%);
+    color: #fff;
+}
+
+.filter-btn:hover, .download-btn:hover {
+    background: linear-gradient(90deg, #6ed6ff 0%, #4f8cff 100%);
+}
+
+.reset-btn:hover {
+    background: #d0e2ff;
+    color: #0f4c81;
+}
+
+.event-table-container {
+    width: auto;
+    overflow-x: auto;
+}
+
+#eventsTable {
+    width: auto;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(79,140,255,0.07);
+    margin-bottom: 1.2rem;
+    font-size: 0.8rem;
+}
+
+#eventsTable th, #eventsTable td {
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1.5px solid #e3eafc;
+    text-align: left;
+}
+
+#eventsTable th {
+    background: linear-gradient(90deg, #e3f0ff 0%, #f7fbff 100%);
+    color: #0f4c81;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+}
+
+#eventsTable td {
+    color: #2d3a4b;
+    font-weight: 500;
+}
+
+.edit-btn {
+    background: linear-gradient(90deg, #4f8cff 0%, #6ed6ff 100%);
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 0.5rem 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgba(79,140,255,0.10);
+    transition: background 0.2s;
+}
+
+.edit-btn:hover {
+    background: linear-gradient(90deg, #6ed6ff 0%, #4f8cff 100%);
+}
+
+.pagination {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    margin-bottom: 0.5rem;
+}
+
+.pagination button {
+    background: #e3eafc;
+    color: #4f8cff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.4rem 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.pagination button.active,
+.pagination button:hover {
+    background: #4f8cff;
+    color: #fff;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(60, 100, 180, 0.18);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: linear-gradient(120deg, #ffffff 80%, #e3f0ff 100%);
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(60, 100, 180, 0.13);
+    padding: 2rem 2.5rem;
+    min-width: 400px;
+    max-width: 95vw;
+    position: relative;
+}
+
+.modal-content h3 {
+    color: #2d3a4b;
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin-bottom: 1.2rem;
+    letter-spacing: 0.5px;
+    text-shadow: 0 2px 8px rgba(79,140,255,0.07);
+}
+
+.save-btn {
+    background: linear-gradient(90deg, #28a745 0%, #6ed6ff 100%);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.13rem;
+    font-weight: 700;
+    padding: 0.95rem 2.5rem;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+    box-shadow: 0 2px 10px rgba(79,140,255,0.10);
+    letter-spacing: 0.2px;
+}
+
+.save-btn:hover {
+    background: linear-gradient(90deg, #6ed6ff 0%, #28a745 100%);
+    box-shadow: 0 6px 20px rgba(79,140,255,0.13);
+    transform: translateY(-2px) scale(1.03);
+}
+
+/* Responsive for table and modal */
+@media (max-width: 900px) {
+    .event-table-section {
+        padding: 1.2rem 0.7rem 1rem 0.7rem;
+        border-radius: 14px;
+    }
+    .modal-content {
+        min-width: 90vw;
+        padding: 1.2rem 0.7rem;
     }
 }

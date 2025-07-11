@@ -46,4 +46,7 @@ urlpatterns = [
     path('events/', views.view_events, name='view_events'),
     path('events/download/', views.download_event_attendance, name='download_event_attendance'),
     path('upload-attendance/', views.upload_attendance, name='upload_attendance'),
+    path('ajax/events/', views.ajax_events, name='ajax_events'),
+    path('ajax/events/edit/', views.ajax_events_edit, name='ajax_events_edit'),
+    path('ajax/events/download/', views.ajax_events_download, name='ajax_events_download'),
 ]

@@ -19,20 +19,18 @@ from django.db import connection
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
-from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_http_methods
 
 # Third-party imports
 import mysql.connector
-import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
-from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
-
+import mysql.connector
+import openpyxl
+import json
 
 
 
@@ -1904,6 +1902,7 @@ def add_event(request):
         country = request.POST.get('event_country')
         state = request.POST.get('event_state')
         district = request.POST.get('event_district')
+        event_description = request.POST.get('event_description')
         # Validate inputs
         if not event_name or not event_date or not instructor_id:
             message = "Event name, date, and instructor are required."
@@ -1917,9 +1916,9 @@ def add_event(request):
 
         if event_name and event_date and instructor_id:
             cursor.execute("""
-                INSERT INTO event_registrations (event_name, event_date, instructor_id,coordinator,location,state, district, country)
-                VALUES (%s, %s, %s,%s, %s, %s, %s, %s)
-            """, [event_name, event_date, instructor_id,coordinator,location,state, district, country])
+                INSERT INTO event_registrations (event_name, event_date, instructor_id,coordinator,location,state, district, country, description)
+                VALUES (%s, %s, %s,%s, %s, %s, %s, %s, %s)
+            """, [event_name, event_date, instructor_id,coordinator,location,state, district, country, event_description])
             conn.commit()
             message = "Event registered successfully."
             return render(request, 'add_event.html', {'instructors': instructors, 'message': message})
@@ -2467,3 +2466,163 @@ def upload_attendance(request):
             print("Error processing file:", e)
             messages.error(request, f"Error processing file: {e}")
     return render(request, 'upload_attendance.html', {'events': events})
+
+def ajax_events(request):
+        # Get filters
+        print("AJAX events view accessed")
+        name = request.GET.get('name', '').strip()
+        coordinator = request.GET.get('coordinator', '').strip()
+        date = request.GET.get('date', '').strip()
+        instructor = request.GET.get('instructor', '').strip()
+
+        conn = get_db_conn()
+        cur = conn.cursor(dictionary=True)
+        sql = """
+            SELECT
+                e.id,
+                e.event_name,
+                e.event_date,
+                e.coordinator,
+                e.location,
+                country.name AS country,
+                state.name AS state,
+                city.name AS district,
+                e.total_attendance,
+                e.description,
+                e.instructor_id,
+                i.name AS instructor_name
+            FROM event_registrations e
+            LEFT JOIN instructors i ON e.instructor_id = i.id
+            LEFT JOIN country ON e.country = country.id
+            LEFT JOIN state ON e.state = state.id
+            LEFT JOIN city ON e.district = city.id
+            WHERE 1=1
+        """
+        params = []
+        if name:
+            sql += " AND e.event_name LIKE %s"
+            params.append(f"%{name}%")
+        if coordinator:
+            sql += " AND e.coordinator LIKE %s"
+            params.append(f"%{coordinator}%")
+        if date:
+            sql += " AND e.event_date = %s"
+            params.append(date)
+        if instructor:
+            sql += " AND e.instructor_id = %s"
+            params.append(instructor)
+        sql += " ORDER BY e.id DESC LIMIT 100"
+        cur.execute(sql, params)
+        events = []
+        for row in cur.fetchall():
+            events.append({
+                'id': row['id'],
+                'name': row['event_name'],
+                'date': row['event_date'].strftime('%Y-%m-%d') if row['event_date'] else '',
+                'coordinator': row['coordinator'],
+                'location': row['location'],
+                'state': row['state'],
+                'district': row['district'],
+                'country': row['country'],
+                'total_attendance': row['total_attendance'],
+                'description': row['description'],
+                'instructor_id': row['instructor_id'],
+                'instructor': row['instructor_name'] if row['instructor_name'] else 'Unspecified'
+            })
+        cur.close()
+        conn.close()
+        return JsonResponse({'events': events})
+
+@csrf_exempt
+def ajax_events_edit(request):
+    print("AJAX events edit view accessed ")
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        print("Data received for edit:", data)
+        conn = get_db_conn()
+        cur = conn.cursor()
+        sql = """
+            UPDATE event_registrations
+            SET event_name=%s,
+                event_date=%s,
+                coordinator=%s,
+                location=%s,
+                instructor_id=%s,
+                country=%s,
+                state=%s,
+                district=%s,
+                description=%s,
+                total_attendance=%s
+            WHERE id=%s
+        """
+        cur.execute(sql, (
+            data['name'],
+            data['date'],
+            data['coordinator'],
+            data['location'],
+            data['instructor_id'],
+            data['country'],
+            data['state'],
+            data['district'],
+            data.get('description', ''),
+            data.get('total_attendance', 0),
+            data['id']
+        ))
+        conn.commit()
+        cur.close()
+        conn.close()
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False})
+
+def ajax_events_download(request):
+    name = request.GET.get('name', '').strip()
+    coordinator = request.GET.get('coordinator', '').strip()
+    date = request.GET.get('date', '').strip()
+    instructor = request.GET.get('instructor', '').strip()
+
+    conn = get_db_conn()
+    cur = conn.cursor(dictionary=True)
+    sql = """
+        SELECT e.event_name, e.event_date, e.coordinator, e.location, i.name AS instructor_name
+        FROM event_registrations e
+        LEFT JOIN instructors i ON e.instructor_id = i.id
+        WHERE 1=1
+    """
+    params = []
+    if name:
+        sql += " AND e.event_name LIKE %s"
+        params.append(f"%{name}%")
+    if coordinator:
+        sql += " AND e.coordinator LIKE %s"
+        params.append(f"%{coordinator}%")
+    if date:
+        sql += " AND e.event_date = %s"
+        params.append(date)
+    if instructor:
+        sql += " AND e.instructor_id = %s"
+        params.append(instructor)
+    sql += " ORDER BY e.id DESC"
+    cur.execute(sql, params)
+    rows = cur.fetchall()
+    cur.close()
+    conn.close()
+
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Events"
+    ws.append(['Event Name', 'Date', 'Coordinator', 'Location', 'Instructor'])
+    for r in rows:
+        ws.append([
+            r['event_name'],
+            r['event_date'].strftime('%Y-%m-%d') if r['event_date'] else '',
+            r['coordinator'],
+            r['location'],
+            r['instructor_name'] or ''
+        ])
+    for col in ws.columns:
+        for cell in col:
+            cell.font = Font(name='Calibri', size=12)
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=Events.xlsx'
+    wb.save(response)
+    return response
