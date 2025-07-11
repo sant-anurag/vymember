@@ -644,7 +644,7 @@ def instructor_infographics(request):
         oldest_date_val = oldest_date_result[0]['oldest_date']
         # Fix the isinstance check for date objects
         # Import datetime correctly at the top of your file
-        from datetime import datetime, date, timedelta
+
 
         # Then in your instructor_infographics function, replace the problematic line with:
         if isinstance(oldest_date_val, (datetime, date)):
@@ -2423,18 +2423,20 @@ def upload_attendance(request):
                     if str(row[6]).strip().lower() == "yes":
                         # Fetch event location info
                         cur.execute("""
-                            SELECT country, state, district FROM event_registrations WHERE id = %s
+                            SELECT country, state, district,instructor_id FROM event_registrations WHERE id = %s
                         """, (event_id,))
                         event_loc = cur.fetchone()
                         country = event_loc[0] if event_loc else None
                         state = event_loc[1] if event_loc else None
                         district = event_loc[2] if event_loc else None
+                        instructor_id = event_loc[3] if event_loc else None
+
 
                         # Insert into members table
                         cur.execute("""
                             INSERT INTO members
-                            (name, age, gender, address, state, district, country, event_id, date_of_initiation, number)
-                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                            (name, age, gender, address, state, district, country, event_id, date_of_initiation, number,instructor_id)
+                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s,%s)
                         """, (
                             row[0],  # name
                             str(row[1]) if row[1] else None,  # age as string
@@ -2445,9 +2447,10 @@ def upload_attendance(request):
                             country,
                             event_id,
                             row[5] if row[5] else None,  # attended_on as date_of_initiation
-                            row[2] or ""  # contact number
+                            row[2] or "" , # contact number
+                            instructor_id
                         ))
-                    new_member_count += 1
+                        new_member_count += 1
             # Update total attendance for the event
             cur.execute("""
                 UPDATE event_registrations
