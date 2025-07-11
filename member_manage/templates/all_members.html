@@ -6,7 +6,11 @@
 <link rel="stylesheet" href="{% static 'css/member_detail.css' %}">
 <section class="members-section">
     <h2>All Members</h2>
-
+    <div class="members-count-summary">
+        <span class="members-icon"><i class="fas fa-users"></i></span>
+        <span class="members-count-label">Total Members:</span>
+        <span class="members-count-value">{{ members|length }}</span>
+    </div>
     <div class="filter-panel">
         <div class="filter-form">
             <div class="filter-row">

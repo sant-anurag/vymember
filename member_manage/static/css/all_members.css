@@ -225,7 +225,50 @@ white-space: nowrap;
 .text-center {
     text-align: center;
 }
+.members-count-summary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(90deg, #4f8cff 0%, #6ed6ff 100%);
+    border-left: 7px solid #28a745;
+    box-shadow: 0 6px 24px rgba(79, 140, 255, 0.18);
+    border-radius: 16px;
+    padding: 1.2rem 2rem;
+    margin-bottom: 1.7rem;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.02em;
+    position: relative;
+    animation: fadeIn 0.7s;
+}
 
+.members-count-summary .members-icon {
+    font-size: 2.1rem;
+    margin-right: 1rem;
+    color: #fff;
+    filter: drop-shadow(0 2px 6px #4f8cff88);
+}
+
+.members-count-label {
+    color: #e0e7ff;
+    margin-right: 0.8rem;
+    font-size: 1.15rem;
+    font-weight: 600;
+    text-shadow: 0 2px 8px #4f8cff44;
+}
+
+.members-count-value {
+    color: #fff;
+    font-size: 2.1rem;
+    font-weight: 800;
+    text-shadow: 0 2px 8px #28a74544;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px);}
+    to { opacity: 1; transform: translateY(0);}
+}
 /* Success message styling */
 .success-message {
     background: #d4edda;
@@ -305,3 +348,4 @@ white-space: nowrap;
         justify-content: center;
     }
 }
+

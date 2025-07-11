@@ -339,7 +339,7 @@ def all_members(request):
         ORDER BY m.name
     """)
     members = cursor.fetchall()
-    print("Members fetched:", members)
+    print("Members fetched:", len(members))
 
     # Format dates for display
     for member in members:
@@ -354,6 +354,7 @@ def all_members(request):
         'instructors': instructors,
         'events': events,
         'members': members,  # This data will be displayed in the template
+        'member_count': len(members),  # Total number of members
     }
     return render(request, 'all_members.html', context)
 
