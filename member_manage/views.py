@@ -2574,6 +2574,8 @@ def ajax_events_edit(request):
         return JsonResponse({'success': True})
     return JsonResponse({'success': False})
 
+
+
 def ajax_events_download(request):
     name = request.GET.get('name', '').strip()
     coordinator = request.GET.get('coordinator', '').strip()
@@ -2583,7 +2585,8 @@ def ajax_events_download(request):
     conn = get_db_conn()
     cur = conn.cursor(dictionary=True)
     sql = """
-        SELECT e.event_name, e.event_date, e.coordinator, e.location, i.name AS instructor_name
+        SELECT e.event_name, e.event_date, e.coordinator, e.location, e.state, e.district, e.country,
+               e.total_attendance, e.description, i.name AS instructor_name
         FROM event_registrations e
         LEFT JOIN instructors i ON e.instructor_id = i.id
         WHERE 1=1
@@ -2610,18 +2613,62 @@ def ajax_events_download(request):
     wb = openpyxl.Workbook()
     ws = wb.active
     ws.title = "Events"
-    ws.append(['Event Name', 'Date', 'Coordinator', 'Location', 'Instructor'])
+    headers = [
+        'Event Name', 'Date', 'Coordinator', 'Location', 'State', 'District', 'Country',
+        'Total Attendance', 'Description', 'Instructor'
+    ]
+    ws.append(headers)
+
+    # Header styling
+    header_font = Font(bold=True, color="FFFFFF", name="Calibri", size=12)
+    header_fill = PatternFill("solid", fgColor="2563eb")
+    header_align = Alignment(horizontal="center", vertical="center")
+    thin_border = Border(left=Side(style='thin', color='CCCCCC'),
+                         right=Side(style='thin', color='CCCCCC'),
+                         top=Side(style='thin', color='CCCCCC'),
+                         bottom=Side(style='thin', color='CCCCCC'))
+    for col_num, col_name in enumerate(headers, 1):
+        cell = ws.cell(row=1, column=col_num)
+        cell.font = header_font
+        cell.fill = header_fill
+        cell.alignment = header_align
+        cell.border = thin_border
+
+    # Data rows styling
+    data_font = Font(name="Calibri", size=11)
+    data_align = Alignment(horizontal="left", vertical="center", wrap_text=True)
     for r in rows:
         ws.append([
             r['event_name'],
             r['event_date'].strftime('%Y-%m-%d') if r['event_date'] else '',
             r['coordinator'],
             r['location'],
+            r['state'],
+            r['district'],
+            r['country'],
+            r['total_attendance'],
+            r['description'],
             r['instructor_name'] or ''
         ])
+    for row in ws.iter_rows(min_row=2, max_row=ws.max_row, min_col=1, max_col=len(headers)):
+        for cell in row:
+            cell.font = data_font
+            cell.alignment = data_align
+            cell.border = thin_border
+
+    # Auto column width
     for col in ws.columns:
+        max_length = 0
+        col_letter = col[0].column_letter
         for cell in col:
-            cell.font = Font(name='Calibri', size=12)
+            try:
+                val = str(cell.value)
+                if len(val) > max_length:
+                    max_length = len(val)
+            except:
+                pass
+        ws.column_dimensions[col_letter].width = max(14, min(max_length + 2, 40))
+
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = 'attachment; filename=Events.xlsx'
     wb.save(response)
