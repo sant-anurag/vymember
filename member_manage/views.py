@@ -2398,6 +2398,7 @@ def upload_attendance(request):
             conn = get_db_connection()
             cur = conn.cursor()
             count = 0
+            new_member_count = 0
             for row in ws.iter_rows(min_row=2, values_only=True):
                     if not row[0]:
                         continue
@@ -2459,5 +2460,6 @@ def upload_attendance(request):
             messages.success(request, f"Successfully uploaded {count} attendance records. {new_member_count} new member(s) registered.")
             return redirect(reverse('upload_attendance'))
         except Exception as e:
+            print("Error processing file:", e)
             messages.error(request, f"Error processing file: {e}")
     return render(request, 'upload_attendance.html', {'events': events})
