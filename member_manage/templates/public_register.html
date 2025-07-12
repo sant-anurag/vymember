@@ -20,17 +20,17 @@
         <div class="form-row">
             <div class="form-group">
                 <label for="name">Full Name</label>
-                <input type="text" name="name" id="name" required/>
+                <input type="text" name="name" id="name" required value="{{ form_data.name|default:'' }}"/>
             </div>
             <div class="form-group">
                 <label for="number">Contact Number</label>
-                <input type="text" name="number" id="number" required/>
+                <input type="text" name="number" id="number" required value="{{ form_data.number|default:'' }}"/>
             </div>
         </div>
         <div class="form-row">
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" name="email" id="email"/>
+                <input type="email" name="email" id="email" value="{{ form_data.email|default:'' }}"/>
             </div>
             <div class="form-group">
                 <label for="date_of_initiation">Initiation Date</label>
@@ -41,11 +41,11 @@
         <div class="form-row">
             <div class="form-group">
                 <label for="age">Age</label>
-                <input type="text" name="age" id="age"/>
+                <input type="text" name="age" id="age" value="{{ form_data.age|default:'' }}"/>
             </div>
             <div class="form-group">
                 <label for="gender">Gender</label>
-                <select name="gender" id="gender" required>
+                <select name="gender" id="gender" required value="{{ form_data.gender|default:'' }}">
                     <option value="">Select Gender</option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
@@ -57,7 +57,7 @@
         <div class="form-row">
             <div class="form-group">
                 <label for="event">Event</label>
-                <select name="event" id="event" required>
+                <select name="event" id="event" required value="{{ form_data.event|default:'' }}">
                     <option value="">Select Event</option>
                     {% for event in events %}
                     <option value="{{ event.id }}">{{ event.event_name }}</option>
@@ -66,13 +66,13 @@
             </div>
             <div class="form-group">
                 <label for="company">Company/Org/Institution</label>
-                <input type="text" name="company" id="company"/>
+                <input type="text" name="company" id="company" value="{{ form_data.company|default:'' }}"/>
             </div>
         </div>
         <div class="form-row">
             <div class="form-group">
                 <label for="address">Address: Apartment/Street</label>
-                <input type="text" name="address" id="address"/>
+                <input type="text" name="address" id="address" value="{{ form_data.address|default:'' }}"/>
             </div>
         </div>
         <div class="form-row">
