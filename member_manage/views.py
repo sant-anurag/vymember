@@ -22,7 +22,6 @@ from django.shortcuts import redirect, render
 from django.views.decorators.csrf import csrf_exempt
 
 # Third-party imports
-import mysql.connector
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
 from django.contrib import messages
@@ -30,10 +29,7 @@ from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 import mysql.connector
 import openpyxl
-import json
-
-
-
+from datetime import datetime
 
 # In-memory token store for demo (use DB or cache in production)
 RESET_TOKENS = {}
@@ -2673,14 +2669,6 @@ def ajax_events_download(request):
     response['Content-Disposition'] = 'attachment; filename=Events.xlsx'
     wb.save(response)
     return response
-
-# views.py
-from django.shortcuts import render
-from django.http import JsonResponse, HttpResponse
-from django.views.decorators.csrf import csrf_exempt
-from datetime import datetime
-import mysql.connector
-
 
 def get_events_for_dropdown():
     conn = get_db_conn()
