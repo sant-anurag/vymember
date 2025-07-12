@@ -2714,7 +2714,7 @@ def public_register(request):
         instructor_id = request.POST.get('instructor', '').strip()
         date_of_initiation = request.POST.get('date_of_initiation', '').strip()
         # validate name as non digit
-        if not name.isalpha():
+        if any(char.isdigit() for char in name):
             form_data = request.POST.copy()
             message = 'Name must contain only letters.'
             message_type = 'error'
