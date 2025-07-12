@@ -2059,6 +2059,7 @@ from django.http import JsonResponse
 from django.db import connection
 
 def get_countries(request):
+    print("API get countries view accessed")
     conn = get_db_connection()
     cursor = conn.cursor()
 
@@ -2673,3 +2674,67 @@ def ajax_events_download(request):
     response['Content-Disposition'] = 'attachment; filename=Events.xlsx'
     wb.save(response)
     return response
+
+# views.py
+from django.shortcuts import render
+from django.http import JsonResponse, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from datetime import datetime
+import mysql.connector
+
+
+def get_events_for_dropdown():
+    conn = get_db_conn()
+    cur = conn.cursor(dictionary=True)
+    cur.execute("SELECT id, event_name FROM event_registrations ORDER BY event_name")
+    events = cur.fetchall()
+    cur.close()
+    conn.close()
+    return events
+
+@csrf_exempt
+def public_register(request):
+    print("Public registration page accessed")
+    message = ''
+    message_type = ''
+    year = datetime.now().year
+    events = get_events_for_dropdown()
+    if request.method == 'POST':
+        name = request.POST.get('name', '').strip()
+        number = request.POST.get('number', '').strip()
+        email = request.POST.get('email', '').strip()
+        age = request.POST.get('age', '').strip()
+        gender = request.POST.get('gender', '').strip()
+        event_id = request.POST.get('event', '').strip()
+        company = request.POST.get('company', '').strip()
+        address = request.POST.get('address', '').strip()
+        member_country = request.POST.get('member_country', '').strip()
+        member_state = request.POST.get('member_state', '').strip()
+        member_city = request.POST.get('member_city', '').strip()
+        feedback = request.POST.get('feedback', '').strip()
+        if not name or not number:
+            message = 'Name and Contact Number are required.'
+            message_type = 'error'
+        else:
+            conn = get_db_conn()
+            cur = conn.cursor()
+            cur.execute("""
+                INSERT INTO members
+                (name, number, email, age, gender, event_id, company, address, country_id, state_id, city_id, feedback, date_of_initiation)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (
+                name, number, email, age, gender, event_id, company, address,
+                member_country, member_state, member_city, feedback, datetime.now().date()
+            ))
+            conn.commit()
+            cur.close()
+            conn.close()
+            message = 'Registration successful!'
+            message_type = 'success'
+    return render(request, 'public_register.html', {
+        'message': message,
+        'message_type': message_type,
+        'events': events,
+        'year': year
+    })
+

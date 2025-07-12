@@ -12,8 +12,8 @@ class SessionTimeoutMiddleware:
             reverse('login'),
             reverse('session_timeout'),
             reverse('register_user'),
+            reverse('public_register'),
             reverse('forgot_password'),
-
             '/',
         ]
         if request.path not in allowed_paths:

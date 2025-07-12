@@ -1,0 +1,107 @@
+<!-- public_register.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Quick Member Registration</title>
+    <link rel="stylesheet" href="{% static 'css/public_register.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="public-register-container">
+        <h2>Quick Member Registration</h2>
+        {% if message %}
+        <div class="form-alert {% if message_type == 'error' %}error{% else %}success{% endif %}">{{ message }}</div>
+        {% endif %}
+        <form id="publicRegisterForm" method="post" action="{% url 'public_register' %}">
+            {% csrf_token %}
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" name="name" id="name" required/>
+                </div>
+                <div class="form-group">
+                    <label for="number">Contact Number</label>
+                    <input type="text" name="number" id="number" required/>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" name="email" id="email"/>
+                </div>
+                <div class="form-group">
+                    <label for="age">Age</label>
+                    <input type="text" name="age" id="age"/>
+                </div>
+                <div class="form-group">
+                    <label for="gender">Gender</label>
+                    <select name="gender" id="gender" required>
+                        <option value="">Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Others">Others</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="event">Event</label>
+                    <select name="event" id="event" required>
+                        <option value="">Select Event</option>
+                        {% for event in events %}
+                        <option value="{{ event.id }}">{{ event.event_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="company">Company/Org/Institution</label>
+                    <input type="text" name="company" id="company"/>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="address">Address: Apartment/Street</label>
+                    <input type="text" name="address" id="address"/>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="member_country">Country</label>
+                    <select name="member_country" id="member_country" required>
+                        <option value="">Select Country</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="member_state">State</label>
+                    <select name="member_state" id="member_state" required>
+                        <option value="">Select State</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="member_city">City</label>
+                    <select name="member_city" id="member_city" required>
+                        <option value="">Select City</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group full-width">
+                    <label for="feedback">Feedback</label>
+                    <textarea name="feedback" id="feedback" rows="2"></textarea>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit">Register</button>
+                <button type="reset" class="reset-btn">Reset</button>
+            </div>
+        </form>
+        <footer>
+            &copy; {{ year|default:"2025" }} VY Member. All rights reserved.
+        </footer>
+    </div>
+    <script src="{% static 'js/public_register.js' %}"></script>
+</body>
+</html>
