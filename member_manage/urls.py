@@ -50,6 +50,6 @@ urlpatterns = [
     path('ajax/events/edit/', views.ajax_events_edit, name='ajax_events_edit'),
     path('ajax/events/download/', views.ajax_events_download, name='ajax_events_download'),
 
-    path('public_register/', views.public_register, name='public_register'),
+path('public_register/', views.public_register, name='public_register'),
 
 ]

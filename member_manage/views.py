@@ -253,7 +253,6 @@ def get_instructors():
     conn.close()
     return instructors
 
-
 def add_instructor(request):
     # check is user is authenticated
     if not request.session.get('is_authenticated'):
@@ -2712,29 +2711,79 @@ def public_register(request):
         member_state = request.POST.get('member_state', '').strip()
         member_city = request.POST.get('member_city', '').strip()
         feedback = request.POST.get('feedback', '').strip()
-        if not name or not number:
-            message = 'Name and Contact Number are required.'
+        instructor_id = request.POST.get('instructor', '').strip()
+        date_of_initiation = request.POST.get('date_of_initiation', '').strip()
+        # validate name as non digit
+        if not name.isalpha():
+            form_data = request.POST.copy()
+            message = 'Name must contain only letters.'
+            message_type = 'error'
+            instructors = get_instructors()
+            events = get_events()
+            return render(request, 'public_register.html', {
+                'message': message,
+                'message_type': message_type,
+                'form_data': form_data,
+                'instructors': instructors,
+                'events': events
+            })
+        if not date_of_initiation:
+            date_of_initiation = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+        if email:
+            # validate the form fields
+            form_data = request.POST.copy()
+            email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+            if not re.match(email_regex, email):
+                instructors = get_instructors()
+                events = get_events()
+                return render(request, 'public_register.html', {
+                    'message': 'Invalid email format.',
+                    'message_type': 'error',
+                    'form_data': form_data,
+                    'instructors': instructors,
+                    'events': events
+                })
+        if not name or not number or not age :
+            message = 'Name, Contact Number, And Age are required.'
             message_type = 'error'
         else:
             conn = get_db_conn()
             cur = conn.cursor()
             cur.execute("""
-                INSERT INTO members
-                (name, number, email, age, gender, event_id, company, address, country_id, state_id, city_id, feedback, date_of_initiation)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            """, (
-                name, number, email, age, gender, event_id, company, address,
-                member_country, member_state, member_city, feedback, datetime.now().date()
+                            INSERT INTO members
+                            (name, number, email, address,age,gender, country, state,district,company, notes, instructor_id, date_of_initiation,event_id)
+                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s,%s, %s, %s,%s, %s, %s)
+                        """, (
+                name, number, email, address, age, gender, member_country, member_state, member_city, company, feedback, instructor_id,
+                date_of_initiation, event_id
             ))
             conn.commit()
             cur.close()
             conn.close()
             message = 'Registration successful!'
             message_type = 'success'
+
+    def get_public_instructors():
+        conn = mysql.connector.connect(
+            host=settings.DB_HOST,
+            user=settings.DB_USER,
+            password=settings.DB_PASSWORD,
+            database=settings.DB_NAME
+        )
+        cur = conn.cursor(dictionary=True)
+        cur.execute("SELECT id, name FROM instructors")
+        instructors = cur.fetchall()
+        cur.close()
+        conn.close()
+        return instructors
+
+    instructors = get_public_instructors()
     return render(request, 'public_register.html', {
         'message': message,
         'message_type': message_type,
         'events': events,
+        'instructors': instructors,
         'year': year
     })
 

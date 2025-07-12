@@ -14,6 +14,9 @@ class SessionTimeoutMiddleware:
             reverse('register_user'),
             reverse('public_register'),
             reverse('forgot_password'),
+            reverse('ajax_countries'),
+            reverse('ajax_states'),
+            reverse('ajax_cities'),
             '/',
         ]
         if request.path not in allowed_paths:
