@@ -1999,7 +1999,7 @@ def record_attendance(request):
         new_member_count = 0
 
         for m in members:
-            if m['is_new']:
+            if m['is_new'] :
                 cursor.execute("""
                     INSERT INTO members (name, number, age, gender, address, state, district, country, instructor_id, date_of_initiation)
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
@@ -2415,7 +2415,7 @@ def upload_attendance(request):
                     count += 1
 
                     # Register as new member for rows marked as yes  if needed or an old member who doesn't exist in database .
-                    if str(row[6]).strip().lower() == "yes" or not isexisting_member(row[0], row[2]):
+                    if str(row[6]).strip().lower() == "yes":
                         # Fetch event location info
                         cur.execute("""
                             SELECT country, state, district,instructor_id FROM event_registrations WHERE id = %s
