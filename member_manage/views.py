@@ -2395,6 +2395,7 @@ def upload_attendance(request):
             cur = conn.cursor()
             count = 0
             new_member_count = 0
+            total_members = 0
             for row in ws.iter_rows(min_row=2, values_only=True):
                     if not row[0]:
                         continue
@@ -2447,9 +2448,10 @@ def upload_attendance(request):
                         ))
                         new_member_count += 1
             # Update total attendance for the event
+
             cur.execute("""
                 UPDATE event_registrations
-                SET total_attendance = total_attendance + %s
+                SET total_attendance = %s
                 WHERE id = %s
             """, (count, event_id))
 
