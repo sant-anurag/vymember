@@ -2414,8 +2414,8 @@ def upload_attendance(request):
                     ))
                     count += 1
 
-                    # Register as new member if needed
-                    if str(row[6]).strip().lower() == "yes":
+                    # Register as new member for rows marked as yes  if needed or an old member who doesn't exist in database .
+                    if str(row[6]).strip().lower() == "yes" or not isexisting_member(row[0], row[2]):
                         # Fetch event location info
                         cur.execute("""
                             SELECT country, state, district,instructor_id FROM event_registrations WHERE id = %s
@@ -2427,7 +2427,7 @@ def upload_attendance(request):
                         instructor_id = event_loc[3] if event_loc else None
 
 
-                        # Insert into members table
+                        # Insert into member table
                         cur.execute("""
                             INSERT INTO members
                             (name, age, gender, address, state, district, country, event_id, date_of_initiation, number,instructor_id)
@@ -2462,6 +2462,15 @@ def upload_attendance(request):
             print("Error processing file:", e)
             messages.error(request, f"Error processing file: {e}")
     return render(request, 'upload_attendance.html', {'events': events})
+
+def isexisting_member(name, contact):
+    conn = get_db_conn()
+    cur = conn.cursor(dictionary=True)
+    cur.execute("SELECT COUNT(*) as total FROM members WHERE name=%s AND number=%s", (name, contact))
+    exists = cur.fetchone()['total'] > 0
+    cur.close()
+    conn.close()
+    return exists
 
 def ajax_events(request):
         # Get filters
