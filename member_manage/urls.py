@@ -49,7 +49,7 @@ urlpatterns = [
     path('ajax/events/', views.ajax_events, name='ajax_events'),
     path('ajax/events/edit/', views.ajax_events_edit, name='ajax_events_edit'),
     path('ajax/events/download/', views.ajax_events_download, name='ajax_events_download'),
-
-path('public_register/', views.public_register, name='public_register'),
+    path('ajax/events', views.ajax_eventsbyDate, name='ajax_events'),
+    path('public_register/', views.public_register, name='public_register'),
 
 ]

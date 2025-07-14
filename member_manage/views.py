@@ -2581,8 +2581,6 @@ def ajax_events_edit(request):
         return JsonResponse({'success': True})
     return JsonResponse({'success': False})
 
-
-
 def ajax_events_download(request):
     name = request.GET.get('name', '').strip()
     coordinator = request.GET.get('coordinator', '').strip()
@@ -2785,4 +2783,35 @@ def public_register(request):
         'instructors': instructors,
         'year': year
     })
+
+# views.py (backend endpoint)
+from django.http import JsonResponse
+from django.views.decorators.http import require_GET
+
+@require_GET
+def ajax_eventsbyDate(request):
+    date = request.GET.get('date', '').strip()
+    conn = get_db_conn()
+    cur = conn.cursor(dictionary=True)
+    sql = """
+        SELECT id, event_name, event_date
+        FROM event_registrations
+        WHERE 1=1
+    """
+    params = []
+    if date:
+        sql += " AND event_date = %s"
+        params.append(date)
+    sql += " ORDER BY event_date DESC LIMIT 100"
+    cur.execute(sql, params)
+    events = []
+    for row in cur.fetchall():
+        events.append({
+            'id': row['id'],
+            'name': row['event_name'],
+            'date': row['event_date'].strftime('%Y-%m-%d') if row['event_date'] else ''
+        })
+    cur.close()
+    conn.close()
+    return JsonResponse({'events': events})
 

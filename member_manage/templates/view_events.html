@@ -13,8 +13,16 @@
         </button>
     </div>
 
+    <!-- view_events.html -->
     <div class="ve-card ve-card-filter">
-        <form class="ve-form" method="get">
+        <form class="ve-form" id="event-filter-form" method="get">
+            <div class="ve-form-group">
+                <label for="event_date" class="ve-label">Event Date</label>
+                <input type="date" class="ve-input" id="event_date" name="event_date">
+                <button type="button" class="ve-btn ve-btn-primary" id="date-filter-btn">
+                    <i class="fas fa-calendar-day"></i> Filter by Date
+                </button>
+            </div>
             <div class="ve-form-group">
                 <label for="event_id" class="ve-label">Event</label>
                 <select class="ve-select" id="event_id" name="event_id">
@@ -121,6 +129,24 @@
     </div>
 </div>
 <script>
+// Add to your JS file or inside a <script> tag
+document.getElementById('date-filter-btn').addEventListener('click', function(e) {
+    e.preventDefault();
+    const date = document.getElementById('event_date').value;
+    if (!date) return;
+    fetch(`/member/ajax/events?date=${date}`)
+        .then(response => response.json())
+        .then(data => {
+            const select = document.getElementById('event_id');
+            select.innerHTML = '<option value="">All Events</option>';
+            data.events.forEach(event => {
+                const option = document.createElement('option');
+                option.value = event.id;
+                option.textContent = `${event.name} (${event.date})`;
+                select.appendChild(option);
+            });
+        });
+});
 document.getElementById('download-btn').addEventListener('click', function() {
     window.location.href = "{% url 'download_event_attendance' %}?event_id={{ selected_event_id }}";
 });

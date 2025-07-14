@@ -103,9 +103,33 @@ body {
     align-items: flex-end;
 }
 
+/* Add to your CSS file */
 .ve-form-group {
-    flex: 1 1 260px;
-    min-width: 180px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+.ve-input[type="date"] {
+    padding: 0.5rem;
+    border: 1px solid #b0b7c3;
+    border-radius: 4px;
+    font-size: 1rem;
+    background: #f3f6fa;
+}
+#date-filter-btn {
+    margin-left: 0.5rem;
+    background-color: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+#date-filter-btn:hover {
+    background-color: #174ea6;
 }
 
 .ve-label {
