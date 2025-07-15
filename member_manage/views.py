@@ -30,6 +30,7 @@ from django.views.decorators.http import require_http_methods
 import mysql.connector
 import openpyxl
 from datetime import datetime
+from django.utils.datastructures import MultiValueDictKeyError
 
 # In-memory token store for demo (use DB or cache in production)
 RESET_TOKENS = {}
@@ -1972,9 +1973,7 @@ def add_event(request):
     conn.close()
     return render(request, 'add_event.html', {'instructors': instructors, 'message': message})
 
-from django.shortcuts import render, redirect
-from django.db import connection
-from django.utils.datastructures import MultiValueDictKeyError
+
 
 def record_attendance(request):
     # Fetch all events for dropdown
