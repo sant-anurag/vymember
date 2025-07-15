@@ -16,6 +16,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 opt.text = c.name;
                 countrySelect.add(opt);
             });
+            // Select "India" if present and trigger change event
+            for (let i = 0; i < countrySelect.options.length; i++) {
+                if (countrySelect.options[i].text.trim().toLowerCase() === 'india') {
+                    countrySelect.selectedIndex = i;
+                    countrySelect.dispatchEvent(new Event('change'));
+                    break;
+                }
+            }
             stateSelect.innerHTML = '<option value="">Select State</option>';
             citySelect.innerHTML = '<option value="">Select City</option>';
         });
@@ -34,6 +42,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     opt.text = s.name;
                     stateSelect.add(opt);
                 });
+                // Select "Maharashtra" if present
+                for (let i = 0; i < stateSelect.options.length; i++) {
+                    if (stateSelect.options[i].text.trim().toLowerCase() === 'maharashtra') {
+                        stateSelect.selectedIndex = i;
+                        stateSelect.dispatchEvent(new Event('change'));
+                        break;
+                    }
+                }
             });
     });
 
@@ -50,6 +66,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     opt.text = c.name;
                     citySelect.add(opt);
                 });
+                // Select "Pune" if present
+                for (let i = 0; i < citySelect.options.length; i++) {
+                    if (citySelect.options[i].text.trim().toLowerCase() === 'pune') {
+                        citySelect.selectedIndex = i;
+                        break;
+                    }
+                }
             });
     });
 
