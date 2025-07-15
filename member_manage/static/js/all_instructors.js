@@ -71,6 +71,7 @@ function openInstructorModal(data, editMode = false) {
     console.log("Opening instructor modal with data:", data, "Edit mode:", editMode);
     document.getElementById('modalTitle').textContent = editMode ? 'Edit Instructor' : 'Instructor Details';
     document.getElementById('modalName').value = data.name || '';
+    document.getElementById('modalNumber').value = data.number || '';
     document.getElementById('modalAge').value = data.age || '';
     document.getElementById('modelGender').value = data.gender || '';
     document.getElementById('modalAssociated').value = data.associated_since || '';
@@ -83,7 +84,7 @@ function openInstructorModal(data, editMode = false) {
 
     // Enable/disable fields
     [
-        'modalName', 'modalAge', 'modalAssociated','modelGender',
+        'modalName','modalNumber', 'modalAge', 'modalAssociated','modelGender',
         'modalUpdeshta', 'modalAddress', 'modalCountry','modalState','modalCity','modalActive'
     ].forEach(id => {
         document.getElementById(id).disabled = !editMode;

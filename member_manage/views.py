@@ -256,6 +256,7 @@ def add_instructor(request):
     message = None
     if request.method == 'POST':
         name = request.POST.get('name', '').strip()
+        number = request.POST.get('number', '').strip()
         age = request.POST.get('age')
         gender = request.POST.get('gender')
         associated_since = request.POST.get('associated_since')
@@ -266,7 +267,7 @@ def add_instructor(request):
         district = request.POST.get('ins_district', '').strip()
 
         is_active = request.POST.get('is_active', '1')  # Default to active
-        if name:
+        if name and age and number and len(number) >= 10 and number.isdigit():
             conn = mysql.connector.connect(
                 host=settings.DB_HOST,
                 user=settings.DB_USER,
@@ -275,15 +276,22 @@ def add_instructor(request):
             )
             cur = conn.cursor()
             cur.execute("""
-                INSERT INTO instructors (name, age, gender, associated_since, updeshta_since, address,state, district, country, is_active)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            """, (name, age or None, gender or None, associated_since or None, updeshta_since or None, address or None,state, district, country, is_active))
+                INSERT INTO instructors (name, number, age, gender, associated_since, updeshta_since, address,state, district, country, is_active)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (name, number,age or None, gender or None, associated_since or None, updeshta_since or None, address or None,state, district, country, is_active))
             conn.commit()
             cur.close()
             conn.close()
             message = "Instructor added successfully!"
         else:
-            message = "Name is required."
+            if not name:
+                message = "Name is required."
+            elif not number or len(number) < 10 or not number.isdigit():
+                message = "Number is missing or invalid (minimum 10 digits required)."
+            elif not age:
+                message = "Age is required"
+            else:
+                message = "Please fill all required fields correctly."
     return render(request, 'add_instructor.html', {'message': message})
 
 def add_public_instructor(request):
@@ -509,7 +517,7 @@ def all_instructors(request):
 
     cursor.execute("""
         SELECT
-            i.id, i.name, i.age, i.gender, i.associated_since,
+            i.id, i.name, i.number, i.age, i.gender, i.associated_since,
             i.updeshta_since, i.address,
             d.name AS district,
             s.name AS state,
@@ -1881,15 +1889,26 @@ def api_instructor_update(request, instructor_id):
     elif request.method == "POST":
         try:
             data = json.loads(request.body)
+            # validate if name , number (>10 digits) ,age are OK
+            if not data.get('name') or not data.get('number') :
+                return JsonResponse({'success': False, 'message': 'Name and number are required.'})
+            # validate if number is all digits
+            if not data.get('number').isdigit():
+                return JsonResponse({'success': False, 'message': 'Number must be all digits.'})
+            if len(data.get('number', '')) < 10:
+                return JsonResponse({'success': False, 'message': 'Number must be at least 10 digits.'})
+            if not data.get('age'):
+                return JsonResponse({'success': False, 'message': 'Age is required.'})
             conn = get_db_connection()
             cursor = conn.cursor()
             cursor.execute("""
                 UPDATE instructors SET
-                    name=%s, age=%s, gender=%s, associated_since=%s,
+                    name=%s, number=%s, age=%s, gender=%s, associated_since=%s,
                     updeshta_since=%s, address=%s, state=%s, district=%s, country=%s,is_active=%s
                 WHERE id=%s
             """, (
                 data.get('name'),
+                data.get('number'),
                 data.get('age') or None,
                 data.get('gender') or None,
                 data.get('associated_since') or None,

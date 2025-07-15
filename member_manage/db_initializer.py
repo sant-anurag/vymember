@@ -38,6 +38,7 @@ class DBInitializer:
             CREATE TABLE IF NOT EXISTS instructors (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 name VARCHAR(255) NOT NULL,
+                number VARCHAR(50) NOT NULL,
                 age INT,
                 gender VARCHAR(10),
                 associated_since YEAR,

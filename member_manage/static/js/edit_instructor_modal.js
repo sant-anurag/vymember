@@ -82,6 +82,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(data => {
                 currentInstructorId = data.id; // Store current instructor ID for later use
                 document.getElementById('editModalName').value = data.name || '';
+                document.getElementById('editModalNumber').value = data.number || '';
                 document.getElementById('editModalAge').value = data.age || '';
                 document.getElementById('editModalAssociated').value = data.associated_since || '';
                 document.getElementById('editModalUpdeshta').value = data.updeshta_since || '';
@@ -113,6 +114,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const payload = {
         name: document.getElementById('editModalName').value,
+        number: document.getElementById('editModalNumber').value,
         age: document.getElementById('editModalAge').value,
         associated_since: document.getElementById('editModalAssociated').value,
         gender: document.getElementById('editModalGender').value,
