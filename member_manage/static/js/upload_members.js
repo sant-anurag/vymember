@@ -60,4 +60,12 @@ document.addEventListener('DOMContentLoaded', function() {
             uploadStatus.style.color = "#ff6384";
         });
     });
+    const fileNameSpan = document.getElementById('fileName');
+    fileInput.addEventListener('change', function() {
+        if (fileInput.files.length) {
+            fileNameSpan.textContent = fileInput.files[0].name;
+        } else {
+            fileNameSpan.textContent = '';
+        }
+    });
 });

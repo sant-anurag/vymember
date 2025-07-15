@@ -31,6 +31,7 @@
             <ul class="submenu">
                 <li><a href="{% url 'all_members' %}"><i class="fas fa-list"></i>All Members</a></li>
                 <li><a href="{% url 'member' %}"><i class="fas fa-user-plus"></i>Add Member</a></li>
+                <li><a href="{% url 'upload_members' %}"><i class="fas fa-upload"></i>Upload Members</a></li>
             </ul>
         </li>
         <li tabindex="0">
@@ -55,7 +56,6 @@
             <a href="#"><i class="fas fa-cog"></i>Settings <i class="fas fa-chevron-down"></i></a>
             <ul class="submenu">
                 <li><a href="{% url 'change_password' %}"><i class="fas fa-key"></i>Change Password</a></li>
-                <li><a href="{% url 'upload_members' %}"><i class="fas fa-upload"></i>Upload</a></li>
                 <li><a href="{% url 'create_user' %}"><i class="fas fa-user-plus"></i>Create User</a></li>
                 <li><a href="#"><i class="fas fa-user"></i>Profile</a></li>
             </ul>

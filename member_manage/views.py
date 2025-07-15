@@ -1185,8 +1185,6 @@ def api_download_instructor_report(request):
 
     return response
 
-
-
 @csrf_exempt
 def upload_members(request):
     # check is user is authenticated

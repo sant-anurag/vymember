@@ -22,7 +22,9 @@
             <p>Drag &amp; drop your Excel file here, or <span class="browse-btn">browse</span></p>
             <input type="file" id="fileInput" name="file" accept=".xlsx,.xls" hidden>
         </div>
-        <button type="submit" class="upload-btn">Upload</button>
+        <span id="fileName" class="file-name"></span>
+        <div></div>
+        <button type="submit" class="upload-btn"><i class="fas fa-upload"></i>Upload File</button>
     </form>
     <div id="uploadStatus"></div>
 </div>
