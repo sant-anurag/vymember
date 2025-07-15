@@ -1201,7 +1201,7 @@ def upload_members(request):
             ws = wb.active
             headers = [cell.value for cell in next(ws.iter_rows(min_row=1, max_row=1))]
             required = ['name', 'number', 'instructor_id', 'date_of_initiation']
-            db_columns = ['name', 'number', 'email', 'address', 'state', 'district', 'country', 'company', 'notes', 'instructor_id', 'date_of_initiation']
+            db_columns = ['name', 'number', 'email', 'age','gender', 'address', 'state', 'district', 'country', 'company', 'notes', 'instructor_id', 'event_id','date_of_initiation']
             # Validate columns
             if not all(col in headers for col in required):
                 return JsonResponse({'success': False, 'message': 'Missing required columns in Excel file.'})
@@ -1225,8 +1225,8 @@ def upload_members(request):
             )
             cur = conn.cursor()
             sql = f"""INSERT INTO members
-                (name, number, email, address, state, district, country, company, notes, instructor_id, date_of_initiation)
-                VALUES ({','.join(['%s']*11)})"""
+                (name, number, email,age,gender, address, state, district, country, company, notes, instructor_id,event_id, date_of_initiation)
+                VALUES ({','.join(['%s']*14)})"""
             cur.executemany(sql, rows)
             conn.commit()
             cur.close()
@@ -1235,8 +1235,6 @@ def upload_members(request):
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'Error: {str(e)}'})
     return JsonResponse({'success': False, 'message': 'Invalid request.'})
-
-
 
 def change_password(request):
     # check is user is authenticated
