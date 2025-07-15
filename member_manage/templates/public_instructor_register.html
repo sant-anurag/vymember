@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Quick Updestha Registration</title>
     <link rel="stylesheet" href="{% static 'css/add_instructor.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 <section class="registration-section">
@@ -13,7 +14,7 @@
     {% if message %}
         <div class="status-message">{{ message }}</div>
     {% endif %}
-    <form id="addInstructorForm" method="post" action="{% url 'add_instructor' %}">
+    <form id="addInstructorForm" method="post" action="{% url 'add_public_instructor' %}">
         {% csrf_token %}
         <div class="form-row">
             <div class="form-group">

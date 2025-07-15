@@ -1,6 +1,7 @@
 /* Instructors section styling */
 .instructors-section {
     background: #fff;
+    font-family: 'Inter', 'Roboto', Arial, sans-serif;
     padding: 2rem 1.5rem;
     border-radius: 20px;
     box-shadow: 0 8px 40px rgba(60, 100, 180, 0.15), 0 2px 8px rgba(0, 0, 0, 0.05);
