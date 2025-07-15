@@ -13,6 +13,7 @@ class SessionTimeoutMiddleware:
             reverse('session_timeout'),
             reverse('register_user'),
             reverse('public_register'),
+            reverse('add_public_instructor'),
             reverse('forgot_password'),
             reverse('ajax_countries'),
             reverse('ajax_states'),

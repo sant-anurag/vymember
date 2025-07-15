@@ -286,6 +286,41 @@ def add_instructor(request):
             message = "Name is required."
     return render(request, 'add_instructor.html', {'message': message})
 
+def add_public_instructor(request):
+    # check is user is authenticated
+    print("Add public instructor view accessed")
+    message = None
+    if request.method == 'POST':
+        name = request.POST.get('name', '').strip()
+        age = request.POST.get('age')
+        gender = request.POST.get('gender')
+        associated_since = request.POST.get('associated_since')
+        updeshta_since = request.POST.get('updeshta_since')
+        address = request.POST.get('address', '').strip()
+        country= request.POST.get('ins_country', '').strip()
+        state = request.POST.get('ins_state', '').strip()
+        district = request.POST.get('ins_district', '').strip()
+
+        is_active = request.POST.get('is_active', '1')  # Default to active
+        if name:
+            conn = mysql.connector.connect(
+                host=settings.DB_HOST,
+                user=settings.DB_USER,
+                password=settings.DB_PASSWORD,
+                database=settings.DB_NAME
+            )
+            cur = conn.cursor()
+            cur.execute("""
+                INSERT INTO instructors (name, age, gender, associated_since, updeshta_since, address,state, district, country, is_active)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (name, age or None, gender or None, associated_since or None, updeshta_since or None, address or None,state, district, country, is_active))
+            conn.commit()
+            cur.close()
+            conn.close()
+            message = "Instructor added successfully!"
+        else:
+            message = "Name is required."
+    return render(request, 'public_instructor_register.html', {'message': message})
 def all_members(request):
     # check is user is authenticated
     if not request.session.get('is_authenticated'):
