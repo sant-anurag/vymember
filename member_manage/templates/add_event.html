@@ -1,42 +1,54 @@
 {% extends "home.html" %}
 {% load static %}
 {% block main_content %}
+
+<!-- Add Event Page Styles -->
 <link rel="stylesheet" href="{% static 'css/add_event.css' %}">
+
+<!-- Add Event Section -->
 <section class="event-section">
     <h2>Add New Event</h2>
     {% if message %}
+    <!-- Status Message -->
     <div class="status-message">{{ message }}</div>
     {% endif %}
+    <!-- Event Form -->
     <form id="eventForm" method="post" action="{% url 'add_event' %}">
         {% csrf_token %}
         <div class="form-row">
+            <!-- Event Name -->
             <div class="form-group">
                 <label for="event_name">Event Name</label>
                 <input type="text" name="event_name" id="event_name" required/>
             </div>
+            <!-- Event Date -->
             <div class="form-group">
                 <label for="event_date">Event Date</label>
                 <input type="date" name="event_date" id="event_date" required/>
             </div>
+            <!-- Event Coordinator -->
             <div class="form-group">
                 <label for="event_coordinator">Event Coordinator</label>
                 <input type="text" name="event_coordinator" id="event_coordinator" required/>
             </div>
         </div>
         <div class="form-row">
-
+            <!-- Empty row for future fields or layout -->
         </div>
         <div class="form-row">
+            <!-- Event Location -->
             <div class="form-group">
                 <label for="event_location">Event Location</label>
                 <input type="text" name="event_location" id="event_location" required/>
             </div>
+            <!-- Country Dropdown -->
             <div class="form-group">
                 <label for="event_country">Country</label>
                 <select name="event_country" id="event_country" required>
                     <option value="">Select Country</option>
                 </select>
             </div>
+            <!-- State Dropdown -->
             <div class="form-group">
                 <label for="event_state">State</label>
                 <select name="event_state" id="event_state" required>
@@ -45,13 +57,15 @@
             </div>
         </div>
         <div class="form-row">
+            <!-- District Dropdown -->
             <div class="form-group">
                 <label for="event_district">District</label>
                 <select name="event_district" id="event_district" required>
                     <option value="">Select District</option>
                 </select>
             </div>
-             <div class="form-group">
+            <!-- Instructor Dropdown -->
+            <div class="form-group">
                 <label for="instructor_id">Event Instructor</label>
                 <select name="instructor_id" id="instructor_id" required>
                     <option value="">Select Instructor</option>
@@ -62,11 +76,13 @@
             </div>
         </div>
         <div class="form-row">
+            <!-- Event Description -->
             <div class="form-group">
                 <label for="event_description">Event Description</label>
                 <textarea name="event_description" id="event_description" rows="2"></textarea>
             </div>
         </div>
+        <!-- Form Actions -->
         <div class="form-actions">
             <button type="submit">Save</button>
             <a href="{% url 'dashboard' %}" class="close-btn">Close</a>
@@ -74,8 +90,9 @@
     </form>
 </section>
 
-<!-- Filter Row -->
+<!-- Event Filter and Table Section -->
 <section class="event-table-section">
+    <!-- Filter Row -->
     <div class="event-filter-row">
         <input type="text" id="filterEventName" placeholder="Event Name">
         <input type="text" id="filterCoordinator" placeholder="Coordinator">
@@ -110,40 +127,46 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Filled by JS -->
+                <!-- Table rows populated by JavaScript -->
             </tbody>
         </table>
+        <!-- Pagination Controls -->
         <div class="pagination" id="pagination">
-            <!-- Pagination buttons by JS -->
+            <!-- Pagination buttons by JavaScript -->
         </div>
     </div>
 </section>
 
-<!-- Edit Modal -->
+<!-- Edit Event Modal -->
 <div id="editEventModal" class="modal-overlay" style="display:none;">
     <div class="modal-content">
         <h3>Edit Event</h3>
         <form id="editEventForm">
             <input type="hidden" id="editEventId">
             <div class="form-row">
+                <!-- Edit Event Name -->
                 <div class="form-group">
                     <label for="editEventName">Event Name</label>
                     <input type="text" id="editEventName" required>
                 </div>
+                <!-- Edit Event Date -->
                 <div class="form-group">
                     <label for="editEventDate">Event Date</label>
                     <input type="date" id="editEventDate" required>
                 </div>
+                <!-- Edit Coordinator -->
                 <div class="form-group">
                     <label for="editEventCoordinator">Coordinator</label>
                     <input type="text" id="editEventCoordinator" required>
                 </div>
             </div>
             <div class="form-row">
+                <!-- Edit Location -->
                 <div class="form-group">
                     <label for="editEventLocation">Location</label>
                     <input type="text" id="editEventLocation" required>
                 </div>
+                <!-- Edit Instructor Dropdown -->
                 <div class="form-group">
                     <label for="editInstructorId">Instructor</label>
                     <select id="editInstructorId" required>
@@ -155,18 +178,21 @@
                 </div>
             </div>
             <div class="form-row">
+                <!-- Edit Country Dropdown -->
                 <div class="form-group">
                     <label for="editEventCountry">Country</label>
                     <select id="editEventCountry" required>
                         <option value="">Select Country</option>
                     </select>
                 </div>
+                <!-- Edit State Dropdown -->
                 <div class="form-group">
                     <label for="editEventState">State</label>
                     <select id="editEventState" required>
                         <option value="">Select State</option>
                     </select>
                 </div>
+                <!-- Edit District Dropdown -->
                 <div class="form-group">
                     <label for="editEventCity">District</label>
                     <select id="editEventCity" required>
@@ -174,10 +200,12 @@
                     </select>
                 </div>
             </div>
+            <!-- Edit Description -->
             <div class="form-group">
                 <label for="editEventDescription">Description</label>
                 <textarea id="editEventDescription"></textarea>
             </div>
+            <!-- Edit Modal Actions -->
             <div class="form-actions">
                 <button type="submit" class="save-btn">Save</button>
                 <button type="button" class="close-btn" id="closeEditModal">Cancel</button>
@@ -186,6 +214,7 @@
     </div>
 </div>
 
+<!-- JavaScript for Event Page Functionality -->
 <script src="{% static 'js/add_event.js' %}"></script>
 <script src="{% static 'js/events_table.js' %}"></script>
 {% endblock %}
