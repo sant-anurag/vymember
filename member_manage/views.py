@@ -266,8 +266,9 @@ def add_instructor(request):
         country= request.POST.get('ins_country', '').strip()
         state = request.POST.get('ins_state', '').strip()
         district = request.POST.get('ins_district', '').strip()
-
         is_active = request.POST.get('is_active', '1')  # Default to active
+
+
         if name and age and number and len(number) >= 10 and number.isdigit():
             conn = mysql.connector.connect(
                 host=settings.DB_HOST,
@@ -275,15 +276,23 @@ def add_instructor(request):
                 password=settings.DB_PASSWORD,
                 database=settings.DB_NAME
             )
+
             cur = conn.cursor()
-            cur.execute("""
-                INSERT INTO instructors (name, number, age, gender, associated_since, updeshta_since, address,state, district, country, is_active)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            """, (name, number,age or None, gender or None, associated_since or None, updeshta_since or None, address or None,state, district, country, is_active))
-            conn.commit()
-            cur.close()
-            conn.close()
-            message = "Instructor added successfully!"
+            # Check if instructor with same number already exists
+            cur.execute("SELECT id FROM instructors WHERE number = %s", (number,))
+            if cur.fetchone():
+                cur.close()
+                conn.close()
+                message = "Instructor with this contact already exists."
+            else:
+                cur.execute("""
+                    INSERT INTO instructors (name, number, age, gender, associated_since, updeshta_since, address,state, district, country, is_active)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """, (name, number,age or None, gender or None, associated_since or None, updeshta_since or None, address or None,state, district, country, is_active))
+                conn.commit()
+                cur.close()
+                conn.close()
+                message = "Instructor added successfully!"
         else:
             if not name:
                 message = "Name is required."
