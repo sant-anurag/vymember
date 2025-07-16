@@ -2063,7 +2063,12 @@ def add_event(request):
     cursor = conn.cursor()
     cursor.execute("SELECT id, name FROM instructors WHERE is_active=1")
     instructors = [{'id': row[0], 'name': row[1]} for row in cursor.fetchall()]
-
+    isAdminUser = get_user_category(request.session.get('username'))
+    print("User category fetched admin status:", isAdminUser)
+    if isAdminUser == True:
+        user_category = 'admin'
+    else:
+        user_category = 'standard'
     message = None
     if request.method == 'POST':
         event_name = request.POST.get('event_name')
@@ -2075,12 +2080,7 @@ def add_event(request):
         state = request.POST.get('event_state')
         district = request.POST.get('event_district')
         event_description = request.POST.get('event_description')
-        isAdminUser = get_user_category(request.session.get('username'))
-        print("User category fetched admin status:", isAdminUser)
-        if isAdminUser == True:
-            user_category = 'admin'
-        else:
-            user_category = 'standard'
+
         # Validate inputs
         if not event_name or not event_date or not instructor_id:
             message = "Event name, date, and instructor are required."
