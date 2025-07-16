@@ -52,6 +52,7 @@
                 <li><a href="{% url 'upload_attendance' %}"><i class="fas fa-upload"></i>Upload Attendance</a></li>
             </ul>
         </li>
+        {% if user_category == 'admin' %}
         <li tabindex="0">
             <a href="#"><i class="fas fa-cog"></i>Settings <i class="fas fa-chevron-down"></i></a>
             <ul class="submenu">
@@ -60,6 +61,7 @@
                 <li><a href="#"><i class="fas fa-user"></i>Profile</a></li>
             </ul>
         </li>
+        {% endif %}
         <li>
             <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i>Logout</a>
         </li>

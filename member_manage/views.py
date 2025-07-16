@@ -95,6 +95,7 @@ def login_view(request):
                 return redirect('dashboard')
             else:
                 message = "Invalid username or password.Please try again."
+    # fetch user category
 
     return render(request, 'login.html', {'message': message})
 
@@ -141,7 +142,15 @@ def home(request):
     instructors = get_instructors()
     events = get_events()
     message = request.session.pop('message', None)
-    return render(request, 'home.html', {'message': message,'instructors': instructors, 'events': events})
+    #fetch user category
+    isAdminUser = get_user_category(request.session['username'])
+    print("User category fetched admin status:", isAdminUser)
+    if isAdminUser == True:
+        user_category = 'admin'
+    else:
+        user_category = 'standard'
+    return render(request, 'home.html', {'message': message,'instructors': instructors,
+                                         'events': events,'user_category':user_category })
 
 @csrf_exempt
 def register_member(request):
@@ -164,7 +173,13 @@ def register_member(request):
         instructor_id = request.POST.get('instructor', '').strip()
         date_of_initiation = request.POST.get('date_of_initiation', '').strip()
         event = request.POST.get('event', '').strip()
-
+        # fetch user category
+        isAdminUser = get_user_category(request.session['username'])
+        print("User category fetched admin status:", isAdminUser)
+        if isAdminUser == True:
+            user_category = 'admin'
+        else:
+            user_category = 'standard'
         # validate the form fields
         form_data = request.POST.copy()
         if not name:
@@ -175,7 +190,8 @@ def register_member(request):
                 'message_type': 'error',
                 'form_data': form_data,
                 'instructors': instructors,
-                'events': events
+                'events': events,
+                'user_category': user_category
             })
         if not number or len(number) < 10 or number.isdigit() is False:
             instructors = get_instructors()
@@ -185,7 +201,8 @@ def register_member(request):
                 'message_type': 'error',
                 'form_data': form_data,
                 'instructors': instructors,
-                'events': events
+                'events': events,
+                'user_category': user_category
             })
         if email:
             email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
@@ -197,7 +214,8 @@ def register_member(request):
                     'message_type': 'error',
                     'form_data': form_data,
                     'instructors': instructors,
-                    'events': events
+                    'events': events,
+                    'user_category': user_category
                 })
         if name and number and instructor_id and date_of_initiation:
             conn = mysql.connector.connect(
@@ -302,7 +320,14 @@ def add_instructor(request):
                 message = "Age is required"
             else:
                 message = "Please fill all required fields correctly."
-    return render(request, 'add_instructor.html', {'message': message})
+    # fetch user category
+    isAdminUser = get_user_category(request.session['username'])
+    print("User category fetched admin status:", isAdminUser)
+    if isAdminUser == True:
+        user_category = 'admin'
+    else:
+        user_category = 'standard'
+    return render(request, 'add_instructor.html', {'message': message,'user_category': user_category})
 
 def add_public_instructor(request):
     # check is user is authenticated
@@ -339,7 +364,16 @@ def add_public_instructor(request):
             message = "Instructor added successfully!"
         else:
             message = "Name is required."
-    return render(request, 'public_instructor_register.html', {'message': message})
+    # fetch user category
+    isAdminUser = get_user_category(request.session['username'])
+    print("User category fetched admin status:", isAdminUser)
+    if isAdminUser == True:
+        user_category = 'admin'
+    else:
+        user_category = 'standard'
+    return render(request, 'public_instructor_register.html', {'message': message
+                                                               ,'user_category': user_category})
+
 def all_members(request):
     # check is user is authenticated
     if not request.session.get('is_authenticated'):
@@ -395,14 +429,22 @@ def all_members(request):
 
     cursor.close()
     conn.close()
-
+    # fetch user category
+    isAdminUser = get_user_category(request.session['username'])
+    print("User category fetched admin status:", isAdminUser)
+    if isAdminUser == True:
+        user_category = 'admin'
+    else:
+        user_category = 'standard'
     context = {
         'companies': companies,
         'instructors': instructors,
         'events': events,
         'members': members,  # This data will be displayed in the template
         'member_count': len(members),  # Total number of members
+        'user_category': user_category
     }
+
     return render(request, 'all_members.html', context)
 
 @require_http_methods(["GET", "DELETE"])
@@ -573,18 +615,31 @@ def all_instructors(request):
 
     cursor.close()
     conn.close()
-
+    # fetch user category
+    isAdminUser = get_user_category(request.session['username'])
+    print("User category fetched admin status:", isAdminUser)
+    if isAdminUser == True:
+        user_category = 'admin'
+    else:
+        user_category = 'standard'
     context = {
         'instructors': instructors,
         'associated_years': associated_years,
         'updeshta_years': updeshta_years,
         'range_years': range_years,
-        'success_message': success_message
+        'success_message': success_message,
+        'user_category': user_category
     }
     return render(request, 'all_instructors.html', context)
 
 def register_user(request):
-
+    # fetch user category
+    isAdminUser = get_user_category(request.session['username'])
+    print("User category fetched admin status:", isAdminUser)
+    if isAdminUser == True:
+        user_category = 'admin'
+    else:
+        user_category = 'standard'
     if request.method == 'POST':
         # Generate years from 1900 to current year
         import datetime
@@ -644,14 +699,16 @@ def register_user(request):
             # Handle regular form submission (fallback)
             # Process form and send email
             # Redirect to success page
-            return render(request, 'register_user.html', {'success': True, 'range_years': range_years})
+            return render(request, 'register_user.html', {'success': True, 'range_years': range_years
+                                                          ,'user_category': user_category})
     else:
         # Generate years from 1900 to current year
         import datetime
         current_year = datetime.datetime.now().year
         range_years = list(range(current_year, 1899, -1))
 
-        return render(request, 'register_user.html', {'range_years': range_years})
+        return render(request, 'register_user.html', {'range_years': range_years,
+                                                      'user_category': user_category})
 
 
 def dictfetchall(cursor):
@@ -747,14 +804,21 @@ def instructor_infographics(request):
     # Close database connection
     cursor.close()
     conn.close()
-
+    # fetch user category
+    isAdminUser = get_user_category(request.session['username'])
+    print("User category fetched admin status:", isAdminUser)
+    if isAdminUser == True:
+        user_category = 'admin'
+    else:
+        user_category = 'standard'
     context = {
         'instructors': instructors,
         'years_range': years_range,
         'total_members': total_members,
         'instructors_count': instructors_count,
         'avg_members_per_instructor': avg_members_per_instructor,
-        'growth_rate': growth_rate
+        'growth_rate': growth_rate,
+        'user_category': user_category
     }
 
     return render(request, 'instructor_infographics.html', context)
@@ -1242,10 +1306,17 @@ def api_download_instructor_report(request):
 @csrf_exempt
 def upload_members(request):
     # check is user is authenticated
+    # fetch user category
+    isAdminUser = get_user_category(request.session['username'])
+    print("User category fetched admin status:", isAdminUser)
+    if isAdminUser == True:
+        user_category = 'admin'
+    else:
+        user_category = 'standard'
     if not request.session.get('is_authenticated'):
         return redirect('login')
     if request.method == 'GET':
-        return render(request, 'upload_members.html')
+        return render(request, 'upload_members.html',{'user_category': user_category})
     if request.method == 'POST' and request.FILES.get('file'):
         file = request.FILES['file']
         try:
@@ -1329,11 +1400,18 @@ def change_password(request):
 
     cursor.close()
     conn.close()
-
+    # fetch user category
+    isAdminUser = get_user_category(request.session['username'])
+    print("User category fetched admin status:", isAdminUser)
+    if isAdminUser == True:
+        user_category = 'admin'
+    else:
+        user_category = 'standard'
     return render(request, 'password_change.html', {
         'users': users,
         'message': message,
-        'success': success
+        'success': success,
+        'user_category': user_category
     })
 
 def validate_password_strength(password):
@@ -1633,17 +1711,35 @@ def create_user(request):
     print("Users fetched for display:", users.object_list)
     columns = ['id', 'username', 'email', 'is_admin', 'created_on']
     user_dicts = [dict(zip(columns, row)) for row in users.object_list]
-
+    # fetch user category
+    isAdminUser = get_user_category(request.session['username'])
+    print("User category fetched admin status:", isAdminUser)
+    if isAdminUser == True:
+        user_category = 'admin'
+    else:
+        user_category = 'standard'
     return render(request, 'create_user.html', {
         'message': message,
         'success': success,
         'users': user_dicts,      # Pass the page object for pagination
-        'page_obj': users    # For compatibility with Django pagination templates
+        'page_obj': users,   # For compatibility with Django pagination templates
+        'user_category': user_category
     })
 
 import json
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
+
+# method to fetch user cathegory
+def get_user_category(username):
+    """Fetch user category (admin or regular) from the database"""
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT is_admin FROM users WHERE username = %s", (username,))
+    user = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return user['is_admin'] if user else None
 
 @require_http_methods(["GET"])
 def get_user_details(request, user_id):
@@ -1789,7 +1885,15 @@ def dashboard(request):
         'new_members_year': new_members_year,
         'growth_rate': growth_rate
     }
-    return render(request, 'dashboard.html', {'stats': stats, 'recent_members': recent_members})
+    isAdminUser = get_user_category(request.session.get('username'))
+    print("User category fetched admin status:", isAdminUser)
+    if isAdminUser == True:
+        user_category = 'admin'
+    else:
+        user_category = 'standard'
+    return render(request, 'dashboard.html', {'stats': stats,
+                                              'recent_members': recent_members,
+                                              'user_category':user_category})
 
 from django.views.decorators.http import require_GET
 
@@ -1959,6 +2063,12 @@ def add_event(request):
         state = request.POST.get('event_state')
         district = request.POST.get('event_district')
         event_description = request.POST.get('event_description')
+        isAdminUser = get_user_category(request.session.get('username'))
+        print("User category fetched admin status:", isAdminUser)
+        if isAdminUser == True:
+            user_category = 'admin'
+        else:
+            user_category = 'standard'
         # Validate inputs
         if not event_name or not event_date or not instructor_id:
             message = "Event name, date, and instructor are required."
@@ -1968,7 +2078,9 @@ def add_event(request):
             if cursor.fetchone()[0] > 0:
                 message = "An event with this date, name,and location already exists."
                 conn.close()
-                return render(request, 'add_event.html', {'instructors': instructors, 'message': message})
+                return render(request, 'add_event.html', {'instructors': instructors,
+                                                          'message': message,
+                                                          'user_category': user_category})
 
         if event_name and event_date and instructor_id:
             cursor.execute("""
@@ -1977,13 +2089,15 @@ def add_event(request):
             """, [event_name, event_date, instructor_id,coordinator,location,state, district, country, event_description])
             conn.commit()
             message = "Event registered successfully."
-            return render(request, 'add_event.html', {'instructors': instructors, 'message': message})
+            return render(request, 'add_event.html', {'instructors': instructors,
+                                                      'message': message,
+                                                      'user_category': user_category})
         else:
             message = "All fields are required."
     conn.close()
-    return render(request, 'add_event.html', {'instructors': instructors, 'message': message})
-
-
+    return render(request, 'add_event.html', {'instructors': instructors,
+                                              'message': message,
+                                              'user_category': user_category})
 
 def record_attendance(request):
     # Fetch all events for dropdown
@@ -2100,12 +2214,19 @@ def record_attendance(request):
         conn.commit()
         conn.close()
         message = f"Attendance recorded. {new_member_count} new member(s) registered successfully."
-
+        # fetch user category
+    isAdminUser = get_user_category(request.session['username'])
+    print("User category fetched admin status:", isAdminUser)
+    if isAdminUser == True:
+        user_category = 'admin'
+    else:
+        user_category = 'standard'
     return render(request, 'record_attendance.html', {
         'events': events,
         'selected_event': selected_event,
         'selected_event_id': str(selected_event_id) if selected_event_id else '',
-        'message': message
+        'message': message,
+        'user_category': user_category
     })
 
 # views.py
@@ -2150,8 +2271,6 @@ def get_cities(request):
 def session_timeout(request):
     return render(request, 'session_timeout.html')
 
-
-
 def get_db_conn():
     return mysql.connector.connect(
         host=settings.DB_HOST,
@@ -2185,6 +2304,7 @@ def forgot_password(request):
             message = "No user found with that email address."
         cur.close()
         conn.close()
+
     return render(request, "forgot_password.html", {"message": message, "message_type": message_type})
 
 def reset_password(request, token):
@@ -2215,10 +2335,18 @@ def reset_password(request, token):
             RESET_TOKENS.pop(token, None)
             message = "Password reset successful! You can now <a href='%s'>login</a>." % reverse('login')
             message_type = "success"
+    # fetch user category
+    isAdminUser = get_user_category(request.session['username'])
+    print("User category fetched admin status:", isAdminUser)
+    if isAdminUser == True:
+        user_category = 'admin'
+    else:
+        user_category = 'standard'
     return render(request, "reset_password.html", {
         "message": message,
         "message_type": message_type,
-        "username": username
+        "username": username,
+        "user_category": user_category
     })
 
 def view_events(request):
@@ -2262,12 +2390,19 @@ def view_events(request):
 
     paginator = Paginator(attendance, 10)
     attendance_page = paginator.get_page(page_number)
-
+    # fetch user category
+    isAdminUser = get_user_category(request.session['username'])
+    print("User category fetched admin status:", isAdminUser)
+    if isAdminUser == True:
+        user_category = 'admin'
+    else:
+        user_category = 'standard'
     return render(request, 'view_events.html', {
         'events': events,
         'selected_event_id': selected_event_id or '',
         'event_summary': event_summary,
         'attendance_page': attendance_page,
+        'user_category': user_category
     })
 
 # Excel download view
@@ -2433,13 +2568,19 @@ def upload_attendance(request):
     events = cur.fetchall()
     cur.close()
     conn.close()
-
+    # fetch user category
+    isAdminUser = get_user_category(request.session['username'])
+    print("User category fetched admin status:", isAdminUser)
+    if isAdminUser == True:
+        user_category = 'admin'
+    else:
+        user_category = 'standard'
     if request.method == "POST":
         event_id = request.POST.get('event_id')
         file = request.FILES.get('attendance_file')
         if not event_id or not file:
             messages.error(request, "Please select an event and upload a file.")
-            return render(request, 'upload_attendance.html', {'events': events})
+            return render(request, 'upload_attendance.html', {'events': events, 'user_category': user_category})
 
         try:
             wb = openpyxl.load_workbook(file)
@@ -2448,7 +2589,7 @@ def upload_attendance(request):
             expected = ['Name', 'Age', 'Contact', 'Gender', 'Address', 'Attended On', 'New Member?']
             if headers != expected:
                 messages.error(request, "Invalid template. Please use the provided template.")
-                return render(request, 'upload_attendance.html', {'events': events})
+                return render(request, 'upload_attendance.html', {'events': events, 'user_category': user_category})
 
             conn = get_db_connection()
             cur = conn.cursor()
@@ -2754,6 +2895,7 @@ def public_register(request):
     message_type = ''
     year = datetime.now().year
     events = get_events_for_dropdown()
+
     if request.method == 'POST':
         name = request.POST.get('name', '').strip()
         number = request.POST.get('number', '').strip()
