@@ -155,6 +155,10 @@
     top: 0;
     font-size: 0.9rem;
 }
+#instructorsTable th,
+#instructorsTable td {
+    white-space: nowrap;
+}
 
 #instructorsTable tr:nth-child(even) {
     background-color: #f7fbff;
