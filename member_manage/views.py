@@ -1551,10 +1551,10 @@ def update_member(request, member_id):
         if not instructor_id or instructor_id.strip() == '':
             instructor_id = None
 
-        # Format date_of_initiation
+        # Correct usage if 'from datetime import datetime' is present
         date_of_initiation = data.get('date_of_initiation')
         if date_of_initiation:
-            date_of_initiation = datetime.datetime.strptime(date_of_initiation, '%Y-%m-%d').date()
+            date_of_initiation = datetime.strptime(date_of_initiation, '%Y-%m-%d').date()
 
         # Update member record
         cursor.execute("""
@@ -1909,16 +1909,24 @@ def dashboard_metrics_api(request):
         cursor.execute("SELECT COUNT(*) as total FROM members WHERE YEAR(date_of_initiation)=%s AND MONTH(date_of_initiation)=%s", (dt.year, dt.month))
         growth_labels.append(dt.strftime('%b %Y'))
         growth_data.append(cursor.fetchone()['total'])
-    # Members by instructor
+
+    # Calculate the date 6 months ago
+    six_months_ago = (datetime.now() - timedelta(days=180)).date()
+
+    # Members by instructor (last 6 months)
     cursor.execute("""
-        SELECT i.name, COUNT(m.id) as total FROM instructors i
+        SELECT i.name, COUNT(m.id) as total
+        FROM instructors i
         LEFT JOIN members m ON m.instructor_id = i.id
-        GROUP BY i.id ORDER BY i.name
-    """)
+            AND m.date_of_initiation >= %s
+        GROUP BY i.id
+        ORDER BY i.name
+    """, (six_months_ago,))
     instructor_labels, instructor_data = [], []
     for row in cursor.fetchall():
-        instructor_labels.append(row['name'])
-        instructor_data.append(row['total'])
+        if row['total'] > 0:
+            instructor_labels.append(row['name'])
+            instructor_data.append(row['total'])
     # Geographic distribution (by state)
     cursor.execute("""
         SELECT state, COUNT(*) as total FROM members
@@ -1937,8 +1945,9 @@ def dashboard_metrics_api(request):
     """)
     top_labels, top_data = [], []
     for row in cursor.fetchall():
-        top_labels.append(row['name'])
-        top_data.append(row['total'])
+        if row['total'] > 0:
+            top_labels.append(row['name'])
+            top_data.append(row['total'])
     cursor.close()
     conn.close()
     return JsonResponse({
