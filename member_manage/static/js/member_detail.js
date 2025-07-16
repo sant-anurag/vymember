@@ -1,13 +1,10 @@
 // static/js/member_detail.js
-document.addEventListener('DOMContentLoaded', function() {
-    // Set up event listeners for action buttons
-    // Set up the CSRF token for all AJAX requests
 
+document.addEventListener('DOMContentLoaded', function() {
     setupDetailButtons();
 });
 
 function setupDetailButtons() {
-    // View button action
     document.querySelectorAll('.view-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const memberId = this.getAttribute('data-id');
@@ -15,7 +12,6 @@ function setupDetailButtons() {
         });
     });
 
-    // Edit button action
     document.querySelectorAll('.edit-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const memberId = this.getAttribute('data-id');
@@ -25,29 +21,25 @@ function setupDetailButtons() {
 }
 
 function openMemberDetail(memberId, mode) {
-    // Create overlay if it doesn't exist
     let overlay = document.querySelector('.member-detail-overlay');
-
     if (!overlay) {
         overlay = document.createElement('div');
         overlay.className = 'member-detail-overlay';
         document.body.appendChild(overlay);
     }
-
-    // Show loading state
     overlay.innerHTML = '<div class="loader"></div>';
     overlay.style.display = 'flex';
 
-    // Fetch member data
     fetch(`/member/api/member/${memberId}/`)
         .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to fetch member details');
-            }
+            if (!response.ok) throw new Error('Failed to fetch member details');
             return response.json();
         })
         .then(member => {
             renderMemberDetail(overlay, member, mode);
+            if (mode === 'edit') {
+                setupCascadingDropdowns(member);
+            }
         })
         .catch(error => {
             console.error('Error fetching member details:', error);
@@ -71,7 +63,6 @@ function openMemberDetail(memberId, mode) {
 function renderMemberDetail(overlay, member, mode) {
     const isViewMode = mode === 'view';
     const modalTitle = isViewMode ? 'Member Details' : 'Edit Member';
-
     const formattedDate = member.date_of_initiation ? new Date(member.date_of_initiation).toISOString().split('T')[0] : '';
 
     overlay.innerHTML = `
@@ -92,7 +83,6 @@ function renderMemberDetail(overlay, member, mode) {
                             <input type="text" id="memberNumber" name="number" value="${member.number || ''}" ${isViewMode ? 'readonly' : ''}>
                         </div>
                     </div>
-
                     <div class="form-row">
                         <div class="form-group">
                             <label for="memberEmail">Email</label>
@@ -106,18 +96,17 @@ function renderMemberDetail(overlay, member, mode) {
                     <div class="form-row">
                         <div class="form-group">
                             <label for="memberAge">Age</label>
-                            <input type="text" id="memberAge" name="memberAge" value="${member.age || ''}" ${isViewMode ? 'readonly' : ''}>
+                            <input type="text" id="memberAge" name="age" value="${member.age || ''}" ${isViewMode ? 'readonly' : ''}>
                         </div>
                         <div class="form-group">
                             <label for="memberGender">Gender</label>
-                            <input type="text" id="memberGender" name="memberGender" value="${member.gender || ''}" ${isViewMode ? 'readonly' : ''}>
+                            <input type="text" id="memberGender" name="gender" value="${member.gender || ''}" ${isViewMode ? 'readonly' : ''}>
                         </div>
                         <div class="form-group">
                             <label for="memberEvent">Event</label>
-                            <input type="text" id="memberEvent" name="memberEvent" value="${member.event_name || ''}" ${isViewMode ? 'readonly' : ''}>
+                            <input type="text" id="memberEvent" name="event_name" value="${member.event_name || ''}" ${isViewMode ? 'readonly' : ''}>
                         </div>
                     </div>
-
                     <div class="form-row">
                         <div class="form-group">
                             <label for="memberInstructor">Instructor</label>
@@ -128,36 +117,32 @@ function renderMemberDetail(overlay, member, mode) {
                             <input type="date" id="memberInitiationDate" name="date_of_initiation" value="${formattedDate}" ${isViewMode ? 'readonly' : ''}>
                         </div>
                     </div>
-
                     <div class="form-row">
                         <div class="form-group">
                             <label for="memberCountry">Country</label>
-                            <input type="text" id="memberCountry" name="country" value="${member.country || ''}" ${isViewMode ? 'readonly' : ''}>
+                            ${generateCountrySelect(member, isViewMode)}
                         </div>
                         <div class="form-group">
                             <label for="memberState">State</label>
-                            <input type="text" id="memberState" name="state" value="${member.state || ''}" ${isViewMode ? 'readonly' : ''}>
+                            ${generateStateSelect(member, isViewMode)}
                         </div>
                     </div>
-
                     <div class="form-row">
                         <div class="form-group">
                             <label for="memberDistrict">District</label>
-                            <input type="text" id="memberDistrict" name="district" value="${member.district || ''}" ${isViewMode ? 'readonly' : ''}>
+                            ${generateDistrictSelect(member, isViewMode)}
                         </div>
                         <div class="form-group">
                             <label for="memberAddress">Address</label>
                             <input type="text" id="memberAddress" name="address" value="${member.address || ''}" ${isViewMode ? 'readonly' : ''}>
                         </div>
                     </div>
-
                     <div class="form-row full-width">
                         <div class="form-group">
                             <label for="memberNotes">Notes</label>
                             <textarea id="memberNotes" name="notes" rows="3" ${isViewMode ? 'readonly' : ''}>${member.notes || ''}</textarea>
                         </div>
                     </div>
-
                     <input type="hidden" name="id" value="${member.id}">
                 </form>
             </div>
@@ -171,6 +156,106 @@ function renderMemberDetail(overlay, member, mode) {
             </div>
         </div>
     `;
+
+    if (!isViewMode) {
+        // Populate selects after rendering
+        populateCountrySelect(member.country_id);
+        setTimeout(() => populateStateSelect(member.country_id, member.state_id), 0);
+        setTimeout(() => populateDistrictSelect(member.state_id, member.district_id), 0);
+    }
+}
+
+function generateCountrySelect(member, isViewMode) {
+    if (isViewMode) {
+        return `<input type="text" value="${member.country || 'N/A'}" readonly>
+                <input type="hidden" name="country" value="${member.country_id || ''}">`;
+    }
+    return `<select id="memberCountry" name="country"><option>Loading...</option></select>`;
+}
+
+function generateStateSelect(member, isViewMode) {
+    if (isViewMode) {
+        return `<input type="text" value="${member.state || 'N/A'}" readonly>
+                <input type="hidden" name="state" value="${member.state_id || ''}">`;
+    }
+    return `<select id="memberState" name="state"><option>Loading...</option></select>`;
+}
+
+function generateDistrictSelect(member, isViewMode) {
+    if (isViewMode) {
+        return `<input type="text" value="${member.district || 'N/A'}" readonly>
+                <input type="hidden" name="district" value="${member.district_id || ''}">`;
+    }
+    return `<select id="memberDistrict" name="district"><option>Loading...</option></select>`;
+}
+
+function populateCountrySelect(selectedId) {
+    fetch('/member/ajax/countries/')
+        .then(res => res.json())
+        .then(data => {
+            const select = document.getElementById('memberCountry');
+            select.innerHTML = '<option value="">Select Country</option>';
+                data.countries.forEach(c => {
+                    select.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+                });
+                if (selectedId) select.value = selectedId;
+                if (callback) callback();
+            });
+}
+
+function populateStateSelect(countryId, selectedId) {
+
+    if (!countryId) {
+            document.getElementById('memberState').innerHTML = '<option value="">Select State</option>';
+            if (callback) callback();
+            return;
+        }
+        fetch(`/member/ajax/states/?country_id=${countryId}`)
+            .then(res => res.json())
+            .then(data => {
+                const select = document.getElementById('memberState');
+                select.innerHTML = '<option value="">Select State</option>';
+                data.states.forEach(s => {
+                    select.innerHTML += `<option value="${s.id}">${s.name}</option>`;
+                });
+                if (selectedId) select.value = selectedId;
+                if (callback) callback();
+            });
+    }
+
+function populateDistrictSelect(stateId, selectedId) {
+    if (!stateId) {
+            document.getElementById('memberDistrict').innerHTML = '<option value="">Select City</option>';
+            return;
+        }
+        fetch(`/member/ajax/cities/?state_id=${stateId}`)
+            .then(res => res.json())
+            .then(data => {
+                const select = document.getElementById('memberDistrict');
+                select.innerHTML = '<option value="">Select City</option>';
+                data.cities.forEach(c => {
+                    select.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+                });
+                if (selectedId) select.value = selectedId;
+            });
+    }
+
+function setupCascadingDropdowns(member) {
+    const countrySelect = document.getElementById('memberCountry');
+    const stateSelect = document.getElementById('memberState');
+    const districtSelect = document.getElementById('memberDistrict');
+
+    if (countrySelect) {
+        countrySelect.addEventListener('change', function() {
+            populateStateSelect(this.value, null);
+            if (districtSelect) districtSelect.innerHTML = '<option value="">-- Select City --</option>';
+        });
+    }
+    if (stateSelect) {
+        stateSelect.addEventListener('change', function() {
+            populateDistrictSelect(this.value, null);
+        });
+    }
 }
 
 function generateInstructorSelect(member, isViewMode) {
@@ -178,7 +263,6 @@ function generateInstructorSelect(member, isViewMode) {
         return `<input type="text" value="${member.instructor_name || 'N/A'}" readonly>
                 <input type="hidden" name="instructor_id" value="${member.instructor_id || ''}">`;
     }
-
     let options = '';
     if (member.instructors && member.instructors.length > 0) {
         options = member.instructors.map(instructor => {
@@ -186,7 +270,6 @@ function generateInstructorSelect(member, isViewMode) {
             return `<option value="${instructor.id}" ${selected}>${instructor.name}</option>`;
         }).join('');
     }
-
     return `
         <select id="memberInstructor" name="instructor_id">
             <option value="">-- Select Instructor --</option>
@@ -206,7 +289,6 @@ function saveMemberChanges(memberId) {
     const form = document.getElementById('memberDetailForm');
     if (!form) return;
 
-    // Create an object to hold the form data
     const memberData = {
         name: document.getElementById('memberName').value,
         number: document.getElementById('memberNumber').value,
@@ -223,15 +305,11 @@ function saveMemberChanges(memberId) {
         notes: document.getElementById('memberNotes').value
     };
 
-    // Get CSRF token
     const csrfToken = getCsrfToken();
-
-    // Show loading indicator
     const loader = document.createElement('div');
     loader.className = 'loader';
     form.appendChild(loader);
 
-    // Send update request
     fetch(`/member/api/member/${memberId}/update/`, {
         method: 'POST',
         headers: {
@@ -241,12 +319,8 @@ function saveMemberChanges(memberId) {
         body: JSON.stringify(memberData)
     })
     .then(response => {
-        // Remove loader
         if (loader) loader.remove();
-
-        if (!response.ok) {
-            throw new Error('Failed to update member details');
-        }
+        if (!response.ok) throw new Error('Failed to update member details');
         return response.json();
     })
     .then(data => {
@@ -254,15 +328,13 @@ function saveMemberChanges(memberId) {
             showFormSuccess('Member updated successfully');
             setTimeout(() => {
                 window.location.reload();
-            }, 3000); // Reload after 3 seconds
+            }, 3000);
         } else {
             showFormError(data.error || 'Failed to update member');
         }
     })
     .catch(error => {
-        // Remove loader if still present
         if (loader) loader.remove();
-
         console.error('Error updating member details:', error);
         showFormError('Error updating member details. Please try again.');
     });
@@ -271,47 +343,28 @@ function saveMemberChanges(memberId) {
 function showFormError(message) {
     const form = document.getElementById('memberDetailForm');
     if (!form) return;
-
-    // Remove any existing alerts
     const existingAlert = form.querySelector('.form-alert');
-    if (existingAlert) {
-        existingAlert.remove();
-    }
-
-    // Create and add error alert
+    if (existingAlert) existingAlert.remove();
     const errorAlert = document.createElement('div');
     errorAlert.className = 'form-alert error';
     errorAlert.textContent = message;
     form.prepend(errorAlert);
-
-    // Auto-remove after 5 seconds
-    setTimeout(() => {
-        errorAlert.remove();
-    }, 5000);
+    setTimeout(() => { errorAlert.remove(); }, 5000);
 }
 
 function showFormSuccess(message) {
     const form = document.getElementById('memberDetailForm');
     if (!form) return;
-
-    // Remove any existing alerts
     const existingAlert = form.querySelector('.form-alert');
-    if (existingAlert) {
-        existingAlert.remove();
-    }
-
-    // Create and add success alert
+    if (existingAlert) existingAlert.remove();
     const successAlert = document.createElement('div');
     successAlert.className = 'form-alert success';
     successAlert.textContent = message;
     form.prepend(successAlert);
-
-    // Auto-remove after 5 seconds
-    setTimeout(() => {
-        successAlert.remove();
-    }, 5000);
+    setTimeout(() => { successAlert.remove(); }, 5000);
 }
- function getCsrfToken() {
-        return document.querySelector('input[name="csrfmiddlewaretoken"]')?.value ||
-               document.cookie.split('; ').find(row => row.startsWith('csrftoken='))?.split('=')[1] || '';
-    }
+
+function getCsrfToken() {
+    return document.querySelector('input[name="csrfmiddlewaretoken"]')?.value ||
+           document.cookie.split('; ').find(row => row.startsWith('csrftoken='))?.split('=')[1] || '';
+}
