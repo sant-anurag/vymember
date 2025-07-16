@@ -310,6 +310,7 @@ def add_public_instructor(request):
     message = None
     if request.method == 'POST':
         name = request.POST.get('name', '').strip()
+        number = request.POST.get('number', '').strip()
         age = request.POST.get('age')
         gender = request.POST.get('gender')
         associated_since = request.POST.get('associated_since')
@@ -329,9 +330,9 @@ def add_public_instructor(request):
             )
             cur = conn.cursor()
             cur.execute("""
-                INSERT INTO instructors (name, age, gender, associated_since, updeshta_since, address,state, district, country, is_active)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            """, (name, age or None, gender or None, associated_since or None, updeshta_since or None, address or None,state, district, country, is_active))
+                INSERT INTO instructors (name, number, age,gender, associated_since, updeshta_since, address,state, district, country, is_active)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (name, number, age or None, gender or None, associated_since or None, updeshta_since or None, address or None,state, district, country, is_active))
             conn.commit()
             cur.close()
             conn.close()
