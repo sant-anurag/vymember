@@ -2196,7 +2196,7 @@ def record_attendance(request):
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """, [
                     m['name'], m['contact'], m['age'], m['gender'], m['address'],
-                    selected_event['state'], selected_event['city'], selected_event['country'],
+                    selected_event['state_id'], selected_event['city_id'], selected_event['country_id'],
                     selected_event['instructor_id'], selected_event['event_date']
                 ])
                 new_member_count += 1
