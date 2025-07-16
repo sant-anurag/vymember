@@ -360,7 +360,42 @@
     background: linear-gradient(90deg, #4f8cff 0%, #1976d2 100%);
     color: #fff;
 }
-
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    margin: 1.5rem 0 0 0;
+}
+.pagination {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    gap: 0.3rem;
+}
+.pagination li {
+    display: inline-block;
+}
+.pagination button {
+    border: none;
+    background: #f7fbff;
+    color: #4f8cff;
+    padding: 0.5rem 1rem;
+    margin: 0 2px;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+.pagination button.active,
+.pagination button:hover {
+    background: #4f8cff;
+    color: #fff;
+    font-weight: 600;
+}
+.pagination button[disabled] {
+    background: #e3eafc;
+    color: #aaa;
+    cursor: not-allowed;
+}
 /* --- Responsive Styles --- */
 
 /* 900px and below */

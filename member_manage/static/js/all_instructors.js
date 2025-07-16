@@ -60,7 +60,67 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Set up download button
     setupDownloadButton();
+    paginateTable();
 });
+
+const rowsPerPage = 10;
+let currentPage = 1;
+
+function paginateTable() {
+    const table = document.getElementById('instructorsTable');
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr')).filter(
+        row => !row.classList.contains('no-results-row')
+    );
+    const totalRows = rows.length;
+    const totalPages = Math.ceil(totalRows / rowsPerPage);
+
+    // Hide all rows
+    rows.forEach(row => row.style.display = 'none');
+
+    // Show only rows for current page
+    const start = (currentPage - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+    rows.slice(start, end).forEach(row => row.style.display = '');
+
+    renderPagination(totalPages);
+}
+
+function renderPagination(totalPages) {
+    const pagination = document.getElementById('pagination');
+    pagination.innerHTML = '';
+
+    // Previous button
+    const prevBtn = document.createElement('button');
+    prevBtn.textContent = 'Previous';
+    prevBtn.disabled = currentPage === 1;
+    prevBtn.onclick = () => { currentPage--; paginateTable(); };
+    const prevLi = document.createElement('li');
+    prevLi.appendChild(prevBtn);
+    pagination.appendChild(prevLi);
+
+    // Page numbers
+    for (let i = 1; i <= totalPages; i++) {
+        const pageBtn = document.createElement('button');
+        pageBtn.textContent = i;
+        if (i === currentPage) pageBtn.classList.add('active');
+        pageBtn.onclick = () => { currentPage = i; paginateTable(); };
+        const pageLi = document.createElement('li');
+        pageLi.appendChild(pageBtn);
+        pagination.appendChild(pageLi);
+    }
+
+    // Next button
+    const nextBtn = document.createElement('button');
+    nextBtn.textContent = 'Next';
+    nextBtn.disabled = currentPage === totalPages;
+    nextBtn.onclick = () => { currentPage++; paginateTable(); };
+    const nextLi = document.createElement('li');
+    nextLi.appendChild(nextBtn);
+    pagination.appendChild(nextLi);
+}
+
+
 // Add at the top or after DOMContentLoaded
 let currentInstructorId = null;
 let isEditMode = false;
