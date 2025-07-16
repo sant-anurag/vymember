@@ -1927,15 +1927,18 @@ def dashboard_metrics_api(request):
         if row['total'] > 0:
             instructor_labels.append(row['name'])
             instructor_data.append(row['total'])
-    # Geographic distribution (by state)
+    # Geographic distribution (by state name)
     cursor.execute("""
-        SELECT state, COUNT(*) as total FROM members
-        WHERE state IS NOT NULL AND state != ''
-        GROUP BY state ORDER BY total DESC LIMIT 6
+        SELECT s.name AS state_name, COUNT(*) as total
+        FROM members m
+        JOIN state s ON m.state = s.id
+        GROUP BY s.id
+        ORDER BY total DESC
+        LIMIT 6
     """)
     geo_labels, geo_data = [], []
     for row in cursor.fetchall():
-        geo_labels.append(row['state'])
+        geo_labels.append(row['state_name'])
         geo_data.append(row['total'])
     # Top performing instructors
     cursor.execute("""
@@ -2128,6 +2131,9 @@ def record_attendance(request):
                 country.name AS country_name,
                 state.name AS state_name,
                 city.name AS city_name,
+                country.id AS country_id,
+                state.id AS state_id,
+                city.id AS city_id,
                 e.total_attendance
             FROM event_registrations e
             LEFT JOIN instructors i ON e.instructor_id = i.id
@@ -2148,7 +2154,10 @@ def record_attendance(request):
                 'country': row[6] or '',
                 'state': row[7] or '',
                 'city': row[8] or '',
-                'total_attendance': row[9] or 0
+                'country_id': row[9] or '',
+                'state_id': row[10] or '',
+                'city_id': row[11] or '',
+                'total_attendance': row[12] or 0
             }
 
     # Handle attendance register POST
