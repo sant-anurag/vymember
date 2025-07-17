@@ -62,6 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 pageEvents.forEach(ev => {
                     let tr = document.createElement('tr');
                     tr.innerHTML = `
+                        <td>${ev.id}</td>
                         <td>${ev.name}</td>
                         <td>${ev.date}</td>
                         <td>${ev.coordinator}</td>

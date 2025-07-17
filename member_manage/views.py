@@ -232,6 +232,39 @@ def register_member(request):
             """, (
                 name, number, email, address,age, gender, country, state,district,company, feedback, instructor_id, date_of_initiation,event
             ))
+            # Insert members for the given event into event_attendance
+            cur.execute("""
+                INSERT INTO event_attendance (
+                    event_id,
+                    member_name,
+                    age,
+                    contact_number,
+                    gender,
+                    address,
+                    attended_on,
+                    is_new_member
+                )
+                SELECT
+                    event_id,
+                    name,
+                    age,
+                    number,
+                    gender,
+                    address,
+                    date_of_initiation,
+                    1
+                FROM members
+                WHERE event_id = %s
+            """, (event,))
+
+            # Update total_attendance in event_registrations for the given event
+            cur.execute("""
+                UPDATE event_registrations
+                SET total_attendance = (
+                    SELECT COUNT(*) FROM event_attendance WHERE event_id = %s
+                )
+                WHERE id = %s
+            """, (event, event))
             conn.commit()
             cur.close()
             conn.close()
@@ -1330,11 +1363,14 @@ def upload_members(request):
                 return JsonResponse({'success': False, 'message': 'Missing required columns in Excel file.'})
             # Prepare data rows
             rows = []
+            event_ids = set()
             for row in ws.iter_rows(min_row=2, values_only=True):
                 row_dict = dict(zip(headers, row))
                 if not all(row_dict.get(col) for col in required):
                     continue  # skip incomplete rows
                 rows.append([row_dict.get(col, None) for col in db_columns])
+                if 'event_id' in headers and row_dict.get('event_id'):
+                    event_ids.add(row_dict.get('event_id'))
             if not rows:
                 return JsonResponse({'success': False, 'message': 'No valid rows to import.'})
             # Insert into DB
@@ -1351,6 +1387,38 @@ def upload_members(request):
                 (name, number, email,age,gender, address, state, district, country, company, notes, instructor_id,event_id, date_of_initiation)
                 VALUES ({','.join(['%s']*14)})"""
             cur.executemany(sql, rows)
+            # For each event_id, insert into event_attendance and update event_registrations
+            for event in event_ids:
+                cur.execute("""
+                    INSERT INTO event_attendance (
+                        event_id,
+                        member_name,
+                        age,
+                        contact_number,
+                        gender,
+                        address,
+                        attended_on,
+                        is_new_member
+                    )
+                    SELECT
+                        event_id,
+                        name,
+                        age,
+                        number,
+                        gender,
+                        address,
+                        date_of_initiation,
+                        1
+                    FROM members
+                    WHERE event_id = %s
+                """, (event,))
+                cur.execute("""
+                    UPDATE event_registrations
+                    SET total_attendance = (
+                        SELECT COUNT(*) FROM event_attendance WHERE event_id = %s
+                    )
+                    WHERE id = %s
+                """, (event, event))
             conn.commit()
             cur.close()
             conn.close()
