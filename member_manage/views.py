@@ -1917,11 +1917,31 @@ def dashboard(request):
     # Total members
     cursor.execute("SELECT COUNT(*) as total FROM members")
     total_members = cursor.fetchone()['total']
-    # Active instructors
+    # Current instructors count
     cursor.execute("SELECT COUNT(*) as total FROM instructors WHERE is_active=1")
+    appointed_instructors = cursor.fetchone()['total']
+
+    # Active instructors (is_active=1) with members registered in the last 3 months
+    cursor.execute("""
+        SELECT COUNT(*) as total FROM instructors i
+        WHERE i.is_active = 1
+          AND EXISTS (
+            SELECT 1 FROM members m
+            WHERE m.instructor_id = i.id
+              AND m.date_of_initiation >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
+          )
+    """)
     active_instructors = cursor.fetchone()['total']
-    # Inactive instructors
-    cursor.execute("SELECT COUNT(*) as total FROM instructors WHERE is_active=0")
+    # Idle instructors (is_active=1) with no member registered in the last 3 months
+    cursor.execute("""
+        SELECT COUNT(*) as total FROM instructors i
+        WHERE i.is_active = 1
+          AND NOT EXISTS (
+            SELECT 1 FROM members m
+            WHERE m.instructor_id = i.id
+              AND m.date_of_initiation >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
+          )
+    """)
     inactive_instructors = cursor.fetchone()['total']
     # New members this month
     cursor.execute("SELECT COUNT(*) as total FROM members WHERE YEAR(date_of_initiation)=%s AND MONTH(date_of_initiation)=%s", (now.year, now.month))
@@ -1944,6 +1964,7 @@ def dashboard(request):
         'inactive_instructors': inactive_instructors,
         'new_members_month': new_members_month,
         'new_members_year': new_members_year,
+        'appointed_instructors': appointed_instructors,
         'growth_rate': growth_rate
     }
     isAdminUser = get_user_category(request.session.get('username'))

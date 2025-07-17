@@ -21,14 +21,6 @@
             <div class="stat-value" id="totalMembers">{{ stats.total_members }}</div>
         </div>
         <div class="stat-card">
-            <div class="stat-label">Active Instructors</div>
-            <div class="stat-value" id="activeInstructors">{{ stats.active_instructors }}</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">Inactive Instructors</div>
-            <div class="stat-value" id="inactiveInstructors">{{ stats.inactive_instructors }}</div>
-        </div>
-        <div class="stat-card">
             <div class="stat-label">New Members This Month</div>
             <div class="stat-value" id="newMembersMonth">{{ stats.new_members_month }}</div>
         </div>
@@ -36,6 +28,19 @@
             <div class="stat-label">New Members This Year</div>
             <div class="stat-value" id="newMembersYear">{{ stats.new_members_year }}</div>
         </div>
+        <div class="stat-card">
+            <div class="stat-label">Available Instructors</div>
+            <div class="stat-value" id="availableInstructors">{{ stats.appointed_instructors }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Active Instructors</div>
+            <div class="stat-value" id="activeInstructors">{{ stats.active_instructors }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Idle Instructors</div>
+            <div class="stat-value" id="inactiveInstructors">{{ stats.inactive_instructors }}</div>
+        </div>
+
         <div class="stat-card">
             <div class="stat-label">Growth Rate</div>
             <div class="stat-value" id="growthRate">{{ stats.growth_rate }}%</div>
