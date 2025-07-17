@@ -398,14 +398,8 @@ def add_public_instructor(request):
         else:
             message = "Name is required."
     # fetch user category
-    isAdminUser = get_user_category(request.session['username'])
-    print("User category fetched admin status:", isAdminUser)
-    if isAdminUser == True:
-        user_category = 'admin'
-    else:
-        user_category = 'standard'
-    return render(request, 'public_instructor_register.html', {'message': message
-                                                               ,'user_category': user_category})
+
+    return render(request, 'public_instructor_register.html', {'message': message})
 
 def all_members(request):
     # check is user is authenticated
