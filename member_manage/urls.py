@@ -71,4 +71,5 @@ urlpatterns = [
 
     # Dashboard Metrics API
     path('dashboard/api/metrics/', views.dashboard_metrics_api, name='dashboard_metrics_api'),  # Dashboard metrics API
+    path('thank_you/', views.thank_you, name='thank_you'),
 ]

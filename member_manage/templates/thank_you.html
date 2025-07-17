@@ -1,0 +1,22 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Thank You for Registering!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/thank_you.css' %}">
+</head>
+<body>
+    <div class="thankyou-container">
+        <div class="thankyou-card">
+            <div class="icon">&#10003;</div>
+            <h1>Thank You!</h1>
+            <p>Your instructor registration was successful.</p>
+            <a href="{% url 'add_public_instructor' %}" class="btn">Register Another Instructor</a>
+            <a href="/" class="btn secondary">Go to Home</a>
+        </div>
+    </div>
+    <script src="{% static 'js/thank_you.js' %}"></script>
+</body>
+</html>
