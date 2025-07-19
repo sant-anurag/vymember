@@ -2411,10 +2411,38 @@ def forgot_password(request):
             message = f"Reset link sent!<br>Your username: <b>{user['username']}</b><br><a href='{reset_link}'>Click here to reset your password</a> (valid for 1 hour)."
             message_type = "success"
             # Send the email
+            html_content = f"""
+            <html>
+              <body style="font-family: Arial, sans-serif; background-color: #f7f7f7; padding: 30px;">
+                <div style="max-width: 480px; margin: auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #e0e0e0; padding: 32px;">
+                  <h2 style="color: #2a7ae2; margin-top: 0;">Password Reset Request</h2>
+                  <p style="font-size: 16px; color: #333;">
+                    Hello <b>{user['username']}</b>,
+                  </p>
+                  <p style="font-size: 15px; color: #444;">
+                    We received a request to reset your password. Click the button below to set a new password. This link is valid for 1 hour.
+                  </p>
+                  <div style="text-align: center; margin: 32px 0;">
+                    <a href="{reset_link}" style="background: #2a7ae2; color: #fff; text-decoration: none; padding: 12px 28px; border-radius: 5px; font-size: 16px; display: inline-block;">
+                      Reset Password
+                    </a>
+                  </div>
+                  <p style="font-size: 13px; color: #888;">
+                    If you did not request this, you can safely ignore this email.<br>
+                    For your security, do not share this link with anyone.
+                  </p>
+                  <hr style="border: none; border-top: 1px solid #eee; margin: 24px 0;">
+                  <p style="font-size: 12px; color: #bbb; text-align: center;">
+                    &copy; {datetime.now().year} Vihangam Yoga. All rights reserved.<br>
+                  </p>
+                </div>
+              </body>
+            </html>
+            """
             send_email(
                 to_email=email,
                 subject="Password Reset Request",
-                html_content=message
+                html_content=html_content
             )
         else:
             message = "No user found with that email address."
