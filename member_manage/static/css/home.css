@@ -8,31 +8,43 @@ body {
     justify-content: flex-start;
     align-items: stretch;
 }
-/* Add to your CSS file */
 .event-dropdown-list {
     position: absolute;
     top: 100%;
     left: 0;
     right: 0;
-    z-index: 10;
+    z-index: 20;
     background: #fff;
-    border: 1.5px solid #e3eafc;
-    border-radius: 0 0 8px 8px;
-    max-height: 180px;
+    border: 1.5px solid #b3d4fc;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    max-height: 220px;
     overflow-y: auto;
     margin: 0;
     padding: 0;
     list-style: none;
-    box-shadow: 0 2px 8px rgba(79,140,255,0.08);
+    box-shadow: 0 8px 24px rgba(79,140,255,0.13), 0 2px 8px rgba(0,0,0,0.06);
+    transition: box-shadow 0.2s;
 }
+
 .event-dropdown-list li {
-    padding: 0.7rem 1rem;
+    padding: 0.85rem 1.2rem;
     cursor: pointer;
-    color: #2d3a4b;
-    transition: background 0.15s;
+    color: #22304a;
+    font-size: 1.04rem;
+    font-family: 'Inter', 'Roboto', Arial, sans-serif;
+    border-bottom: 1px solid #f0f4fa;
+    transition: background 0.15s, color 0.15s;
 }
+
+.event-dropdown-list li:last-child {
+    border-bottom: none;
+}
+
 .event-dropdown-list li:hover, .event-dropdown-list li.active {
-    background: #e3f0ff;
+    background: linear-gradient(90deg, #e3f0ff 0%, #f7fbff 100%);
+    color: #0f4c81;
+    font-weight: 600;
 }
 /* Enhanced Sidebar Styling */
 .sidebar {

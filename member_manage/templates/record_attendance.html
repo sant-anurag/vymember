@@ -71,11 +71,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function showDropdown(list) {
         dropdown.innerHTML = '';
-        if (list.length === 0) {
+        // Limit to 5 results
+        const toShow = list.slice(0, 5);
+        if (toShow.length === 0) {
             dropdown.style.display = 'none';
             return;
         }
-        list.forEach(ev => {
+        toShow.forEach(ev => {
             const li = document.createElement('li');
             li.textContent = ev.name;
             li.dataset.id = ev.id;
