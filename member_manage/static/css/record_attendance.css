@@ -362,3 +362,34 @@ body {
         border-radius: 7px;
     }
 }
+
+/* Custom scrollbar for event dropdown (WebKit browsers) */
+.event-dropdown-list {
+    scrollbar-width: thin;
+    scrollbar-color: #b3d4fc #f7fbff;
+}
+
+/* For Chrome, Edge, Safari */
+.event-dropdown-list::-webkit-scrollbar {
+    width: 10px;
+    background: #f7fbff;
+    border-radius: 8px;
+}
+
+.event-dropdown-list::-webkit-scrollbar-thumb {
+    background: #b3d4fc;
+    border-radius: 8px;
+    border: 2px solid #f7fbff;
+}
+
+@media screen and (max-width: 900px) {
+    .event-dropdown-list::-webkit-scrollbar {
+        width: 14px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .event-dropdown-list::-webkit-scrollbar {
+        width: 18px;
+    }
+}
