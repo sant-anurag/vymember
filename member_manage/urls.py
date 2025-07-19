@@ -72,4 +72,6 @@ urlpatterns = [
     # Dashboard Metrics API
     path('dashboard/api/metrics/', views.dashboard_metrics_api, name='dashboard_metrics_api'),  # Dashboard metrics API
     path('thank_you/', views.thank_you, name='thank_you'),
+    path('member/reset-password/<str:token>/', views.reset_password_public, name='reset_password_public'),
+    path('member/reset-password/', views.reset_password_public, name='reset_password_public'),
 ]

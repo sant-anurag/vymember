@@ -1469,7 +1469,48 @@ def change_password(request):
         'success': success,
         'user_category': user_category
     })
+def reset_password_public(request):
+    """View for changing user passwords"""
+    # Get a database connection
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
 
+    # Fetch all users for the dropdown
+    cursor.execute("SELECT id, username FROM users")
+    users = cursor.fetchall()
+
+    message = None
+    success = False
+
+    if request.method == 'POST':
+        user_id = request.POST.get('user')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        # Validate inputs
+        if not all([user_id, new_password, confirm_password]):
+            message = "All fields are required"
+        elif new_password != confirm_password:
+            message = "New passwords don't match"
+        else:
+            # Validate password strength
+            if not validate_password_strength(new_password):
+                message = "Password must be at least 8 characters and include letters, numbers, and a special character"
+            else:
+                # Update with new password
+                hashed_new = hashlib.sha256(new_password.encode()).hexdigest()
+                cursor.execute("UPDATE users SET password = %s WHERE id = %s", (hashed_new, user_id))
+                conn.commit()
+                message = "Password changed successfully"
+                success = True
+    cursor.close()
+    conn.close()
+
+    return render(request, 'password_reset.html', {
+        'users': users,
+        'message': message,
+        'success': success
+    })
 def validate_password_strength(password):
     """Validate password meets complexity requirements"""
     if len(password) < 8:
@@ -2407,7 +2448,7 @@ def forgot_password(request):
                 "username": user["username"],
                 "expires": datetime.now() + timedelta(hours=1)
             }
-            reset_link = request.build_absolute_uri(reverse('reset_password', args=[token]))
+            reset_link = request.build_absolute_uri(reverse('reset_password_public', args=[token]))
             message = f"Reset link sent!<br>Your username: <b>{user['username']}</b><br><a href='{reset_link}'>Click here to reset your password</a> (valid for 1 hour)."
             message_type = "success"
             # Send the email
