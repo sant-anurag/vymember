@@ -693,7 +693,7 @@ def register_user(request):
                 Email: {email}
                 Age: {age}
                 Date of Birth: {dob}
-                Associated Since: {associated_since}
+                Associatedd Since: {associated_since}
                 Updeshta Since: {updeshta_since}
                 Address: {address}
                 
@@ -2374,6 +2374,23 @@ def get_db_conn():
         database=settings.DB_NAME
     )
 
+def send_email(to_email, subject, html_content):
+    from email.mime.text import MIMEText
+    import smtplib
+
+    msg = MIMEText(html_content, "html")
+    msg["Subject"] = subject
+    msg["From"] = 'sant.vihangam@gmail.com'
+    msg["To"] = to_email
+    gmail_user = 'sant.vihangam@gmail.com'
+    gmail_app_password = 'pdsexaeusfdgvqsu'
+    # Send email via Gmail SMTP
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.starttls()
+    server.login(gmail_user, gmail_app_password)
+    server.sendmail("sant.vihangam@gmail.com", msg["To"], msg.as_string())
+    server.quit()
+
 def forgot_password(request):
     message = None
     message_type = "error"
@@ -2384,17 +2401,21 @@ def forgot_password(request):
         cur.execute("SELECT id, username FROM users WHERE email=%s", (email,))
         user = cur.fetchone()
         if user:
-            # Generate token
             token = secrets.token_urlsafe(32)
             RESET_TOKENS[token] = {
                 "user_id": user["id"],
                 "username": user["username"],
                 "expires": datetime.now() + timedelta(hours=1)
             }
-            # Simulate sending email (show link on page for demo)
             reset_link = request.build_absolute_uri(reverse('reset_password', args=[token]))
             message = f"Reset link sent!<br>Your username: <b>{user['username']}</b><br><a href='{reset_link}'>Click here to reset your password</a> (valid for 1 hour)."
             message_type = "success"
+            # Send the email
+            send_email(
+                to_email=email,
+                subject="Password Reset Request",
+                html_content=message
+            )
         else:
             message = "No user found with that email address."
         cur.close()
