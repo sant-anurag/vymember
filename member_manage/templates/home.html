@@ -69,140 +69,140 @@
 </div>
 <div class="main-content">
     {% block main_content %}
-    <section class="registration-section">
-        <h2>Register New Member</h2>
-        {% if message %}
-        <div class="form-alert {% if message_type == 'error' %}error{% endif %}">{{ message }}</div>
-        {% endif %}
-        <form id="registrationForm" method="post" action="{% url 'register_member' %}">
-            {% csrf_token %}
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="name">Full Name</label>
-                    <input type="text" name="name" id="name" required value="{{ form_data.name|default:'' }}"/>
-                </div>
-                <div class="form-group">
-                    <label for="number">Contact Number</label>
-                    <input type="text" name="number" id="number" required value="{{ form_data.number|default:'' }}"/>
-                </div>
+<style>
+    .required-asterisk {
+        color: #e53935;
+        margin-left: 3px;
+        font-weight: bold;
+    }
+</style>
+<section class="registration-section">
+    <h2>Register New Member</h2>
+    {% if message %}
+    <div class="form-alert {% if message_type == 'error' %}error{% endif %}">{{ message }}</div>
+    {% endif %}
+    <form id="registrationForm" method="post" action="{% url 'register_member' %}">
+        {% csrf_token %}
+        <div class="form-row">
+            <div class="form-group">
+                <label for="name">Full Name<span class="required-asterisk">*</span></label>
+                <input type="text" name="name" id="name" required value="{{ form_data.name|default:'' }}"/>
             </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="date_of_initiation">Initiation Date</label>
-                    <input type="date" name="date_of_initiation" id="date_of_initiation" required value="{{ form_data.date_of_initiation|default:'' }} "/>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="text" name="email" id="email" required value="{{ form_data.email|default:'' }}"/>
-                </div>
+            <div class="form-group">
+                <label for="number">Contact Number<span class="required-asterisk">*</span></label>
+                <input type="text" name="number" id="number" required value="{{ form_data.number|default:'' }}"/>
             </div>
-            <style>
-                #age, #gender, #event {
-                    width: 220px;
-                    box-sizing: border-box;
-                    display: block;
-                }
-            </style>
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="age">Age</label>
-                    <input type="text" name="age" id="age" required value="{{ form_data.age|default:'' }}"/>
-                </div>
-                <div class="form-group">
-                    <label for="gender">Gender</label>
-                    <select name="gender" id="gender" required>
-                        <option value="">Select Gender</option>
-                        <option value="Male" {% if form_data.gender == "Male" %}selected{% endif %}>Male</option>
-                        <option value="Female" {% if form_data.gender == "Female" %}selected{% endif %}>Female</option>
-                        <option value="Others" {% if form_data.gender == "Others" %}selected{% endif %}>Others</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="event">Event</label>
-                    <select name="event" id="event" required>
-                        <option value="">Select Event</option>
-                        {% for event in events %}
-                        <option value="{{ event.id }}" {% if form_data.event_id == event.id %}selected{% endif %}>
-                            {{ event.event_name }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="date_of_initiation">Initiation Date<span class="required-asterisk">*</span></label>
+                <input type="date" name="date_of_initiation" id="date_of_initiation" required value="{{ form_data.date_of_initiation|default:'' }} "/>
             </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="company">Company\Org\Instituion</label>
-                    <input type="text" name="company" id="company" value="{{ form_data.company|default:'' }}"/>
-                </div>
-                <div class="form-group">
-                    <label for="instructor">Instructor</label>
-                    <select name="instructor" id="instructor" required>
-                        <option value="">Select Instructor</option>
-                        {% for instructor in instructors %}
-                        <option value="{{ instructor.id }}"
-                            {% if form_data.instructor|stringformat:"s" == instructor.id|stringformat:"s" %}selected{% endif %}>
-                            {{ instructor.name }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="text" name="email" id="email" value="{{ form_data.email|default:'' }}"/>
             </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="address">Address: Apartment/Street</label>
-                    <input type="text" name="address" id="address" value="{{ form_data.address|default:'' }}"/>
-                </div>
-               <div class="form-group">
-                    <label for="member_country">Country</label>
-                    <select name="member_country" id="member_country" required>
-                        <option value="">Select Country</option>
-                        {% for country in countries %}
-                        <option value="{{ country.id }}"
-                            {% if form_data.member_country|stringformat:"s" == country.id|stringformat:"s" %}selected{% endif %}>
-                            {{ country.name }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="age">Age<span class="required-asterisk">*</span></label>
+                <input type="text" name="age" id="age" required value="{{ form_data.age|default:'' }}"/>
             </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="member_state">State</label>
-                    <select name="member_state" id="member_state" required>
-                        <option value="">Select State</option>
-                        {% for state in states %}
-                        <option value="{{ state.id }}"
-                            {% if form_data.member_state|stringformat:"s" == state.id|stringformat:"s" %}selected{% endif %}>
-                            {{ state.name }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="member_city">City</label>
-                    <select name="member_city" id="member_city" required>
-                        <option value="">Select City</option>
-                        {% for city in cities %}
-                        <option value="{{ city.id }}"
-                            {% if form_data.member_city|stringformat:"s" == city.id|stringformat:"s" %}selected{% endif %}>
-                            {{ city.name }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
+            <div class="form-group">
+                <label for="gender">Gender<span class="required-asterisk">*</span></label>
+                <select name="gender" id="gender" required>
+                    <option value="">Select Gender</option>
+                    <option value="Male" {% if form_data.gender == "Male" %}selected{% endif %}>Male</option>
+                    <option value="Female" {% if form_data.gender == "Female" %}selected{% endif %}>Female</option>
+                    <option value="Others" {% if form_data.gender == "Others" %}selected{% endif %}>Others</option>
+                </select>
             </div>
-            <div class="form-row">
-                <div class="form-group full-width">
-                    <label for="feedback">Feedback</label>
-                    <textarea name="feedback" id="feedback" rows="2">{{ form_data.feedback|default:'' }}</textarea>
-                </div>
+            <div class="form-group">
+                <label for="event">Event<span class="required-asterisk">*</span></label>
+                <select name="event" id="event" required>
+                    <option value="">Select Event</option>
+                    {% for event in events %}
+                    <option value="{{ event.id }}" {% if form_data.event_id == event.id %}selected{% endif %}>
+                        {{ event.event_name }}
+                    </option>
+                    {% endfor %}
+                </select>
             </div>
-            <div class="form-actions">
-                <button type="submit">Register</button>
-                <button type="reset" class="reset-btn">Reset</button>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="instructor">Instructor<span class="required-asterisk">*</span></label>
+                <select name="instructor" id="instructor" required>
+                    <option value="">Select Instructor</option>
+                    {% for instructor in instructors %}
+                    <option value="{{ instructor.id }}"
+                        {% if form_data.instructor|stringformat:"s" == instructor.id|stringformat:"s" %}selected{% endif %}>
+                        {{ instructor.name }}
+                    </option>
+                    {% endfor %}
+                </select>
             </div>
-        </form>
-    </section>
+            <div class="form-group">
+                <label for="company">Company\Org\Instituion</label>
+                <input type="text" name="company" id="company" value="{{ form_data.company|default:'' }}"/>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="address">Address: Apartment/Street</label>
+                <input type="text" name="address" id="address" value="{{ form_data.address|default:'' }}"/>
+            </div>
+           <div class="form-group">
+                <label for="member_country">Country<span class="required-asterisk">*</span></label>
+                <select name="member_country" id="member_country" required>
+                    <option value="">Select Country</option>
+                    {% for country in countries %}
+                    <option value="{{ country.id }}"
+                        {% if form_data.member_country|stringformat:"s" == country.id|stringformat:"s" %}selected{% endif %}>
+                        {{ country.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="member_state">State<span class="required-asterisk">*</span></label>
+                <select name="member_state" id="member_state" required>
+                    <option value="">Select State</option>
+                    {% for state in states %}
+                    <option value="{{ state.id }}"
+                        {% if form_data.member_state|stringformat:"s" == state.id|stringformat:"s" %}selected{% endif %}>
+                        {{ state.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="member_city">City<span class="required-asterisk">*</span></label>
+                <select name="member_city" id="member_city" required>
+                    <option value="">Select City</option>
+                    {% for city in cities %}
+                    <option value="{{ city.id }}"
+                        {% if form_data.member_city|stringformat:"s" == city.id|stringformat:"s" %}selected{% endif %}>
+                        {{ city.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group full-width">
+                <label for="feedback">Feedback</label>
+                <textarea name="feedback" id="feedback" rows="2">{{ form_data.feedback|default:'' }}</textarea>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit">Register</button>
+            <button type="reset" class="reset-btn">Reset</button>
+        </div>
+    </form>
+</section>
     {% endblock %}
     <footer>
         &copy; {{ year|default:"2025" }} VY Member. All rights reserved.
