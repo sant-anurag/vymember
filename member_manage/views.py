@@ -822,11 +822,13 @@ def instructor_infographics(request):
     previous_year_members = safe_int(previous_year_result[0].get('count')) if previous_year_result else 0
 
     # Calculate growth rate
+    print("Current year members:", current_year_members)
+    print("Previous year members:", previous_year_members)
     if previous_year_members > 0:
         growth_rate = round(((current_year_members - previous_year_members) / previous_year_members * 100), 1)
     else:
         growth_rate = 0
-
+    print("Growth rate calculated:", growth_rate)
     # Close database connection
     cursor.close()
     conn.close()
@@ -957,26 +959,27 @@ def api_instructor_infographics_data(request):
                 growth_data.insert(0, count)
 
         # Prepare data for Geographic Distribution chart
-        # Prepare data for Geographic Distribution chart
         if instructor_id != 'all':
             # city-wise distribution for selected instructor
             query = """
-                SELECT district as location, COUNT(*) as count 
+                SELECT c.name as location, COUNT(*) as count
                 FROM members m
-                WHERE district IS NOT NULL AND district != ''
+                JOIN city c ON m.district = c.id
+                WHERE m.district IS NOT NULL AND m.district != ''
             """ + member_filter_sql + """
-                GROUP BY district 
+                GROUP BY c.name
                 ORDER BY count DESC
                 LIMIT 8
             """
         else:
             # country-wise distribution for all instructors
-            query = """
-                SELECT country as location, COUNT(*) as count 
+           query = """
+                SELECT c.name as location, COUNT(*) as count
                 FROM members m
-                WHERE country IS NOT NULL AND country != ''
+                JOIN country c ON m.country = c.id
+                WHERE m.country IS NOT NULL AND m.country != ''
             """ + member_filter_sql + """
-                GROUP BY country 
+                GROUP BY c.name
                 ORDER BY count DESC
                 LIMIT 8
             """
