@@ -659,13 +659,7 @@ def all_instructors(request):
     return render(request, 'all_instructors.html', context)
 
 def register_user(request):
-    # fetch user category
-    isAdminUser = get_user_category(request.session['username'])
-    print("User category fetched admin status:", isAdminUser)
-    if isAdminUser == True:
-        user_category = 'admin'
-    else:
-        user_category = 'standard'
+
     if request.method == 'POST':
         # Generate years from 1900 to current year
         import datetime
@@ -725,16 +719,14 @@ def register_user(request):
             # Handle regular form submission (fallback)
             # Process form and send email
             # Redirect to success page
-            return render(request, 'register_user.html', {'success': True, 'range_years': range_years
-                                                          ,'user_category': user_category})
+            return render(request, 'register_user.html', {'success': True, 'range_years': range_years})
     else:
         # Generate years from 1900 to current year
         import datetime
         current_year = datetime.datetime.now().year
         range_years = list(range(current_year, 1899, -1))
 
-        return render(request, 'register_user.html', {'range_years': range_years,
-                                                      'user_category': user_category})
+        return render(request, 'register_user.html', {'range_years': range_years})
 
 
 def dictfetchall(cursor):
