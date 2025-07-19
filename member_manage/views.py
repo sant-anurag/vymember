@@ -2389,7 +2389,7 @@ def forgot_password(request):
             RESET_TOKENS[token] = {
                 "user_id": user["id"],
                 "username": user["username"],
-                "expires": datetime.datetime.now() + datetime.timedelta(hours=1)
+                "expires": datetime.now() + datetime.timedelta(hours=1)
             }
             # Simulate sending email (show link on page for demo)
             reset_link = request.build_absolute_uri(reverse('reset_password', args=[token]))
