@@ -7,14 +7,12 @@ class SessionTimeoutMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        # List of paths that should not trigger session timeout
         allowed_paths = [
             reverse('login'),
             reverse('session_timeout'),
             reverse('register_user'),
             reverse('public_register'),
             reverse('add_public_instructor'),
-            reverse('reset_password_public'),
             reverse('thank_you'),
             reverse('forgot_password'),
             reverse('ajax_countries'),

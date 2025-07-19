@@ -1469,7 +1469,7 @@ def change_password(request):
         'success': success,
         'user_category': user_category
     })
-def reset_password_public(request):
+def reset_password_public(request,token):
     """View for changing user passwords"""
     # Get a database connection
     conn = get_db_connection()
@@ -1483,7 +1483,19 @@ def reset_password_public(request):
     success = False
 
     if request.method == 'POST':
-        user_id = request.POST.get('user')
+        user_name = request.POST.get('user')
+        #fetch user id from username
+        cursor.execute("SELECT id FROM users WHERE username = %s", (user_name,))
+        user_data = cursor.fetchone()
+        if not user_data:
+            message = "User not found"
+            return render(request, 'password_reset.html', {
+                'users': users,
+                'message': message,
+                'success': success,
+                'token': token
+            })
+        user_id = user_data['id']
         new_password = request.POST.get('new_password')
         confirm_password = request.POST.get('confirm_password')
 
@@ -1509,7 +1521,8 @@ def reset_password_public(request):
     return render(request, 'password_reset.html', {
         'users': users,
         'message': message,
-        'success': success
+        'success': success,
+        'token': token
     })
 def validate_password_strength(password):
     """Validate password meets complexity requirements"""
