@@ -8,7 +8,32 @@ body {
     justify-content: flex-start;
     align-items: stretch;
 }
-
+/* Add to your CSS file */
+.event-dropdown-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    background: #fff;
+    border: 1.5px solid #e3eafc;
+    border-radius: 0 0 8px 8px;
+    max-height: 180px;
+    overflow-y: auto;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    box-shadow: 0 2px 8px rgba(79,140,255,0.08);
+}
+.event-dropdown-list li {
+    padding: 0.7rem 1rem;
+    cursor: pointer;
+    color: #2d3a4b;
+    transition: background 0.15s;
+}
+.event-dropdown-list li:hover, .event-dropdown-list li.active {
+    background: #e3f0ff;
+}
 /* Enhanced Sidebar Styling */
 .sidebar {
     width: 260px;

@@ -117,16 +117,12 @@
                     <option value="Others" {% if form_data.gender == "Others" %}selected{% endif %}>Others</option>
                 </select>
             </div>
-            <div class="form-group">
-                <label for="event">Event<span class="required-asterisk">*</span></label>
-                <select name="event" id="event" required>
-                    <option value="">Select Event</option>
-                    {% for event in events %}
-                    <option value="{{ event.id }}" {% if form_data.event_id == event.id %}selected{% endif %}>
-                        {{ event.event_name }}
-                    </option>
-                    {% endfor %}
-                </select>
+            <!-- In your form, replace the event select group with: -->
+            <div class="form-group" style="position: relative;">
+                <label for="eventFilter">Event<span class="required-asterisk">*</span></label>
+                <input type="text" id="eventFilter" placeholder="Type to filter events..." autocomplete="off" required>
+                <input type="hidden" name="event" id="eventIdHidden" required>
+                <ul id="eventDropdown" class="event-dropdown-list" style="display:none;"></ul>
             </div>
         </div>
         <div class="form-row">
@@ -219,6 +215,70 @@ document.querySelector('.reset-btn').addEventListener('click', function(e) {
     // Clear all input values (including those set by Django context)
     form.querySelectorAll('input, textarea').forEach(el => el.value = '');
     form.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterInput = document.getElementById('eventFilter');
+    const dropdown = document.getElementById('eventDropdown');
+    const hiddenInput = document.getElementById('eventIdHidden');
+    const events = [
+        {% for event in events %}
+        {id: '{{ event.id }}', name: '{{ event.event_name|escapejs }} ({{ event.event_date|date:"j F, Y" }})'},
+        {% endfor %}
+    ];
+    let filtered = events;
+
+    function showDropdown(list) {
+        dropdown.innerHTML = '';
+        if (list.length === 0) {
+            dropdown.style.display = 'none';
+            return;
+        }
+        list.forEach(ev => {
+            const li = document.createElement('li');
+            li.textContent = ev.name;
+            li.dataset.id = ev.id;
+            dropdown.appendChild(li);
+        });
+        dropdown.style.display = 'block';
+    }
+
+    filterInput.addEventListener('input', function() {
+        const val = filterInput.value.trim().toLowerCase();
+        if (val.length === 0) {
+            filtered = events;
+            showDropdown(filtered);
+            hiddenInput.value = '';
+            return;
+        }
+        filtered = events.filter(ev => ev.name.toLowerCase().includes(val));
+        showDropdown(filtered);
+        hiddenInput.value = '';
+    });
+
+    filterInput.addEventListener('focus', function() {
+        if (filterInput.value.trim().length === 0) {
+            filtered = events;
+            showDropdown(filtered);
+        } else if (filtered.length > 0) {
+            showDropdown(filtered);
+        }
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!dropdown.contains(e.target) && e.target !== filterInput) {
+            dropdown.style.display = 'none';
+        }
+    });
+
+    dropdown.addEventListener('mousedown', function(e) {
+        if (e.target.tagName === 'LI') {
+            filterInput.value = e.target.textContent;
+            hiddenInput.value = e.target.dataset.id;
+            dropdown.style.display = 'none';
+        }
+    });
 });
 </script>
 </body>

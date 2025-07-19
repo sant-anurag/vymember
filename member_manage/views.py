@@ -128,7 +128,7 @@ def list_logged_in_users(request):
 def get_events():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT id, event_name FROM event_registrations ORDER BY event_name DESC")
+    cursor.execute("SELECT id, event_name,event_date FROM event_registrations ORDER BY event_name DESC")
     events = cursor.fetchall()
     cursor.close()
     conn.close()
