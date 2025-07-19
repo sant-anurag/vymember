@@ -9,9 +9,9 @@
     {% endif %}
     <!-- Event Filter Row -->
     <form id="eventFilterForm" class="filter-row" method="get" action="{% url 'record_attendance' %}">
-        <div class="form-group" style="position: relative;">
+        <div class="form-group" style="position: relative; width:400px;">
             <label for="eventFilter">Event<span class="required-asterisk">*</span></label>
-            <input type="text" id="eventFilter" placeholder="Type to filter events..." autocomplete="off" required>
+            <input type="text" id="eventFilter" placeholder="Type to filter events...min 3 characters required" autocomplete="off" required>
             <input type="hidden" name="event_id" id="eventIdHidden" required>
             <ul id="eventDropdown" class="event-dropdown-list" style="display:none;"></ul>
         </div>
