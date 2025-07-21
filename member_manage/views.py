@@ -1200,14 +1200,16 @@ def api_instructor_details(request, instructor_id):
         cursor.close()
         conn.close()
 
+import openpyxl
+from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
+from openpyxl.utils import get_column_letter
+
 def api_download_instructor_report(request):
-    """API endpoint to download instructor report as CSV"""
-    # Get filter parameters
+    """API endpoint to download instructor report as Excel with summary and member details"""
     instructor_id = request.GET.get('instructor_id', 'all')
     time_range = request.GET.get('time_range', 'all')
     year = request.GET.get('year', 'all')
 
-    # Apply filters to member query
     member_filter_params = []
     member_filter_sql = ""
 
@@ -1215,7 +1217,6 @@ def api_download_instructor_report(request):
         member_filter_sql += " AND instructor_id = %s"
         member_filter_params.append(instructor_id)
 
-    # Apply time range filter
     current_date = datetime.now()
     if time_range == 'year':
         start_date = datetime(current_date.year, 1, 1)
@@ -1234,34 +1235,51 @@ def api_download_instructor_report(request):
         member_filter_sql += " AND YEAR(date_of_initiation) = %s"
         member_filter_params.append(year)
 
-    # Create CSV file
-    buffer = io.StringIO()
-    writer = csv.writer(buffer)
-
-    # Write header row
-    writer.writerow(['Instructor Name', 'Total Members', 'New Members This Year', 'Countries', 'states'])
-
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
     try:
-        # Get data for all instructors or the selected one
+        # Prepare workbook and styles
+        wb = openpyxl.Workbook()
+        ws_summary = wb.active
+        ws_summary.title = "Summary"
+        ws_members = wb.create_sheet(title="Member_Details")
+
+        # Styles
+        header_font = Font(bold=True, color="FFFFFF")
+        header_fill = PatternFill("solid", fgColor="4F8CFF")
+        align_center = Alignment(horizontal="center", vertical="center")
+        thin_border = Border(left=Side(style='thin'), right=Side(style='thin'),
+                             top=Side(style='thin'), bottom=Side(style='thin'))
+
+        # --- Summary Sheet ---
+        summary_headers = ['Instructor Name', 'Total Members', 'New Members This Year', 'Countries', 'States']
+        ws_summary.append(summary_headers)
+        for col, _ in enumerate(summary_headers, 1):
+            cell = ws_summary.cell(row=1, column=col)
+            cell.font = header_font
+            cell.fill = header_fill
+            cell.alignment = align_center
+            cell.border = thin_border
+            ws_summary.column_dimensions[get_column_letter(col)].width = 25
+
+        # Get instructors
         if instructor_id != 'all':
             cursor.execute("SELECT * FROM instructors WHERE is_active = 1 AND id = %s", [instructor_id])
         else:
             cursor.execute("SELECT * FROM instructors WHERE is_active = 1")
-
         instructors = cursor.fetchall()
 
+        all_member_ids = []
         for instructor in instructors:
-            # Get total members for this instructor
+            # Total members
             cursor.execute(
                 "SELECT COUNT(*) as total FROM members WHERE instructor_id = %s" + member_filter_sql,
                 [instructor['id']] + member_filter_params
             )
             total_members = cursor.fetchone()['total']
 
-            # Get new members this year
+            # New members this year
             cursor.execute(
                 """
                 SELECT COUNT(*) as count 
@@ -1272,7 +1290,7 @@ def api_download_instructor_report(request):
             )
             new_members_this_year = cursor.fetchone()['count']
 
-            # Get top countries
+            # Top countries
             cursor.execute(
                 """
                 SELECT country, COUNT(*) as count 
@@ -1288,7 +1306,7 @@ def api_download_instructor_report(request):
             countries = cursor.fetchall()
             countries_str = ", ".join([f"{c['country']} ({c['count']})" for c in countries if c['country']])
 
-            # Get top states
+            # Top states
             cursor.execute(
                 """
                 SELECT state, COUNT(*) as count 
@@ -1304,8 +1322,7 @@ def api_download_instructor_report(request):
             states = cursor.fetchall()
             states_str = ", ".join([f"{s['state']} ({s['count']})" for s in states if s['state']])
 
-            # Write data row
-            writer.writerow([
+            ws_summary.append([
                 instructor['name'],
                 total_members,
                 new_members_this_year,
@@ -1313,16 +1330,96 @@ def api_download_instructor_report(request):
                 states_str
             ])
 
+            # Collect member ids for details sheet
+            cursor.execute(
+                "SELECT id FROM members WHERE instructor_id = %s" + member_filter_sql,
+                [instructor['id']] + member_filter_params
+            )
+            all_member_ids.extend([row['id'] for row in cursor.fetchall()])
+
+        # Format summary data rows
+        for row in ws_summary.iter_rows(min_row=2, max_row=ws_summary.max_row, max_col=len(summary_headers)):
+            for cell in row:
+                cell.alignment = align_center
+                cell.border = thin_border
+
+        # --- Member Details Sheet ---
+        member_headers = [
+            'ID', 'Name', 'Number', 'Email', 'Age', 'Gender', 'Address',
+            'Country', 'State', 'District', 'Company', 'Notes',
+            'Instructor', 'Event', 'Date of Initiation'
+        ]
+        ws_members.append(member_headers)
+        for col, _ in enumerate(member_headers, 1):
+            cell = ws_members.cell(row=1, column=col)
+            cell.font = header_font
+            cell.fill = header_fill
+            cell.alignment = align_center
+            cell.border = thin_border
+            ws_members.column_dimensions[get_column_letter(col)].width = 20
+
+        if all_member_ids:
+            format_ids = ','.join(['%s'] * len(all_member_ids))
+            query = f"""
+                SELECT
+                    m.id, m.name, m.number, m.email, m.age, m.gender, m.address,
+                    country.name AS country, state.name AS state, city.name AS district,
+                    m.company, m.notes,
+                    i.name as instructor_name,
+                    e.event_name as event_name,
+                    m.date_of_initiation
+                FROM members m
+                LEFT JOIN instructors i ON m.instructor_id = i.id
+                LEFT JOIN country ON m.country = country.id
+                LEFT JOIN state ON m.state = state.id
+                LEFT JOIN city ON m.district = city.id
+                LEFT JOIN event_registrations e ON m.event_id = e.id
+                WHERE m.id IN ({format_ids})
+                ORDER BY m.name
+            """
+            cursor.execute(query, all_member_ids)
+            members = cursor.fetchall()
+            for member in members:
+                ws_members.append([
+                    member['id'],
+                    member['name'],
+                    member['number'],
+                    member['email'],
+                    member['age'],
+                    member['gender'],
+                    member['address'],
+                    member['country'],
+                    member['state'],
+                    member['district'],
+                    member['company'],
+                    member['notes'],
+                    member['instructor_name'],
+                    member['event_name'],
+                    member['date_of_initiation'].strftime('%Y-%m-%d') if member['date_of_initiation'] else ''
+                ])
+
+            # Format member data rows
+            for row in ws_members.iter_rows(min_row=2, max_row=ws_members.max_row, max_col=len(member_headers)):
+                for cell in row:
+                    cell.alignment = Alignment(horizontal="left", vertical="center")
+                    cell.border = thin_border
+
+        # Save workbook to bytes
+        from io import BytesIO
+        output = BytesIO()
+        wb.save(output)
+        output.seek(0)
+
+        response = HttpResponse(
+            output,
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        response['Content-Disposition'] = f'attachment; filename=instructor_report_{datetime.now().strftime("%Y%m%d")}.xlsx'
+        return response
+
     finally:
         cursor.close()
         conn.close()
-
-    # Prepare the CSV file for download
-    buffer.seek(0)
-    response = HttpResponse(buffer.getvalue(), content_type='text/csv')
-    response['Content-Disposition'] = f'attachment; filename=instructor_report_{datetime.now().strftime("%Y%m%d")}.csv'
-
-    return response
 
 @csrf_exempt
 def upload_members(request):
