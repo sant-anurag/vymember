@@ -144,13 +144,15 @@ def home(request):
     message = request.session.pop('message', None)
     #fetch user category
     isAdminUser = get_user_category(request.session['username'])
-    print("User category fetched admin status:", isAdminUser)
+    print("User category fetched admin status:", isAdminUser)    #get user name
+    user_name = request.session.get('username', 'Guest')
     if isAdminUser == True:
         user_category = 'admin'
     else:
         user_category = 'standard'
     return render(request, 'home.html', {'message': message,'instructors': instructors,
-                                         'events': events,'user_category':user_category })
+                                         'events': events,'user_category':user_category,
+                                         'user_name': user_name})
 
 @csrf_exempt
 def register_member(request):
