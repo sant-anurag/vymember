@@ -1290,15 +1290,16 @@ def api_download_instructor_report(request):
             )
             new_members_this_year = cursor.fetchone()['count']
 
-            # Top countries
+            # Top countries (fetch country name)
             cursor.execute(
                 """
-                SELECT country, COUNT(*) as count 
-                FROM members 
-                WHERE instructor_id = %s AND country IS NOT NULL AND country != ''
+                SELECT c.name as country, COUNT(*) as count
+                FROM members m
+                LEFT JOIN country c ON m.country = c.id
+                WHERE m.instructor_id = %s AND m.country IS NOT NULL AND m.country != ''
                 """ + member_filter_sql + """
-                GROUP BY country 
-                ORDER BY count DESC 
+                GROUP BY c.name
+                ORDER BY count DESC
                 LIMIT 3
                 """,
                 [instructor['id']] + member_filter_params
@@ -1306,21 +1307,23 @@ def api_download_instructor_report(request):
             countries = cursor.fetchall()
             countries_str = ", ".join([f"{c['country']} ({c['count']})" for c in countries if c['country']])
 
-            # Top states
+            # Top states (fetch state name)
             cursor.execute(
                 """
-                SELECT state, COUNT(*) as count 
-                FROM members 
-                WHERE instructor_id = %s AND state IS NOT NULL AND state != ''
+                SELECT s.name as state, COUNT(*) as count
+                FROM members m
+                LEFT JOIN state s ON m.state = s.id
+                WHERE m.instructor_id = %s AND m.state IS NOT NULL AND m.state != ''
                 """ + member_filter_sql + """
-                GROUP BY state 
-                ORDER BY count DESC 
+                GROUP BY s.name
+                ORDER BY count DESC
                 LIMIT 3
                 """,
                 [instructor['id']] + member_filter_params
             )
             states = cursor.fetchall()
             states_str = ", ".join([f"{s['state']} ({s['count']})" for s in states if s['state']])
+
 
             ws_summary.append([
                 instructor['name'],
