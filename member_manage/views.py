@@ -1200,9 +1200,7 @@ def api_instructor_details(request, instructor_id):
         cursor.close()
         conn.close()
 
-import openpyxl
-from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
-from openpyxl.utils import get_column_letter
+
 
 def api_download_instructor_report(request):
     """API endpoint to download instructor report as Excel with summary and member details"""
@@ -2518,9 +2516,29 @@ def get_cities(request):
     return JsonResponse({'cities': cities})
 
 def session_timeout(request):
+    """
+    Renders the session timeout page when a user's session has expired.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: Rendered 'session_timeout.html' template.
+    """
     return render(request, 'session_timeout.html')
 
 def get_db_conn():
+    """
+    Establishes and returns a new MySQL database connection using settings from Django settings.
+
+    Returns:
+        mysql.connector.connection.MySQLConnection: A new database connection object.
+
+    Steps:
+        - Reads DB connection parameters from Django settings.
+        - Uses mysql.connector to connect to the database.
+        - Returns the connection object for use in queries.
+    """
     return mysql.connector.connect(
         host=settings.DB_HOST,
         user=settings.DB_USER,
@@ -2529,10 +2547,26 @@ def get_db_conn():
     )
 
 def send_email(to_email, subject, html_content):
+    """
+    Sends an HTML email using Gmail's SMTP server.
+
+    Args:
+        to_email (str): Recipient's email address.
+        subject (str): Subject of the email.
+        html_content (str): HTML content to be sent in the email body.
+
+    Steps:
+        - Creates an HTML MIMEText message.
+        - Sets the subject, sender, and recipient fields.
+        - Connects to Gmail's SMTP server with TLS.
+        - Logs in using the configured Gmail credentials.
+        - Sends the email to the recipient.
+        - Closes the SMTP connection.
+    """
     from email.mime.text import MIMEText
     import smtplib
 
-    msg = MIMEText(html_content, "html")
+    msg = MIMEText(html_content, "html")  # Create HTML email message
     msg["Subject"] = subject
     msg["From"] = 'sant.vihangam@gmail.com'
     msg["To"] = to_email
@@ -2540,10 +2574,10 @@ def send_email(to_email, subject, html_content):
     gmail_app_password = 'pdsexaeusfdgvqsu'
     # Send email via Gmail SMTP
     server = smtplib.SMTP('smtp.gmail.com', 587)
-    server.starttls()
-    server.login(gmail_user, gmail_app_password)
-    server.sendmail("sant.vihangam@gmail.com", msg["To"], msg.as_string())
-    server.quit()
+    server.starttls()  # Start TLS encryption
+    server.login(gmail_user, gmail_app_password)  # Login to Gmail SMTP
+    server.sendmail("sant.vihangam@gmail.com", msg["To"], msg.as_string())  # Send email
+    server.quit()  # Close SMTP connection
 
 def forgot_password(request):
     message = None
@@ -2964,13 +2998,32 @@ def upload_attendance(request):
     return render(request, 'upload_attendance.html', {'events': events})
 
 def isexisting_member(name, contact):
-    conn = get_db_conn()
-    cur = conn.cursor(dictionary=True)
-    cur.execute("SELECT COUNT(*) as total FROM members WHERE name=%s AND number=%s", (name, contact))
-    exists = cur.fetchone()['total'] > 0
-    cur.close()
-    conn.close()
-    return exists
+    """
+    Checks if a member with the specified name and contact number exists in the members table.
+
+    Args:
+        name (str): The name of the member to check.
+        contact (str): The contact number of the member to check.
+
+    Returns:
+        bool: True if the member exists, False otherwise.
+
+    Steps:
+        - Establishes a database connection using get_db_conn().
+        - Executes a SQL query to count matching records in the members table.
+        - Returns True if at least one record is found, otherwise False.
+        - Closes the cursor and connection.
+    """
+    conn = get_db_conn()  # Establish database connection
+    cur = conn.cursor(dictionary=True)  # Use dictionary cursor for result
+    cur.execute(
+        "SELECT COUNT(*) as total FROM members WHERE name=%s AND number=%s",
+        (name, contact)
+    )  # Query for existing member
+    exists = cur.fetchone()['total'] > 0  # Check if count > 0
+    cur.close()  # Close cursor
+    conn.close()  # Close connection
+    return exists  # Return result
 
 def ajax_events(request):
         # Get filters
@@ -3178,16 +3231,41 @@ def ajax_events_download(request):
     return response
 
 def get_events_for_dropdown():
-    conn = get_db_conn()
-    cur = conn.cursor(dictionary=True)
-    cur.execute("SELECT id, event_name FROM event_registrations ORDER BY event_name")
-    events = cur.fetchall()
-    cur.close()
-    conn.close()
-    return events
+    """
+    Fetches all events from the event_registrations table for use in dropdowns.
+
+    Returns:
+        list: A list of dictionaries, each containing 'id' and 'event_name' for an event.
+
+    Steps:
+        - Connects to the database using get_db_conn().
+        - Executes a query to select event id and name, ordered by event_name.
+        - Fetches all results as dictionaries.
+        - Closes the cursor and connection.
+        - Returns the list of events.
+    """
+    conn = get_db_conn()  # Establish database connection
+    cur = conn.cursor(dictionary=True)  # Use dictionary cursor for easy access
+    cur.execute("SELECT id, event_name FROM event_registrations ORDER BY event_name")  # Query events
+    events = cur.fetchall()  # Fetch all event records
+    cur.close()  # Close cursor
+    conn.close()  # Close connection
+    return events  # Return list of event dicts
 
 @csrf_exempt
 def public_register(request):
+    """
+    Handles public member registration via a web form.
+
+    - Displays the registration form on GET.
+    - On POST, validates and inserts a new member record into the database.
+    - Validates name (no digits), email format, and required fields (name, number, age).
+    - On success, shows a success message; on error, shows an error message and preserves form data.
+
+    Context:
+        - Uses helper functions to fetch events and instructors for dropdowns.
+        - Renders 'public_register.html' with appropriate context and messages.
+    """
     print("Public registration page accessed")
     message = ''
     message_type = ''
