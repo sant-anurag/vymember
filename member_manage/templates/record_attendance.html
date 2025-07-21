@@ -11,7 +11,7 @@
     <form id="eventFilterForm" class="filter-row" method="get" action="{% url 'record_attendance' %}">
         <div class="form-group" style="position: relative; width:400px;">
             <label for="eventFilter">Event<span class="required-asterisk">*</span></label>
-            <input type="text" id="eventFilter" placeholder="Type to filter events...min 3 characters required" autocomplete="off" required>
+            <input type="text" id="eventFilter" placeholder="Type to filter events...min 3 chars required" autocomplete="off" required>
             <input type="hidden" name="event_id" id="eventIdHidden" required>
             <ul id="eventDropdown" class="event-dropdown-list" style="display:none;"></ul>
         </div>
@@ -20,6 +20,9 @@
         <button type="button" class="download-btn" id="downloadBtn" title="Download"><i class="fas fa-download"></i></button>
     </form>
 
+
+    <!-- Add this before the event-details-row -->
+    <div class="event-details-header">Event Details</div>
     <!-- Event Details Row -->
     {% if selected_event %}
     <div class="event-details-row">
@@ -50,7 +53,7 @@
         </div>
         <div class="form-actions">
             <button type="submit" class="save-btn">Save</button>
-            <button type="button" class="reset-btn" id="resetRegisterBtn">Reset</button>
+            <button type="button" class="reset-attendance-btn" id="resetRegisterBtn">Reset</button>
             <a href="{% url 'dashboard' %}" class="close-btn">Close</a>
         </div>
     </form>
