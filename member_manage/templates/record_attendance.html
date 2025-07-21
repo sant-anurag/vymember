@@ -71,7 +71,10 @@ document.addEventListener('DOMContentLoaded', function() {
         {% endfor %}
     ];
     let filtered = events;
-
+    {% if selected_event %}
+    document.getElementById('eventFilter').value = "{{ selected_event.event_name|escapejs }} ({{ selected_event.event_date|date:'j F, Y' }})";
+    document.getElementById('eventIdHidden').value = "{{ selected_event.id }}";
+    {% endif %}
     function showDropdown(list) {
         dropdown.innerHTML = '';
         // Limit to 5 results
