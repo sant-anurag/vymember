@@ -2997,7 +2997,14 @@ def upload_attendance(request):
         except Exception as e:
             print("Error processing file:", e)
             messages.error(request, f"Error processing file: {e}")
-    return render(request, 'upload_attendance.html', {'events': events})
+    # fetch user category
+    isAdminUser = get_user_category(request.session['username'])
+    print("User category fetched admin status:", isAdminUser)
+    if isAdminUser == True:
+        user_category = 'admin'
+    else:
+        user_category = 'standard'
+    return render(request, 'upload_attendance.html', {'events': events, 'user_category': user_category})
 
 def isexisting_member(name, contact):
     """
