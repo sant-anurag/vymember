@@ -134,9 +134,9 @@ function filterTable() {
     rows.forEach(row => {
         if (row.cells.length <= 1) return; // Skip "No members found" row
 
-        const companyCell = row.cells[3].textContent.toLowerCase();
-        const instructorNameCell = row.cells[4].textContent.toLowerCase();
-        const dateCell = row.cells[5].textContent;
+        const companyCell = row.cells[5].textContent.toLowerCase();
+        const instructorNameCell = row.cells[6].textContent.toLowerCase();
+        const dateCell = row.cells[8].textContent;
         const nameCell = row.cells[0].textContent.toLowerCase();
         const numberCell = row.cells[1].textContent.toLowerCase();
         const emailCell = row.cells[2].textContent.toLowerCase();
