@@ -15,75 +15,111 @@ function setupDownloadButton() {
     }
 }
 
-
 function downloadTableAsExcel() {
-    // Get the table
     const table = document.getElementById('membersTable');
     if (!table) return;
 
-    // Create a workbook
     const XLSX = window.XLSX;
     if (!XLSX) {
-        // If XLSX is not available, add the library dynamically
         const script = document.createElement('script');
         script.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
         script.onload = function() {
-            // Retry after loading the library
             downloadTableAsExcel();
         };
         document.head.appendChild(script);
         return;
     }
 
-    // Get only visible rows (respecting filters)
-    const rows = Array.from(table.querySelectorAll('tbody tr')).filter(row =>
-        row.style.display !== 'none' && !row.classList.contains('no-results-row')
-    );
-
-    if (rows.length === 0) {
+    if (!allRows || allRows.length === 0) {
         alert('No data to export. Please adjust your filters.');
         return;
     }
 
-    // Get headers
     const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.textContent.trim());
-
-    // Remove the "Actions" column
     const actionColumnIndex = headers.findIndex(header => header === 'Actions');
     if (actionColumnIndex !== -1) {
         headers.splice(actionColumnIndex, 1);
     }
 
-    // Create data array
-    const data = [headers];
+    const data = [];
+    const title = ['Members Export'];
+    const timestamp = [`Exported on: ${new Date().toLocaleString()}`];
+    data.push(title, timestamp, [], headers);
 
-    // Add rows data
-    rows.forEach(row => {
+    allRows.forEach(row => {
         const rowData = Array.from(row.cells).map(cell => cell.textContent.trim());
-        // Remove the actions cell
         if (actionColumnIndex !== -1) {
             rowData.splice(actionColumnIndex, 1);
         }
         data.push(rowData);
     });
 
-    // Create worksheet
     const ws = XLSX.utils.aoa_to_sheet(data);
 
-    // Set column widths
-    const colWidths = headers.map(h => ({ wch: Math.max(h.length, 15) }));
+    // Styles
+    const headerStyle = {
+        font: { name: "Calibri", sz: 12, bold: true, color: { rgb: "FFFFFF" } },
+        fill: { fgColor: { rgb: "305496" } }, // Deep blue
+        border: {
+            top: { style: "thin", color: { rgb: "BFBFBF" } },
+            bottom: { style: "thin", color: { rgb: "BFBFBF" } },
+            left: { style: "thin", color: { rgb: "BFBFBF" } },
+            right: { style: "thin", color: { rgb: "BFBFBF" } }
+        },
+        alignment: { horizontal: "center", vertical: "center" }
+    };
+    const zebraStyle1 = {
+        font: { name: "Calibri", sz: 11, color: { rgb: "222222" } },
+        fill: { fgColor: { rgb: "F2F2F2" } }, // Light gray
+        border: headerStyle.border
+    };
+    const zebraStyle2 = {
+        font: { name: "Calibri", sz: 11, color: { rgb: "222222" } },
+        fill: { fgColor: { rgb: "FFFFFF" } }, // White
+        border: headerStyle.border
+    };
+
+    // Apply header style
+    const headerRowIndex = 3;
+    const range = XLSX.utils.decode_range(ws['!ref']);
+    for (let C = range.s.c; C <= range.e.c; ++C) {
+        const cellAddress = XLSX.utils.encode_cell({ r: headerRowIndex, c: C });
+        if (ws[cellAddress]) ws[cellAddress].s = headerStyle;
+    }
+
+    // Apply zebra striping and borders to data rows
+    for (let R = headerRowIndex + 1; R <= range.e.r; ++R) {
+        const style = (R % 2 === 0) ? zebraStyle1 : zebraStyle2;
+        for (let C = range.s.c; C <= range.e.c; ++C) {
+            const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+            if (ws[cellAddress]) ws[cellAddress].s = style;
+        }
+    }
+
+    // Freeze header row
+    ws['!freeze'] = { xSplit: 0, ySplit: headerRowIndex + 1 };
+
+    // Auto-size columns
+    const colWidths = headers.map((h, i) => {
+        let maxLen = h.length;
+        for (let r = headerRowIndex + 1; r < data.length; r++) {
+            maxLen = Math.max(maxLen, (data[r][i] || '').length);
+        }
+        return { wch: Math.max(maxLen + 2, 15) };
+    });
     ws['!cols'] = colWidths;
 
-    // Create workbook
+    // Enable filters
+    ws['!autofilter'] = { ref: XLSX.utils.encode_range({ s: { r: headerRowIndex, c: 0 }, e: { r: headerRowIndex, c: headers.length - 1 } }) };
+
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Members');
 
-    // Generate Excel file and trigger download
     const today = new Date();
     const dateStr = today.toISOString().split('T')[0];
     const fileName = `members_export_${dateStr}.xlsx`;
 
-    XLSX.writeFile(wb, fileName);
+    XLSX.writeFile(wb, fileName, { cellStyles: true });
 }
 
 function setupFilters() {
