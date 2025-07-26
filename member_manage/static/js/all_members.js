@@ -1,17 +1,10 @@
+// On page load, use updateFilteredRowsAndPaginate instead of paginateTable
 document.addEventListener('DOMContentLoaded', function() {
     console.log("All members page loaded");
-
-    // Set up event listeners for filters
     setupFilters();
-
-    // Set up event listeners for action buttons
-    // setupActionButtons();
-
-    // Set up download button
     setupDownloadButton();
-
-    paginateTable();
-    setupPaginationEvents();
+    updateFilteredRowsAndPaginate();
+    setupPaginationEvents && setupPaginationEvents();
 });
 
 
@@ -101,12 +94,10 @@ function setupFilters() {
     const applyFilterBtn = document.getElementById('applyFilter');
     const resetFilterBtn = document.getElementById('resetFilter');
 
-    // Apply filters when the button is clicked
     if (applyFilterBtn) {
         applyFilterBtn.addEventListener('click', filterTable);
     }
 
-    // Reset filters when reset button is clicked
     if (resetFilterBtn) {
         resetFilterBtn.addEventListener('click', function() {
             if (companyFilter) companyFilter.value = '';
@@ -119,13 +110,15 @@ function setupFilters() {
             rows.forEach(row => {
                 row.style.display = '';
             });
+            updateFilteredRowsAndPaginate();
         });
     }
 }
 
+// --- Replace your filterTable function with this: ---
 function filterTable() {
     const companyValue = document.getElementById('companyFilter').value.toLowerCase();
-    const instructorValue = document.getElementById('instructorFilter').value.toLowerCase();
+    const instructorValue = document.getElementById('instructorFilter').selectedOptions[0]?.textContent.toLowerCase();
     const dateValue = document.getElementById('dateFilter').value;
     const searchValue = document.getElementById('searchInput').value.toLowerCase();
 
@@ -141,54 +134,55 @@ function filterTable() {
         const numberCell = row.cells[1].textContent.toLowerCase();
         const emailCell = row.cells[2].textContent.toLowerCase();
 
-        // Check each filter condition
-        const companyMatch = !companyValue || companyCell.includes(companyValue);
+        // Company filter (exact match or empty)
+        const companyMatch = !companyValue || companyCell === companyValue;
 
-        const instructorMatch = !instructorValue ||
-                               instructorNameCell.includes(instructorValue) ||
-                               row.querySelector('.view-btn')?.getAttribute('data-id') === instructorValue;
+        // Instructor filter (by name, not id)
+        const instructorMatch = !instructorValue || instructorValue === 'all instructors' || instructorNameCell === instructorValue;
 
-        // Format date for comparison
-        const dateMatch = !dateValue || dateCell.includes(dateValue);
+        // Date filter (exact match or empty)
+        const dateMatch = !dateValue || dateCell.startsWith(dateValue);
 
         // Search in name, number, or email
         const searchMatch = !searchValue ||
-                           nameCell.includes(searchValue) ||
-                           numberCell.includes(searchValue) ||
-                           emailCell.includes(searchValue);
+            nameCell.includes(searchValue) ||
+            numberCell.includes(searchValue) ||
+            emailCell.includes(searchValue);
 
-        // Show/hide the row based on all filters combined
         row.style.display = (companyMatch && instructorMatch && dateMatch && searchMatch) ? '' : 'none';
     });
 
-    // Check if any visible rows remain
+    // Handle "No results" row
     const visibleRows = Array.from(rows).filter(row => row.style.display !== 'none');
+    const tbody = document.querySelector('#membersTable tbody');
+    let noResultsRow = Array.from(rows).find(row => row.classList.contains('no-results-row'));
 
     if (visibleRows.length === 0) {
-        // If no rows match the filter, show a "No results" message
-        const tbody = document.querySelector('#membersTable tbody');
-
-        // Check if we already have a no-results row
-        const noResultsRow = Array.from(rows).find(row => row.classList.contains('no-results-row'));
-
         if (!noResultsRow) {
-            // Create a new row for "No results" message
-            const newRow = document.createElement('tr');
-            newRow.classList.add('no-results-row');
-            newRow.innerHTML = '<td colspan="7" class="text-center">No members match the selected filters</td>';
-            tbody.appendChild(newRow);
-        } else {
-            // Show the existing no-results row
-            noResultsRow.style.display = '';
+            noResultsRow = document.createElement('tr');
+            noResultsRow.classList.add('no-results-row');
+            noResultsRow.innerHTML = '<td colspan="14" class="text-center">No members match the selected filters</td>';
+            tbody.appendChild(noResultsRow);
         }
-    } else {
-        // If we have results, hide any "No results" message
-        const noResultsRow = document.querySelector('.no-results-row');
-        if (noResultsRow) {
-            noResultsRow.style.display = 'none';
-        }
+        noResultsRow.style.display = '';
+    } else if (noResultsRow) {
+        noResultsRow.style.display = 'none';
     }
+
+    updateFilteredRowsAndPaginate();
 }
+
+// --- Update updateFilteredRowsAndPaginate to always reset to page 1 ---
+function updateFilteredRowsAndPaginate() {
+    allRows = Array.from(document.querySelectorAll('#membersTable tbody tr'))
+        .filter(row => row.style.display !== 'none' && !row.classList.contains('no-results-row'));
+    totalPages = Math.ceil(allRows.length / ROWS_PER_PAGE) || 1;
+    currentPage = 1;
+    showPage(currentPage);
+    renderPaginationBar();
+}
+
+// On page load, after DOMContentLoaded, call paginateTable() as before.
 
 function setupActionButtons() {
     // View button action
