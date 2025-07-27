@@ -3310,6 +3310,30 @@ def public_register(request):
                 'instructors': instructors,
                 'events': events
             })
+        #validate number as digits only
+        if not number.isdigit() or not age.isdigit() or len(number) < 10:
+            # if number is not digits or less than 10 digits
+            print("Invalid contact number:", number)
+            form_data = request.POST.copy()
+            if not number.isdigit():
+                message = 'Contact number must contain only digits.'
+            elif len(number) < 10:
+                message = 'Contact number must be at least 10 digits long.'
+            elif not age.isdigit():
+                message = 'Age must be a valid number.'
+            else:
+                message = 'Invalid input for contact number or age.'
+
+            message_type = 'error'
+            instructors = get_instructors()
+            events = get_events()
+            return render(request, 'public_register.html', {
+                'message': message,
+                'message_type': message_type,
+                'form_data': form_data,
+                'instructors': instructors,
+                'events': events
+            })
         if not date_of_initiation:
             date_of_initiation = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 

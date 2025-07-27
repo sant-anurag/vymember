@@ -18,12 +18,12 @@
     <form id="publicRegisterForm" method="post" action="{% url 'public_register' %}">
         {% csrf_token %}
         <div class="form-row">
-            <div class="form-group">
-                <label for="name">Full Name</label>
+            <div class="form-group required">
+                <label for="name">Full Name<span class="required-asterisk">*</span></label>
                 <input type="text" name="name" id="name" required value="{{ form_data.name|default:'' }}"/>
             </div>
-            <div class="form-group">
-                <label for="number">Contact Number</label>
+            <div class="form-group required">
+                <label for="number">Contact Number<span class="required-asterisk">*</span></label>
                 <input type="text" name="number" id="number" required value="{{ form_data.number|default:'' }}"/>
             </div>
         </div>
@@ -32,19 +32,19 @@
                 <label for="email">Email</label>
                 <input type="email" name="email" id="email" value="{{ form_data.email|default:'' }}"/>
             </div>
-            <div class="form-group">
-                <label for="date_of_initiation">Initiation Date</label>
+            <div class="form-group required">
+                <label for="date_of_initiation">Initiation Date<span class="required-asterisk">*</span></label>
                 <input type="date" name="date_of_initiation" id="date_of_initiation" required
                        value="{{ form_data.date_of_initiation|default:'' }} "/>
             </div>
         </div>
         <div class="form-row">
-            <div class="form-group">
-                <label for="age">Age</label>
+            <div class="form-group required">
+                <label for="age">Age<span class="required-asterisk">*</span></label>
                 <input type="text" name="age" id="age" value="{{ form_data.age|default:'' }}"/>
             </div>
-            <div class="form-group">
-                <label for="gender">Gender</label>
+            <div class="form-group required">
+                <label for="gender">Gender<span class="required-asterisk">*</span></label>
                 <select name="gender" id="gender" required value="{{ form_data.gender|default:'' }}">
                     <option value="">Select Gender</option>
                     <option value="Male">Male</option>
@@ -66,7 +66,7 @@
             </div>
             <div class="form-group">
                 <label for="company">Company/Org/Institution</label>
-                <input type="text" name="company" id="company" value="{{ form_data.company|default:'' }}"/>
+                <input type="text" name="company" id="company" value="{{ form_data.company|default:'' }}" placeholder="Working company,institution etc."/>
             </div>
         </div>
         <div class="form-row">
@@ -77,13 +77,13 @@
         </div>
         <div class="form-row">
             <div class="form-group">
-                <label for="member_country">Country</label>
+                <label for="member_country">Country<span class="required-asterisk">*</span></label>
                 <select name="member_country" id="member_country" required>
                     <option value="">Select Country</option>
                 </select>
             </div>
             <div class="form-group">
-                <label for="member_state">State</label>
+                <label for="member_state">State<span class="required-asterisk">*</span></label>
                 <select name="member_state" id="member_state" required>
                     <option value="">Select State</option>
                 </select>
@@ -91,7 +91,7 @@
         </div>
         <div class="form-row">
             <div class="form-group">
-                <label for="member_city">City</label>
+                <label for="member_city">City<span class="required-asterisk">*</span></label>
                 <select name="member_city" id="member_city" required>
                     <option value="">Select City</option>
                 </select>
@@ -113,7 +113,7 @@
         <div class="form-row">
             <div class="form-group full-width">
                 <label for="feedback">Feedback</label>
-                <textarea name="feedback" id="feedback" rows="2"></textarea>
+                <textarea name="feedback" id="feedback" rows="2" placeholder="Your updestha name here"></textarea>
             </div>
         </div>
         <div class="form-actions">
