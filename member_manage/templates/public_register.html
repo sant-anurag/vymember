@@ -56,17 +56,8 @@
 
         <div class="form-row">
             <div class="form-group">
-                <label for="event">Event</label>
-                <select name="event" id="event" required value="{{ form_data.event|default:'' }}">
-                    <option value="">Select Event</option>
-                    {% for event in events %}
-                    <option value="{{ event.id }}">{{ event.event_name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-group">
                 <label for="company">Company/Org/Institution</label>
-                <input type="text" name="company" id="company" value="{{ form_data.company|default:'' }}" placeholder="Working company,institution etc."/>
+                <input type="text" name="company" id="company" value="{{ form_data.company|default:'' }}" placeholder="optional : Working company,institution etc."/>
             </div>
         </div>
         <div class="form-row">

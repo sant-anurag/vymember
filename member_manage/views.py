@@ -3287,7 +3287,6 @@ def public_register(request):
         email = request.POST.get('email', '').strip()
         age = request.POST.get('age', '').strip()
         gender = request.POST.get('gender', '').strip()
-        event_id = request.POST.get('event', '').strip()
         company = request.POST.get('company', '').strip()
         address = request.POST.get('address', '').strip()
         member_country = request.POST.get('member_country', '').strip()
@@ -3358,12 +3357,12 @@ def public_register(request):
             conn = get_db_conn()
             cur = conn.cursor()
             cur.execute("""
-                            INSERT INTO members
-                            (name, number, email, address,age,gender, country, state,district,company, notes, instructor_id, date_of_initiation,event_id)
-                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s,%s, %s, %s,%s, %s, %s)
-                        """, (
+                INSERT INTO members
+                (name, number, email, address, age, gender, country, state, district, company, notes, instructor_id, date_of_initiation, event_id)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 1)
+            """, (
                 name, number, email, address, age, gender, member_country, member_state, member_city, company, feedback, instructor_id,
-                date_of_initiation, event_id
+                date_of_initiation
             ))
             conn.commit()
             cur.close()
