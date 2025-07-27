@@ -3368,7 +3368,7 @@ def public_register(request):
             conn.commit()
             cur.close()
             conn.close()
-            message = 'Registration successful!'
+            message = f'{name} Registered successfully!'
             message_type = 'success'
 
     def get_public_instructors():
