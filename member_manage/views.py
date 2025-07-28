@@ -3423,4 +3423,5 @@ def ajax_eventsbyDate(request):
     return JsonResponse({'events': events})
 
 def thank_you(request):
-    return render(request, 'thank_you.html')
+    task = request.GET.get('task', '')
+    return render(request, 'thank_you.html',{'task': task})

@@ -21,7 +21,7 @@ class SessionTimeoutMiddleware:
             '/',
         ]
         # Allow all reset-password links (with or without token)
-        if request.path.startswith('/member/reset-password/'):
+        if request.path.startswith('/member/reset-password/') or request.path.startswith('/member/public_register'):
             return self.get_response(request)
         if request.path not in allowed_paths:
             if not request.session.get('is_authenticated'):
