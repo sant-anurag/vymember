@@ -396,7 +396,7 @@ def add_public_instructor(request):
             conn.commit()
             cur.close()
             conn.close()
-            return redirect('thank_you', {'task':'instructor_registration'})
+            return redirect('/member/thank_you/?task=instructor_registration')
         else:
             message = "Name is required."
 
@@ -3367,7 +3367,7 @@ def public_register(request):
             conn.commit()
             cur.close()
             conn.close()
-            return redirect('thank_you', {'task': 'member_registration'})
+            return redirect('/member/thank_you/?task=member_registration')
     def get_public_instructors():
         conn = mysql.connector.connect(
             host=settings.DB_HOST,
