@@ -60,12 +60,7 @@
                 <input type="text" name="company" id="company" value="{{ form_data.company|default:'' }}" placeholder="optional : Working company,institution etc."/>
             </div>
         </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label for="address">Address: Apartment/Street</label>
-                <input type="text" name="address" id="address" value="{{ form_data.address|default:'' }}"/>
-            </div>
-        </div>
+
         <div class="form-row">
             <div class="form-group">
                 <label for="member_country">Country<span class="required-asterisk">*</span></label>
@@ -87,24 +82,16 @@
                     <option value="">Select City</option>
                 </select>
             </div>
-            <div class="form-group">
-                <label for="instructor">Updeshta Name</label>
-                <select name="instructor" id="instructor" required>
-                    <option value="">Select Instructor</option>
-                    {% for instructor in instructors %}
-                    <option value="{{ instructor.id }}"
-                            {% if form_data.instructor|stringformat:"s" == instructor.id|stringformat:"s" %}selected{% endif %}>
-                    {{ instructor.name }}
-                    </option>
-                    {% endfor %}
-                </select>
-            </div>
         </div>
 
         <div class="form-row">
             <div class="form-group full-width">
                 <label for="feedback">Updestha Name</label>
                 <textarea name="feedback" id="feedback" rows="1" placeholder="Your updestha name here"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="address">Address: Apartment/Street</label>
+                <input type="text" name="address" id="address" value="{{ form_data.address|default:'' }}" placeholder="Flat No./Locality"/>
             </div>
         </div>
         <div class="form-actions">
