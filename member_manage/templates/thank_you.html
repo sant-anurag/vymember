@@ -12,8 +12,13 @@
         <div class="thankyou-card">
             <div class="icon">&#10003;</div>
             <h1>Thank You!</h1>
+            {% if task == "instructor_registration" %}
             <p>Your instructor registration was successful.</p>
             <a href="{% url 'add_public_instructor' %}" class="btn">Register Another Instructor</a>
+            {% else %}
+            <p>Your registration was successful.</p>
+            <a href="{% url 'public_register' %}" class="btn">Register Another Member</a>
+            {% endif %}
             <a href="/" class="btn secondary">Go to Home</a>
         </div>
     </div>
