@@ -3367,7 +3367,7 @@ def public_register(request):
             conn.commit()
             cur.close()
             conn.close()
-            return redirect('thank_you', {'task': 'instructor_registration'})
+            return redirect('thank_you', {'task': 'member_registration'})
     def get_public_instructors():
         conn = mysql.connector.connect(
             host=settings.DB_HOST,
