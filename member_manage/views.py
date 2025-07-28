@@ -3293,7 +3293,7 @@ def public_register(request):
         member_state = request.POST.get('member_state', '').strip()
         member_city = request.POST.get('member_city', '').strip()
         feedback = request.POST.get('feedback', '').strip()
-        instructor_id = request.POST.get('instructor', '').strip()
+
         date_of_initiation = request.POST.get('date_of_initiation', '').strip()
         # validate name as non digit
         if any(char.isdigit() for char in name):
@@ -3359,9 +3359,9 @@ def public_register(request):
             cur.execute("""
                 INSERT INTO members
                 (name, number, email, address, age, gender, country, state, district, company, notes, instructor_id, date_of_initiation, event_id)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 1)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 6, %s, 1)
             """, (
-                name, number, email, address, age, gender, member_country, member_state, member_city, company, feedback, instructor_id,
+                name, number, email, address, age, gender, member_country, member_state, member_city, company, feedback,
                 date_of_initiation
             ))
             conn.commit()
