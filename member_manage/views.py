@@ -2101,7 +2101,14 @@ def dashboard(request):
     # Growth rate (vs last year)
     cursor.execute("SELECT COUNT(*) as total FROM members WHERE YEAR(date_of_initiation)=%s", (now.year-1,))
     last_year = cursor.fetchone()['total']
-    growth_rate = round(((new_members_year - last_year) / last_year * 100), 1) if last_year else 0
+
+    #  print growth rate paramteres
+    print("New members this year:", new_members_year)
+    print("Last year members count:", last_year)
+    # Calculate growth rate
+    growth_rate = 0
+    if last_year > 0:
+        growth_rate = round(((new_members_year - last_year) / last_year * 100), 1)
     # Recent members
     cursor.execute("SELECT name, date_of_initiation FROM members ORDER BY date_of_initiation DESC LIMIT 7")
     recent_members = cursor.fetchall()
