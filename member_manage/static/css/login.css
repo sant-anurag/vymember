@@ -200,17 +200,72 @@ body {
       border: 1.5px solid #f5c6cb;
     }
 
-    @media (max-width: 480px) {
+    @media (max-width: 900px) {
       .login-container {
-        padding: 1.5rem 0.7rem 1.2rem 0.7rem;
-        width: 98vw;
-        border-radius: 14px;
+        width: 80vw;
+        padding: 2rem 1.2rem 1.5rem 1.2rem;
       }
       .login-form h2 {
-        font-size: 1.15rem;
+        font-size: 1.25rem;
       }
       .login-avatar {
-        width: 48px;
-        height: 48px;
+        width: 80px;
+        height: 80px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .login-container {
+        width: 95vw;
+        padding: 1.2rem 0.7rem 1rem 0.7rem;
+        border-radius: 16px;
+      }
+      .login-form h2 {
+        font-size: 1.1rem;
+      }
+      .login-avatar {
+        width: 60px;
+        height: 60px;
+      }
+      .login-form input,
+      .login-form button {
+        font-size: 0.97rem;
+        padding: 0.7rem 0.8rem;
+      }
+      .form-links {
+        font-size: 0.9rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .login-container {
+        width: 98vw;
+        padding: 1rem 0.3rem 0.7rem 0.3rem;
+        border-radius: 10px;
+      }
+      .login-form h2 {
+        font-size: 0.95rem;
+        margin-bottom: 0.7rem;
+      }
+      .login-avatar {
+        width: 40px;
+        height: 40px;
+      }
+      .login-avatar img {
+        width: 32px;
+        height: 32px;
+      }
+      .login-form input,
+      .login-form button {
+        font-size: 0.9rem;
+        padding: 0.6rem 0.5rem;
+      }
+      .form-links {
+        font-size: 0.85rem;
+        gap: 2px;
+      }
+      .form-alert {
+        font-size: 0.9rem;
+        padding: 8px 10px;
       }
     }
