@@ -219,7 +219,6 @@ function updateFilteredRowsAndPaginate() {
 }
 
 // On page load, after DOMContentLoaded, call paginateTable() as before.
-
 function setupActionButtons() {
     // View button action
     document.querySelectorAll('.view-btn').forEach(btn => {

@@ -76,22 +76,51 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     });
 
-    // Form validation
+
     const form = document.getElementById('publicRegisterForm');
+    const modal = document.getElementById('memberExistsModal');
+    const modalYesBtn = document.getElementById('modalYesBtn');
+    const modalNoBtn = document.getElementById('modalNoBtn');
+    const existingMembersList = document.getElementById('existingMembersList');
+    let allowSubmit = false;
+
     if (form) {
         form.addEventListener('submit', function(e) {
-            const name = form.name.value.trim();
-            const number = form.number.value.trim();
-            if (!name || !number) {
-                alert('Name and Contact Number are required.');
-                e.preventDefault();
+            if (allowSubmit) {
+                allowSubmit = false; // reset for next submit
+                return; // proceed with normal submit
             }
-        });
-        document.querySelector('.reset-btn').addEventListener('click', function(e) {
             e.preventDefault();
+            const number = form.number.value.trim();
+            if (!number) {
+                alert('Contact Number is required.');
+                return;
+            }
+            fetch(`/member/ajax/check_by_phone/?number=${encodeURIComponent(number)}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.exists) {
+                        // Show modal with member names
+                        existingMembersList.innerHTML = '<ul>' +
+                            data.members.map(m => `<li>${m.name}</li>`).join('') +
+                            '</ul>';
+                        modal.style.display = 'flex';
+                    } else {
+                        allowSubmit = true;
+                        form.submit();
+                    }
+                });
+        });
+
+        modalYesBtn.addEventListener('click', function() {
+            modal.style.display = 'none';
+            allowSubmit = true;
+            form.submit();
+        });
+
+        modalNoBtn.addEventListener('click', function() {
+            modal.style.display = 'none';
             form.reset();
-            form.querySelectorAll('input, textarea').forEach(el => el.value = '');
-            form.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
         });
     }
 });

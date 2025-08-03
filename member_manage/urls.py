@@ -74,4 +74,6 @@ urlpatterns = [
     path('thank_you/', views.thank_you, name='thank_you'),
     path('reset-password/<str:token>/', views.reset_password_public, name='reset_password_public'),
     path('reset-password/', views.reset_password_public, name='reset_password_public'),
+    path('ajax/check_by_phone/', views.check_member_by_phone, name='check_member_by_phone'),
+
 ]

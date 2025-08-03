@@ -3432,3 +3432,16 @@ def ajax_eventsbyDate(request):
 def thank_you(request):
     task = request.GET.get('task', '')
     return render(request, 'thank_you.html',{'task': task})
+
+from django.views.decorators.http import require_GET
+
+@require_GET
+def check_member_by_phone(request):
+    phone = request.GET.get('number')
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT id, name FROM members WHERE number = %s", (phone,))
+    members = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return JsonResponse({'exists': bool(members), 'members': members})
