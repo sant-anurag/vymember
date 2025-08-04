@@ -3521,6 +3521,80 @@ def download_members(request):
     wb.save(response)
     return response
 
+from django.http import HttpResponse
+import openpyxl
+from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+from openpyxl.utils import get_column_letter
+
+def download_instructors(request):
+    print("Download instructors view accessed")
+    conn = get_db_conn()
+    cur = conn.cursor(dictionary=True)
+    cur.execute("""
+        SELECT id, name, number, age, gender, associated_since, updeshta_since, address, state, district, country, is_active
+        FROM instructors
+        ORDER BY id DESC
+    """)
+    instructors = cur.fetchall()
+    cur.close()
+    conn.close()
+
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Instructors"
+    headers = [
+        "ID", "Name", "Contact Number", "Age", "Gender", "Associated Since", "Updeshta Since",
+        "Address", "State", "District", "Country", "Is Active"
+    ]
+    ws.append(headers)
+
+    # Style header
+    header_font = Font(bold=True, color="FFFFFF", name="Calibri", size=12)
+    header_fill = PatternFill("solid", fgColor="2563eb")
+    header_align = Alignment(horizontal="center", vertical="center")
+    thin_border = Border(left=Side(style='thin', color='CCCCCC'),
+                         right=Side(style='thin', color='CCCCCC'),
+                         top=Side(style='thin', color='CCCCCC'),
+                         bottom=Side(style='thin', color='CCCCCC'))
+    for col_num, col_name in enumerate(headers, 1):
+        cell = ws.cell(row=1, column=col_num)
+        cell.font = header_font
+        cell.fill = header_fill
+        cell.alignment = header_align
+        cell.border = thin_border
+
+    # Data rows
+    data_font = Font(name="Calibri", size=11)
+    data_align = Alignment(horizontal="left", vertical="center", wrap_text=True)
+    for ins in instructors:
+        ws.append([
+            ins['id'], ins['name'], ins['number'], ins['age'], ins['gender'],
+            ins['associated_since'], ins['updeshta_since'], ins['address'],
+            ins['state'], ins['district'], ins['country'], "Yes" if ins['is_active'] else "No"
+        ])
+    for row in ws.iter_rows(min_row=2, max_row=ws.max_row, min_col=1, max_col=len(headers)):
+        for cell in row:
+            cell.font = data_font
+            cell.alignment = data_align
+            cell.border = thin_border
+
+    # Auto column width
+    for col in ws.columns:
+        max_length = 0
+        col_letter = get_column_letter(col[0].column)
+        for cell in col:
+            try:
+                if cell.value:
+                    max_length = max(max_length, len(str(cell.value)))
+            except:
+                pass
+        ws.column_dimensions[col_letter].width = max(14, min(max_length + 2, 40))
+
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=Instructors.xlsx'
+    wb.save(response)
+    return response
+
 # member_manage/views.py
 from django.http import JsonResponse
 

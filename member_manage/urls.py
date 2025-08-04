@@ -78,5 +78,7 @@ urlpatterns = [
     # member_manage/urls.py
     path('download_members/', views.download_members_page, name='download_members_page'),
     path('download_members_excel/', views.download_members, name='download_members_excel'),
+    path('download_updestha_excel/', views.download_instructors, name='download_updestha_excel'),
+
     path('api/member_count/', views.api_member_count, name='api_member_count'),
 ]

@@ -4,7 +4,8 @@
 {% block title %}Download Members{% endblock %}
 {% block main_content %}
 <link rel="stylesheet" href="{% static 'css/download_members.css' %}">
-<div class="center-container">
+<div class="center-container" style="gap: 40px;">
+    <!-- Members Card -->
     <div class="card">
         <h2>Download Members Data</h2>
         <div class="member-count">
@@ -13,6 +14,19 @@
         </div>
         <form method="get" action="{% url 'download_members_excel' %}">
             <button type="submit" class="download-btn" id="downloadBtn" title="Download Members Data">
+                <i class="fas fa-download"></i> Download Excel
+            </button>
+        </form>
+    </div>
+    <!-- Updestha Card -->
+    <div class="card">
+        <h2>Download Updestha Data</h2>
+        <div class="member-count">
+            {{ updestha_count|default:"0" }}
+            <span class="label">Total Updestha</span>
+        </div>
+        <form method="get" action="{% url 'download_updestha_excel' %}">
+            <button type="submit" class="download-btn" id="downloadInsBtn" title="Download Updeshta Data">
                 <i class="fas fa-download"></i> Download Excel
             </button>
         </form>
