@@ -3445,3 +3445,110 @@ def check_member_by_phone(request):
     cursor.close()
     conn.close()
     return JsonResponse({'exists': bool(members), 'members': members})
+
+# member_manage/views.py
+from django.http import HttpResponse
+import openpyxl
+from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+from openpyxl.utils import get_column_letter
+
+def download_members(request):
+    print("Download members view accessed")
+    conn = get_db_conn()
+    cur = conn.cursor(dictionary=True)
+    cur.execute("""
+        SELECT name, number, email, address, age, gender, country, state, district, company, notes, instructor_id, date_of_initiation, event_id
+        FROM members
+        ORDER BY id DESC
+    """)
+    members = cur.fetchall()
+    cur.close()
+    conn.close()
+
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Members"
+    headers = [
+        "Name", "Contact Number", "Email", "Address", "Age", "Gender", "Country", "State", "City",
+        "Company", "Notes", "Instructor ID", "Date of Initiation", "Event ID"
+    ]
+    ws.append(headers)
+
+    # Style header
+    header_font = Font(bold=True, color="FFFFFF", name="Calibri", size=12)
+    header_fill = PatternFill("solid", fgColor="2563eb")
+    header_align = Alignment(horizontal="center", vertical="center")
+    thin_border = Border(left=Side(style='thin', color='CCCCCC'),
+                         right=Side(style='thin', color='CCCCCC'),
+                         top=Side(style='thin', color='CCCCCC'),
+                         bottom=Side(style='thin', color='CCCCCC'))
+    for col_num, col_name in enumerate(headers, 1):
+        cell = ws.cell(row=1, column=col_num)
+        cell.font = header_font
+        cell.fill = header_fill
+        cell.alignment = header_align
+        cell.border = thin_border
+
+    # Data rows
+    data_font = Font(name="Calibri", size=11)
+    data_align = Alignment(horizontal="left", vertical="center", wrap_text=True)
+    for m in members:
+        ws.append([
+            m['name'], m['number'], m['email'], m['address'], m['age'], m['gender'],
+            m['country'], m['state'], m['district'], m['company'], m['notes'],
+            m['instructor_id'], m['date_of_initiation'], m['event_id']
+        ])
+    for row in ws.iter_rows(min_row=2, max_row=ws.max_row, min_col=1, max_col=len(headers)):
+        for cell in row:
+            cell.font = data_font
+            cell.alignment = data_align
+            cell.border = thin_border
+
+    # Auto column width
+    for col in ws.columns:
+        max_length = 0
+        col_letter = get_column_letter(col[0].column)
+        for cell in col:
+            try:
+                if cell.value:
+                    max_length = max(max_length, len(str(cell.value)))
+            except:
+                pass
+        ws.column_dimensions[col_letter].width = max(14, min(max_length + 2, 40))
+
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=Members.xlsx'
+    wb.save(response)
+    return response
+
+# member_manage/views.py
+from django.http import JsonResponse
+
+def api_member_count(request):
+    conn = get_db_conn()
+    cur = conn.cursor()
+    cur.execute("SELECT COUNT(*) FROM members")
+    count = cur.fetchone()[0]
+    cur.close()
+    conn.close()
+    return JsonResponse({'count': count})
+
+# member_manage/views.py
+from django.shortcuts import render
+
+def download_members_page(request):
+    # Fetch member count for display (optional)
+    conn = get_db_conn()
+    cur = conn.cursor()
+    cur.execute("SELECT COUNT(*) FROM members")
+    count = cur.fetchone()[0]
+    cur.close()
+    conn.close()
+    # fetch user category
+    isAdminUser = get_user_category(request.session['username'])
+    print("User category fetched admin status:", isAdminUser)
+    if isAdminUser == True:
+        user_category = 'admin'
+    else:
+        user_category = 'standard'
+    return render(request, 'download_members.html', {'member_count': count, 'user_category': user_category})

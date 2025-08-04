@@ -1,0 +1,21 @@
+{% extends 'home.html' %}
+{% load static %}
+
+{% block title %}Download Members{% endblock %}
+{% block main_content %}
+<link rel="stylesheet" href="{% static 'css/download_members.css' %}">
+<div class="center-container">
+    <div class="card">
+        <h2>Download Members Data</h2>
+        <div class="member-count">
+            {{ member_count }}
+            <span class="label">Total Members</span>
+        </div>
+        <form method="get" action="{% url 'download_members_excel' %}">
+            <button type="submit" class="download-btn" id="downloadBtn" title="Download Members Data">
+                <i class="fas fa-download"></i> Download Excel
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
