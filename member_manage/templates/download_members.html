@@ -20,7 +20,7 @@
     <div class="card">
         <h2>Download Updestha Data</h2>
         <div class="member-count">
-            {{ updestha_count|default:"0" }}
+            {{ instructor_count|default:"0" }}
             <span class="label">Total Updestha</span>
         </div>
         <form method="get" action="{% url 'download_updestha_excel' %}">
@@ -44,7 +44,7 @@
     <div class="card">
         <h2>Download Event Attendance</h2>
         <div class="member-count">
-            {{ attendance_count|default:"0" }}
+            {{ event_attendance_count|default:"0" }}
             <span class="label">Total Attendance</span>
         </div>
         <form method="get" action="{% url 'download_event_attendance_excel' %}">

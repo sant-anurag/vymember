@@ -3607,25 +3607,33 @@ def api_member_count(request):
     conn.close()
     return JsonResponse({'count': count})
 
+
 # member_manage/views.py
 from django.shortcuts import render
 
+# Python
 def download_members_page(request):
-    # Fetch member count for display (optional)
     conn = get_db_conn()
     cur = conn.cursor()
     cur.execute("SELECT COUNT(*) FROM members")
-    count = cur.fetchone()[0]
+    member_count = cur.fetchone()[0]
+    cur.execute("SELECT COUNT(*) FROM instructors")
+    instructor_count = cur.fetchone()[0]
+    cur.execute("SELECT COUNT(*) FROM event_registrations")
+    event_count = cur.fetchone()[0]
+    cur.execute("SELECT COUNT(*) FROM event_attendance")
+    event_attendance_count = cur.fetchone()[0]
     cur.close()
     conn.close()
-    # fetch user category
     isAdminUser = get_user_category(request.session['username'])
-    print("User category fetched admin status:", isAdminUser)
-    if isAdminUser == True:
-        user_category = 'admin'
-    else:
-        user_category = 'standard'
-    return render(request, 'download_members.html', {'member_count': count, 'user_category': user_category})
+    user_category = 'admin' if isAdminUser == True else 'standard'
+    return render(request, 'download_members.html', {
+        'member_count': member_count,
+        'user_category': user_category,
+        'instructor_count': instructor_count,
+        'event_count': event_count,
+        'event_attendance_count': event_attendance_count
+    })
 
 import openpyxl
 from openpyxl.styles import Font, Alignment, Border, Side
