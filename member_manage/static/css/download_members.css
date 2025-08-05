@@ -1,58 +1,149 @@
-/* member_manage/static/css/download_members.css */
 body {
-    background: #f3f6fa;
-    font-family: 'Inter', 'Roboto', Arial, sans-serif;
-    margin: 0;
-    min-height: 100vh;
-}
-.center-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-.card {
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 4px 24px rgba(37,99,235,0.08);
-    padding: 40px 32px;
-    text-align: center;
-    min-width: 340px;
-}
-.card h2 {
-    margin-bottom: 24px;
-    color: #2563eb;
-    font-weight: 600;
-}
-.member-count {
-    font-size: 2.8rem;
-    font-weight: 700;
-    color: #2563eb;
-    margin-bottom: 12px;
-}
-.member-count .label {
-    display: block;
-    font-size: 1rem;
-    color: #888;
-    margin-top: 4px;
-    font-weight: 500;
-}
-.download-btn {
-    background: linear-gradient(90deg, #2563eb 0%, #1e40af 100%);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 14px 32px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
-    box-shadow: 0 2px 8px #e0e0e0;
-    margin-top: 24px;
-    transition: background 0.2s;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-}
-.download-btn:hover {
-    background: linear-gradient(90deg, #1e40af 0%, #2563eb 100%);
-}
+        background: #f3f6fa;
+        font-family: 'Inter', 'Roboto', Arial, sans-serif;
+        margin: 0;
+        min-height: 100vh;
+    }
+
+    .download-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: stretch;
+        gap: 32px;
+        padding: 48px 24px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .card {
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 6px 32px rgba(37,99,235,0.10);
+        padding: 40px 32px;
+        text-align: center;
+        min-width: 320px;
+        max-width: 340px;
+        flex: 1 1 320px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        transition: box-shadow 0.2s;
+    }
+
+    .card:hover {
+        box-shadow: 0 8px 40px rgba(37,99,235,0.18);
+    }
+
+    .card h2 {
+        margin-bottom: 24px;
+        color: #2563eb;
+        font-weight: 700;
+        font-size: 1.35rem;
+        letter-spacing: 0.5px;
+    }
+
+    .member-count {
+        font-size: 2.4rem;
+        font-weight: 700;
+        color: #2563eb;
+        margin-bottom: 14px;
+    }
+
+    .member-count .label {
+        display: block;
+        font-size: 1rem;
+        color: #888;
+        margin-top: 4px;
+        font-weight: 500;
+    }
+
+    .download-btn {
+        background: linear-gradient(90deg, #2563eb 0%, #1e40af 100%);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 14px 32px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 2px 8px #e0e0e0;
+        margin-top: 24px;
+        transition: background 0.2s, box-shadow 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .download-btn:hover {
+        background: linear-gradient(90deg, #1e40af 0%, #2563eb 100%);
+        box-shadow: 0 4px 16px #d1d5db;
+    }
+
+    .download-btn i {
+        font-size: 1.2em;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 900px) {
+        .download-container {
+            gap: 24px;
+            padding: 32px 12px;
+        }
+        .card {
+            min-width: 260px;
+            max-width: 300px;
+            padding: 32px 20px;
+        }
+        .card h2 {
+            font-size: 1.15rem;
+        }
+        .member-count {
+            font-size: 2rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .download-container {
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            padding: 24px 8px;
+        }
+        .card {
+            min-width: 220px;
+            max-width: 95vw;
+            padding: 28px 12px;
+        }
+        .card h2 {
+            font-size: 1rem;
+        }
+        .member-count {
+            font-size: 1.5rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .download-container {
+            padding: 12px 2px;
+            gap: 12px;
+        }
+        .card {
+            min-width: 160px;
+            max-width: 98vw;
+            padding: 18px 4px;
+            border-radius: 12px;
+        }
+        .card h2 {
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+        }
+        .member-count {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+        .download-btn {
+            padding: 10px 12px;
+            font-size: 0.95rem;
+        }
+    }

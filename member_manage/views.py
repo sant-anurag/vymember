@@ -3626,3 +3626,72 @@ def download_members_page(request):
     else:
         user_category = 'standard'
     return render(request, 'download_members.html', {'member_count': count, 'user_category': user_category})
+
+import openpyxl
+from openpyxl.styles import Font, Alignment, Border, Side
+from django.http import HttpResponse
+from django.db import connection
+
+def _format_worksheet(ws, headers):
+    # Set column widths
+    for i, header in enumerate(headers, 1):
+        ws.column_dimensions[openpyxl.utils.get_column_letter(i)].width = max(15, len(header) + 2)
+    # Bold header row
+    bold_font = Font(bold=True)
+    for cell in ws[1]:
+        cell.font = bold_font
+        cell.alignment = Alignment(horizontal="center")
+    # Add borders
+    thin = Side(border_style="thin", color="888888")
+    border = Border(left=thin, right=thin, top=thin, bottom=thin)
+    for row in ws.iter_rows():
+        for cell in row:
+            cell.border = border
+
+def download_events_excel(request):
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Events"
+    headers = [
+        "ID", "Event Name", "Event Date", "Instructor ID", "Coordinator",
+        "Total Attendance", "Location", "State", "District", "Country", "Description", "Created At"
+    ]
+    ws.append(headers)
+    conn = get_db_conn()
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT id, event_name, event_date, instructor_id, coordinator, total_attendance,
+               location, state, district, country, description, created_at
+        FROM event_registrations
+    """)
+    for row in cur.fetchall():
+        ws.append(row)
+    _format_worksheet(ws, headers)
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=Events.xlsx'
+    wb.save(response)
+    return response
+
+def download_event_attendance_excel(request):
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Event Attendance"
+    headers = [
+        "ID", "Event ID", "Member Name", "Age", "Contact Number", "Gender",
+        "Address", "Attended On", "Is New Member"
+    ]
+    ws.append(headers)
+    conn = get_db_conn()
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT id, event_id, member_name, age, contact_number, gender,
+               address, attended_on, is_new_member
+        FROM event_attendance
+    """)
+    for row in cur.fetchall():
+        ws.append(row)
+    _format_worksheet(ws, headers)
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=Events_attendance.xlsx'
+    wb.save(response)
+    return response

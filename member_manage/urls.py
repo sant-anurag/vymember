@@ -81,4 +81,6 @@ urlpatterns = [
     path('download_updestha_excel/', views.download_instructors, name='download_updestha_excel'),
 
     path('api/member_count/', views.api_member_count, name='api_member_count'),
+    path('download/events/', views.download_events_excel, name='download_events_excel'),
+    path('download/event_attendance/', views.download_event_attendance_excel, name='download_event_attendance_excel'),
 ]

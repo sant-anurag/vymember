@@ -1,11 +1,10 @@
 {% extends 'home.html' %}
 {% load static %}
 
-{% block title %}Download Members{% endblock %}
+{% block title %}Download Data{% endblock %}
 {% block main_content %}
 <link rel="stylesheet" href="{% static 'css/download_members.css' %}">
-<div class="center-container" style="gap: 40px;">
-    <!-- Members Card -->
+<div class="download-container">
     <div class="card">
         <h2>Download Members Data</h2>
         <div class="member-count">
@@ -13,12 +12,11 @@
             <span class="label">Total Members</span>
         </div>
         <form method="get" action="{% url 'download_members_excel' %}">
-            <button type="submit" class="download-btn" id="downloadBtn" title="Download Members Data">
-                <i class="fas fa-download"></i> Download Excel
+            <button type="submit" class="download-btn" title="Download Members Data">
+                <i class="fas fa-users"></i> Download Excel
             </button>
         </form>
     </div>
-    <!-- Updestha Card -->
     <div class="card">
         <h2>Download Updestha Data</h2>
         <div class="member-count">
@@ -26,8 +24,32 @@
             <span class="label">Total Updestha</span>
         </div>
         <form method="get" action="{% url 'download_updestha_excel' %}">
-            <button type="submit" class="download-btn" id="downloadInsBtn" title="Download Updeshta Data">
-                <i class="fas fa-download"></i> Download Excel
+            <button type="submit" class="download-btn" title="Download Updeshta Data">
+                <i class="fas fa-user-tie"></i> Download Excel
+            </button>
+        </form>
+    </div>
+    <div class="card">
+        <h2>Download Events Data</h2>
+        <div class="member-count">
+            {{ event_count|default:"0" }}
+            <span class="label">Total Events</span>
+        </div>
+        <form method="get" action="{% url 'download_events_excel' %}">
+            <button type="submit" class="download-btn" title="Download Events Data">
+                <i class="fas fa-calendar-alt"></i> Download Excel
+            </button>
+        </form>
+    </div>
+    <div class="card">
+        <h2>Download Event Attendance</h2>
+        <div class="member-count">
+            {{ attendance_count|default:"0" }}
+            <span class="label">Total Attendance</span>
+        </div>
+        <form method="get" action="{% url 'download_event_attendance_excel' %}">
+            <button type="submit" class="download-btn" title="Download Attendance Data">
+                <i class="fas fa-clipboard-list"></i> Download Excel
             </button>
         </form>
     </div>
